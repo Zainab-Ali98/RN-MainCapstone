@@ -15,7 +15,7 @@ function LoginScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/background.png")}
+        source={require("../../assets/background.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
@@ -41,7 +41,7 @@ function LoginScreen() {
         </View>
 
         <Image
-          source={require("../assets/bear.png")}
+          source={require("../../assets/bear.png")}
           style={styles.bearImage}
           resizeMode="contain"
         />

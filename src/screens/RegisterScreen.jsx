@@ -16,7 +16,7 @@ function RegisterScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/background.png")}
+        source={require("../../assets/background.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
@@ -66,11 +66,11 @@ function RegisterScreen() {
 
           <View style={styles.buttonSection}>
             <Image
-              source={require("../assets/registerbear.png")}
+              source={require("../../assets/registerbear.png")}
               style={styles.bearImage}
               resizeMode="contain"
             />
-       
+
             <TouchableOpacity style={styles.registerButton}>
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 1,
   },
   bearImage: {
     width: 150,
