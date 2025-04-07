@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-
 const { width, height } = Dimensions.get("window");
 
 function LoginScreen() {
