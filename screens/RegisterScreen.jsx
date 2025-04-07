@@ -70,7 +70,7 @@ function RegisterScreen() {
               style={styles.bearImage}
               resizeMode="contain"
             />
-       
+
             <TouchableOpacity style={styles.registerButton}>
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 1,
   },
   bearImage: {
     width: 150,
