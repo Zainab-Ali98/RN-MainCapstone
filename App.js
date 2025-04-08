@@ -5,16 +5,18 @@ import { AuthNavigator } from "./navigation/AuthNavigator";
 import "react-native-gesture-handler";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ParentScreen from "./src/screens/ParentScreen";
+import TaskScreen from "./src/screens/TaskScreen";
 
 export default function App() {
   return (
     <NavigationContainer>
-        <View style={styles.container}>
-          <AuthNavigator />
-          {/* <ProfileScreen/> */}
-          {/* <ParentScreen /> */}
-          <StatusBar style="light" />
-        </View>
+      <View style={styles.container}>
+        {/* <AuthNavigator /> */}
+        {/* <ProfileScreen/> */}
+        {/* <ParentScreen /> */}
+        <TaskScreen />
+        <StatusBar style="light" />
+      </View>
     </NavigationContainer>
   );
 }
