@@ -9,10 +9,13 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
 function RegisterScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Image
@@ -20,13 +23,17 @@ function RegisterScreen() {
         style={styles.backgroundImage}
         resizeMode="cover"
       />
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>REGISTER</Text>
+      </View>
+
       <ScrollView
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          <Text style={styles.title}>REGISTER</Text>
-
           <View style={styles.profileContainer}>
             <View style={styles.profilePicture}>
               <Text style={styles.profilePlaceholder}>Add Photo</Text>
@@ -36,7 +43,14 @@ function RegisterScreen() {
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
+              placeholder="First Name"
+              placeholderTextColor="#9E9E9E"
+              autoCapitalize="words"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Last Name"
               placeholderTextColor="#9E9E9E"
               autoCapitalize="words"
             />
@@ -55,13 +69,6 @@ function RegisterScreen() {
               placeholderTextColor="#9E9E9E"
               secureTextEntry
             />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#9E9E9E"
-              secureTextEntry
-            />
           </View>
 
           <View style={styles.buttonSection}>
@@ -70,13 +77,25 @@ function RegisterScreen() {
               style={styles.bearImage}
               resizeMode="contain"
             />
-       
-            <TouchableOpacity style={styles.registerButton}>
+
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={() => navigation.navigate("Profile")}
+            >
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.loginLink}>
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.loginLink}
+            onPress={() => navigation.navigate("Login")}
+          >
             <Text style={styles.loginText}>Already have an account? Login</Text>
           </TouchableOpacity>
         </View>
@@ -96,21 +115,28 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     top: 0,
   },
-  scrollContent: {
-    minHeight: height,
-    paddingBottom: 40,
-  },
-  content: {
+  titleContainer: {
+    paddingTop: 60,
     paddingHorizontal: 39,
-    paddingTop: 140,
-    alignItems: "center",
+    zIndex: 1,
   },
   title: {
     fontSize: 25,
     fontWeight: "800",
     letterSpacing: -0.333,
-    marginBottom: 30,
     color: "#ffffff",
+    textAlign: "center",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 40,
+    paddingBottom: 40,
+  },
+  content: {
+    paddingHorizontal: 39,
+    alignItems: "center",
   },
   profileContainer: {
     marginBottom: 30,
@@ -149,8 +175,23 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 20,
   },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 20,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#D9D9D9",
+  },
+  dividerText: {
+    color: "#9E9E9E",
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
   loginLink: {
-    marginTop: 20,
     padding: 10,
   },
   buttonSection: {
@@ -166,6 +207,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 1,
   },
   bearImage: {
     width: 150,
@@ -178,6 +220,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: "#4D5DFA",
     fontSize: 16,
+    fontWeight: "500",
   },
 });
 
