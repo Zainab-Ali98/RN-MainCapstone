@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -10,11 +10,45 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import * as ImagePicker from "expo-image-picker";
 const { width, height } = Dimensions.get("window");
 
 function RegisterScreen() {
   const navigation = useNavigation();
+  // const [authenticated, setAuthenticated] = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
+
+  const [image, setImage] = useState(null);
+
+  // const { mutate } = useMutation({
+  //   mutationFn: () => register(userInfo, image),
+  //   onSuccess: () => {
+  //     setAuthenticated(true);
+  //   },
+  // });
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  // const handleRegister = () => {
+  //   mutate();
+  // };
 
   return (
     <View style={styles.container}>
@@ -35,9 +69,13 @@ function RegisterScreen() {
       >
         <View style={styles.content}>
           <View style={styles.profileContainer}>
-            <View style={styles.profilePicture}>
+            <TouchableOpacity
+              onPress={() => pickImage()}
+              style={styles.profilePicture}
+            >
               <Text style={styles.profilePlaceholder}>Add Photo</Text>
-            </View>
+            </TouchableOpacity>
+            {image && <Image source={{ uri: image }} style={styles.image} />}
           </View>
 
           <View style={styles.inputContainer}>
@@ -221,6 +259,10 @@ const styles = StyleSheet.create({
     color: "#4D5DFA",
     fontSize: 16,
     fontWeight: "500",
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
 

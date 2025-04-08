@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 
 const statuses = ["Ongoing", "Verified", "Completed", "Rejected"];
 
@@ -106,6 +108,37 @@ const ParentScreen = () => {
     ? children.filter((child) => child.status === filterStatus)
     : children;
 
+  const navigation = useNavigation();
+  // const [authenticated, setAuthenticated] = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
+
+  const [image, setImage] = useState(null);
+
+  // const { mutate } = useMutation({
+  //   mutationFn: () => register(userInfo, image),
+  //   onSuccess: () => {
+  //     setAuthenticated(true);
+  //   },
+  // });
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -200,9 +233,7 @@ const ParentScreen = () => {
                     <View style={{ flex: 1 }}>
                       <Text style={styles.childName}>{child.name}</Text>
                       <Text style={styles.childTasks}>3 Tasks</Text>
-                      <TouchableOpacity
-                        onPress={() => handleUploadPhoto(child.id)}
-                      >
+                      <TouchableOpacity onPress={() => pickImage()}>
                         <Text style={styles.uploadLink}>Upload Photo</Text>
                       </TouchableOpacity>
                     </View>
@@ -260,7 +291,7 @@ const ParentScreen = () => {
 
               <TouchableOpacity
                 style={styles.modalUploadButton}
-                onPress={handleModalPhotoUpload}
+                onPress={pickImage}
               >
                 <Text style={styles.modalUploadText}>Upload Photo</Text>
               </TouchableOpacity>
