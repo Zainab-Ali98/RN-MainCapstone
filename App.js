@@ -4,18 +4,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { AuthNavigator } from "./navigation/AuthNavigator";
 import "react-native-gesture-handler";
 import ProfileScreen from "./src/screens/ProfileScreen";
+import ParentScreen from "./src/screens/ParentScreen";
 
-export default function App() {
+export default function App(){
   return (
-
     <NavigationContainer>
       <View style={styles.container}>
-        <AuthNavigator />
+        {/* <AuthNavigator /> */}
         {/* <ProfileScreen/> */}
+        <ParentScreen />
         <StatusBar style="light" />
       </View>
     </NavigationContainer>
-
   );
 }
 
