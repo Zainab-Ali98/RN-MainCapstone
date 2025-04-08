@@ -7,10 +7,16 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from "react-native";
+
 const { width, height } = Dimensions.get("window");
 
-function LoginScreen() {
+function LoginScreen({ navigation }) {
+  const handleRegisterPress = () => {
+    navigation.navigate("Register");
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -19,36 +25,57 @@ function LoginScreen() {
         resizeMode="cover"
       />
 
-      <View style={styles.content}>
-        <Text style={styles.title}>LOGIN</Text>
+      <Text style={styles.title}>LOGIN</Text>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#9E9E9E"
-            keyboardType="email-address"
-            autoCapitalize="none"
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#9E9E9E"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#9E9E9E"
+              secureTextEntry
+            />
+          </View>
+
+          <Image
+            source={require("../../assets/bear.png")}
+            style={styles.bearImage}
+            resizeMode="contain"
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#9E9E9E"
-            secureTextEntry
-          />
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          <View style={styles.orContainer}>
+            <View style={styles.line} />
+            <Text style={styles.orText}>OR</Text>
+            <View style={styles.line} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.registerLink}
+            onPress={handleRegisterPress}
+          >
+            <Text style={styles.registerText}>
+              Don't have an account? Register
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        <Image
-          source={require("../../assets/bear.png")}
-          style={styles.bearImage}
-          resizeMode="contain"
-        />
-
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -64,23 +91,32 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     top: 0,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 39,
-    paddingTop: 140,
-    alignItems: "center",
-    zIndex: 10,
-  },
   title: {
+    position: "absolute",
+    top: 140,
+    alignSelf: "center",
     color: "#ffffff",
     fontSize: 25,
     fontWeight: "800",
     letterSpacing: -0.333,
-    marginBottom: 342,
+    zIndex: 10,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingTop: 200,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 39,
+    alignItems: "center",
   },
   inputContainer: {
     width: "100%",
     gap: 37,
+    marginTop: 142,
   },
   input: {
     width: "100%",
@@ -90,15 +126,14 @@ const styles = StyleSheet.create({
     borderColor: "#D9D9D9",
     paddingHorizontal: 16,
     fontSize: 14,
-    color: "#9E9E9E",
-    backgroundColor: "#ffffff",
+    color: "#ffffff",
+    backgroundColor: "transparent",
   },
   loginButton: {
     width: "100%",
     height: 72,
     borderRadius: 28,
     backgroundColor: "#4D5DFA",
-    //marginTop: 56,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -110,6 +145,31 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
+  },
+  registerLink: {
+    marginTop: 20,
+    padding: 10,
+  },
+  registerText: {
+    color: "#4D5DFA",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  orContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 20,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#D9D9D9",
+  },
+  orText: {
+    color: "#9E9E9E",
+    marginHorizontal: 10,
+    fontSize: 14,
   },
 });
 
