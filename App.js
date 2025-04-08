@@ -7,6 +7,7 @@ import ProfileScreen from "./src/screens/ProfileScreen";
 
 export default function App() {
   return (
+
     <NavigationContainer>
       <View style={styles.container}>
         <AuthNavigator />
@@ -14,6 +15,7 @@ export default function App() {
         <StatusBar style="light" />
       </View>
     </NavigationContainer>
+
   );
 }
 
