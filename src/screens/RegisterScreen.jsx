@@ -4,13 +4,18 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
+  Image,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 const { width, height } = Dimensions.get("window");
 
-function LoginScreen() {
+function RegisterScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Image
@@ -19,36 +24,82 @@ function LoginScreen() {
         resizeMode="cover"
       />
 
-      <View style={styles.content}>
-        <Text style={styles.title}>LOGIN</Text>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#9E9E9E"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#9E9E9E"
-            secureTextEntry
-          />
-        </View>
-
-        <Image
-          source={require("../../assets/bear.png")}
-          style={styles.bearImage}
-          resizeMode="contain"
-        />
-
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>REGISTER</Text>
       </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          <View style={styles.profileContainer}>
+            <View style={styles.profilePicture}>
+              <Text style={styles.profilePlaceholder}>Add Photo</Text>
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="First Name"
+              placeholderTextColor="#9E9E9E"
+              autoCapitalize="words"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Last Name"
+              placeholderTextColor="#9E9E9E"
+              autoCapitalize="words"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#9E9E9E"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#9E9E9E"
+              secureTextEntry
+            />
+          </View>
+
+          <View style={styles.buttonSection}>
+            <Image
+              source={require("../../assets/registerbear.png")}
+              style={styles.bearImage}
+              resizeMode="contain"
+            />
+
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={() => navigation.navigate("Profile")}
+            >
+              <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.loginLink}
+            onPress={() => navigation.navigate("Login")}
+          >
+            <Text style={styles.loginText}>Already have an account? Login</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -64,23 +115,51 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     top: 0,
   },
-  content: {
-    flex: 1,
+  titleContainer: {
+    paddingTop: 60,
     paddingHorizontal: 39,
-    paddingTop: 140,
-    alignItems: "center",
-    zIndex: 10,
+    zIndex: 1,
   },
   title: {
-    color: "#ffffff",
     fontSize: 25,
     fontWeight: "800",
     letterSpacing: -0.333,
-    marginBottom: 342,
+    color: "#ffffff",
+    textAlign: "center",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 40,
+    paddingBottom: 40,
+  },
+  content: {
+    paddingHorizontal: 39,
+    alignItems: "center",
+  },
+  profileContainer: {
+    marginBottom: 30,
+    alignItems: "center",
+  },
+  profilePicture: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#F5F5F5",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    borderStyle: "dashed",
+  },
+  profilePlaceholder: {
+    color: "#9E9E9E",
+    fontSize: 16,
   },
   inputContainer: {
     width: "100%",
-    gap: 37,
+    gap: 20,
   },
   input: {
     width: "100%",
@@ -91,26 +170,58 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 14,
     color: "#9E9E9E",
-    backgroundColor: "#ffffff",
-  },
-  loginButton: {
-    width: "100%",
-    height: 72,
-    borderRadius: 28,
-    backgroundColor: "#4D5DFA",
-    //marginTop: 56,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bearImage: {
-    width: 118,
-    height: 78,
-    marginTop: 28,
   },
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
   },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 20,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#D9D9D9",
+  },
+  dividerText: {
+    color: "#9E9E9E",
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+  loginLink: {
+    padding: 10,
+  },
+  buttonSection: {
+    width: "100%",
+    marginTop: 15,
+    position: "relative",
+    paddingTop: 80,
+  },
+  registerButton: {
+    width: "100%",
+    height: 72,
+    borderRadius: 28,
+    backgroundColor: "#4D5DFA",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 1,
+  },
+  bearImage: {
+    width: 150,
+    height: 100,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 1,
+  },
+  loginText: {
+    color: "#4D5DFA",
+    fontSize: 16,
+    fontWeight: "500",
+  },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
