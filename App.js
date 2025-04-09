@@ -9,6 +9,7 @@ import ProfileScreen from "./src/screens/ProfileScreen";
 import ParentScreen from "./src/screens/ParentScreen";
 import TaskScreen from "./src/screens/TaskScreen";
 import CreateTaskScreen from "./src/screens/CreateTaskScreen";
+import ViewTaskScreen from "./src/screens/ViewTaskScreen";
 
 export default function App() {
   return (
@@ -16,10 +17,11 @@ export default function App() {
       <NavigationContainer>
         <View style={styles.container}>
           {/* <AuthNavigator /> */}
-          <ProfileScreen/>
+          {/* <ProfileScreen/> */}
           {/* <ParentScreen /> */}
           {/* <TaskScreen /> */}
           {/* <CreateTaskScreen /> */}
+          <ViewTaskScreen />
           <StatusBar style="light" />
         </View>
       </NavigationContainer>

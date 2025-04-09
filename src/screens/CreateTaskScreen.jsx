@@ -11,10 +11,12 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
 const CreateTaskScreen = () => {
+  const navigation = useNavigation();
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
   const [reward, setReward] = useState(12);
@@ -51,7 +53,7 @@ const CreateTaskScreen = () => {
   };
 
   const handleSubmit = () => {
-    console.log({
+    navigation.navigate("ViewTask", {
       taskName,
       description,
       reward,

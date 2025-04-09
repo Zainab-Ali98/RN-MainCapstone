@@ -4,6 +4,8 @@ import RegisterScreen from "../src/screens/RegisterScreen";
 import TaskScreen from "../src/screens/TaskScreen";
 import DepositScreen from "../src/screens/DepositScreen";
 import ProfileScreen from "../src/screens/ProfileScreen";
+import CreateTaskScreen from "../src/screens/CreateTaskScreen";
+import ViewTaskScreen from "../src/screens/ViewTaskScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +22,9 @@ export const AuthNavigator = () => {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Task" component={TaskScreen} />
       <Stack.Screen name="Deposit" component={DepositScreen} />
-
+      <Stack.Screen name="CreateTask" component={CreateTaskScreen} />
+      <Stack.Screen name="ViewTask" component={ViewTaskScreen} />
     </Stack.Navigator>
   );
 };
+
