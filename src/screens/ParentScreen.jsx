@@ -25,7 +25,7 @@ const ParentScreen = ({navigation}) => {
 
     
   const handleCreateTask = () => {
-    // navigation.navigate("CreateChildAcc");
+    navigation.navigate("CreateTask");
   };
   
   const cycleStatus = (childId) => {

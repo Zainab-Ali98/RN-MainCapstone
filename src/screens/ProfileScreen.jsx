@@ -106,7 +106,8 @@ const ProfileScreen = () => {
                 <Text style={styles.actionButtonText}>Deposit</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity style={styles.actionButton}
+                onPress={() => navigation.navigate("CreateTask")}>
                 <Text style={styles.actionButtonText}>Create Task</Text>
               </TouchableOpacity>
             </View>
