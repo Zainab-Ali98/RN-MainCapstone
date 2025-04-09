@@ -16,6 +16,9 @@ function LoginScreen({ navigation }) {
   const handleRegisterPress = () => {
     navigation.navigate("Register");
   };
+  const handleLoginPress = () => {
+    navigation.navigate("Parent");
+  };
 
   return (
     <View style={styles.container}>
@@ -56,7 +59,10 @@ function LoginScreen({ navigation }) {
             resizeMode="contain"
           />
 
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLoginPress}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 

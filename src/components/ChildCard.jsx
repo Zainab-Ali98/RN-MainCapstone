@@ -1,136 +1,57 @@
-import React, { useState, useContext } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { ChildCard } from "../components/ChildCard";
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+  } from "react-native";
 
-const statuses = ["Ongoing", "Verified", "Completed", "Rejected"];
-
-const ParentScreen = ({navigation}) => {
-  const [children, setChildren] = useState([{"id": 1, name: "John Doe", status: "Ongoing", imageSrc: "../assets/bear.png" }, { id: 2, name: "Jane Smith", status: "Verified", imageSrc: null }, { id: 3, name: "Sam Brown", status: "Completed", imageSrc: null }, { id: 4, name: "Lucy Green", status: "Rejected", imageSrc: null }]);
-  const [filterStatus, setFilterStatus] = useState(null);
-
-  const handelChildProfilenPress = (child_id) => {
-    navigation.navigate("Profile");
-  };  
-  
-  const handleAddChildPress = () => {
-    navigation.navigate("CreateChildAcc");
-  };
-
-    
-  const handleCreateTask = () => {
-    // navigation.navigate("CreateChildAcc");
-  };
-  
-  const cycleStatus = (childId) => {
-    setChildren((prevChildren) =>
-      prevChildren.map((child) => {
-        if (child.id === childId) {
-          const currentIndex = statuses.indexOf(child.status);
-          const nextStatus = statuses[(currentIndex + 1) % statuses.length];
-          return { ...child, status: nextStatus };
-        }
-        return child;
-      })
-    );
-  };
-
-  const filteredChildren = filterStatus
-    ? children.filter((child) => child.status === filterStatus)
-    : children;
-  
+export const ChildCard = ({
+  child,
+  cycleStatus,
+  handleCreateTask,
+  openChildProfile,
+}) => {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* 💰 Balance Card with Purple Border */}
-          <View style={styles.balanceCard}>
-            <Text style={styles.balanceCardLabel}>Balance</Text>
-            <Text style={styles.balanceCardAmount}>245.500 KD</Text>
-          </View>
-
-          {/* ➕ Add Child Card */}
-          <View style={styles.addCard}>
-            <View style={styles.cardHeader}>
-              <View>
-                <Text style={styles.cardTitle}>Add Child</Text>
-                <Text style={styles.cardSubtitle}>
-                  Create a new child account
-                </Text>
+    <TouchableOpacity
+      onPress={() => openChildProfile(child.id)}
+      style={styles.childCard}
+    >
+      <View style={styles.childCard}>
+        <View style={styles.childRow}>
+          <View style={styles.avatar}>
+            {child.imageSrc ? (
+              <Image
+                source={{ uri: child.imageSrc }}
+                style={styles.avatarImage}
+              />
+            ) : (
+              <View style={styles.avatarFallback}>
+                <Text style={styles.avatarLetter}>{child.name.charAt(0)}</Text>
               </View>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => handleAddChildPress()}
-              >
-                <Text style={styles.addButtonText}>+ Add</Text>
-              </TouchableOpacity>
-            </View>
+            )}
           </View>
-
-          {/* 🔍 Filter Tabs */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.filterRow}
-          >
-            <TouchableOpacity
-              onPress={() => setFilterStatus(null)}
-              style={[
-                styles.filterButton,
-                filterStatus === null && styles.filterActive,
-              ]}
-            >
-              <Text style={styles.filterText}>All</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.childName}>{child.name}</Text>
+            <Text style={styles.childTasks}>3 Tasks</Text>
+            <TouchableOpacity onPress={() => handleCreateTask()}>
+              <Text style={styles.uploadLink}>Upload Photo</Text>
             </TouchableOpacity>
-            {statuses.map((status) => (
-              <TouchableOpacity
-                key={status}
-                onPress={() => setFilterStatus(status)}
-                style={[
-                  styles.filterButton,
-                  filterStatus === status && styles.filterActive,
-                ]}
-              >
-                <Text style={styles.filterText}>{status}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          </View>
 
-          {/* 👶 Children List */}
-          {filteredChildren.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyTitle}>No children found</Text>
-              <Text style={styles.emptySubtitle}>
-                Try adding or changing filters
-              </Text>
-            </View>
-          ) : (
-            <>
-              <View style={styles.childrenHeader}>
-                <Text style={styles.childrenTitle}>Child Progress</Text>
-                <Text style={styles.childrenCount}>
-                  {filteredChildren.length}
-                </Text>
-              </View>
-
-              {filteredChildren.map((child) => (
-                <ChildCard child={child} cycleStatus={cycleStatus} handleCreateTask={handleCreateTask} openChildProfile={handelChildProfilenPress} key={child.id} />
-              ))}
-            </>
-          )}
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+          {/* 🔁 Status badge */}
+          <TouchableOpacity
+            style={[styles.statusBadge, styles[child.status.toLowerCase()]]}
+            onPress={() => cycleStatus(child.id)}
+          >
+            <Text style={styles.statusText}>{child.status}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
-export default ParentScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f9fafb" },
