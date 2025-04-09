@@ -7,20 +7,19 @@ import "react-native-gesture-handler";
 import DepositScreen from "./src/screens/DepositScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ParentScreen from "./src/screens/ParentScreen";
+import TaskScreen from "./src/screens/TaskScreen";
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
-          {/* <AuthNavigator /> */}
-          {/* <DepositScreen /> */}
-          {/* <ProfileScreen/> */}
-          <ParentScreen/>
-          <StatusBar style="light" />
-        </View>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <View style={styles.container}>
+        {/* <AuthNavigator /> */}
+        {/* <ProfileScreen/> */}
+        {/* <ParentScreen /> */}
+        <TaskScreen />
+        <StatusBar style="light" />
+      </View>
+    </NavigationContainer>
   );
 }
 
