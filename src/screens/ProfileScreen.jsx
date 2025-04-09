@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   View,
@@ -39,10 +40,7 @@ const SavingGoalItem = ({ item }) => (
     <Text style={styles.goalTitle}>{item.title}</Text>
     <View style={styles.goalProgress}>
       <View
-        style={[
-          styles.progressBar,
-          { width: `${(item.progress / item.amount) * 100}%` },
-        ]}
+        style={[styles.progressBar, { width: `${(item.progress / item.amount) * 100}%` }]}
       />
     </View>
     <Text style={styles.goalAmount}>
@@ -52,6 +50,8 @@ const SavingGoalItem = ({ item }) => (
 );
 
 const ProfileScreen = () => {
+  const navigation = useNavigation(); // Correctly placed inside the component
+
   return (
     <View style={styles.container}>
       <Image
@@ -60,10 +60,7 @@ const ProfileScreen = () => {
         resizeMode="cover"
       />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <Text style={styles.title}>PROFILE</Text>
 
@@ -102,7 +99,10 @@ const ProfileScreen = () => {
             />
 
             <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate("Deposit")} // This should work now
+              >
                 <Text style={styles.actionButtonText}>Deposit</Text>
               </TouchableOpacity>
 
