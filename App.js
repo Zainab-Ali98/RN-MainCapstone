@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import "react-native-gesture-handler";
 import DepositScreen from "./src/screens/DepositScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
+import ParentScreen from "./src/screens/ParentScreen";
 
 export default function App() {
   return (
@@ -13,8 +14,9 @@ export default function App() {
       <NavigationContainer>
         <View style={styles.container}>
           {/* <AuthNavigator /> */}
-          <DepositScreen />
+          {/* <DepositScreen /> */}
           {/* <ProfileScreen/> */}
+          <ParentScreen/>
           <StatusBar style="light" />
         </View>
       </NavigationContainer>
