@@ -252,7 +252,10 @@ const styles = StyleSheet.create({
   bearImage: {
     width: 100,
     height: 70,
-    marginTop: 20,
+    position: "absolute",
+    right: 0,
+    top: -50,
+    zIndex: 1,
   },
   submitButton: {
     width: "100%",
