@@ -10,6 +10,7 @@ import ParentScreen from "./src/screens/ParentScreen";
 import TaskScreen from "./src/screens/TaskScreen";
 import CreateTaskScreen from "./src/screens/CreateTaskScreen";
 import ViewTaskScreen from "./src/screens/ViewTaskScreen";
+import CreateNewGoal from "./src/screens/CreateNewGoal";
 
 export default function App() {
   return (
@@ -21,7 +22,8 @@ export default function App() {
           {/* <ParentScreen /> */}
           {/* <TaskScreen /> */}
           {/* <CreateTaskScreen /> */}
-          <ViewTaskScreen />
+          {/* <ViewTaskScreen /> */}
+          <CreateNewGoal />
           <StatusBar style="light" />
         </View>
       </NavigationContainer>
