@@ -8,18 +8,22 @@ import DepositScreen from "./src/screens/DepositScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ParentScreen from "./src/screens/ParentScreen";
 import TaskScreen from "./src/screens/TaskScreen";
+import CreateTaskScreen from "./src/screens/CreateTaskScreen";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        {/* <AuthNavigator /> */}
-        {/* <ProfileScreen/> */}
-        {/* <ParentScreen /> */}
-        <TaskScreen />
-        <StatusBar style="light" />
-      </View>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <View style={styles.container}>
+          {/* <AuthNavigator /> */}
+          <ProfileScreen/>
+          {/* <ParentScreen /> */}
+          {/* <TaskScreen /> */}
+          {/* <CreateTaskScreen /> */}
+          <StatusBar style="light" />
+        </View>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
