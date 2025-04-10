@@ -26,14 +26,6 @@ function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      {/* <LottieView
-        ref={animationRef}
-        source={require("/Users/nuni/Documents/development/RN-MainCapstone/assets/finalbears.json")}
-        style={styles.backgroundImage}
-        autoPlay
-        loop
-      /> */}
-
       <View style={styles.titleContainer}>
         <Text style={styles.title}>REGISTER</Text>
       </View>
@@ -109,13 +101,13 @@ function RegisterScreen() {
             <Text style={styles.loginText}>Already have an account? Login</Text>
           </TouchableOpacity>
         </View>
-         <LottieView
-        ref={animationRef}
-        source={require("/Users/nuni/Documents/development/RN-MainCapstone/assets/bearstwo.json")}
-        style={styles.backgroundImage}
-        autoPlay
-        loop
-      />
+        <LottieView
+          ref={animationRef}
+          source={require("../../assets/bearstwo.json")}
+          style={styles.backgroundImage}
+          autoPlay
+          loop
+        />
       </ScrollView>
     </View>
   );
@@ -127,10 +119,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   backgroundImage: {
-   position: "absolute",
+    position: "absolute",
     width: width,
-    height: height ,
-   top: 0,
+    height: height,
+    top: 0,
   },
   titleContainer: {
     paddingTop: 60,
