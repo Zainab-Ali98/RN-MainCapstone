@@ -18,7 +18,7 @@ const mockTask = {
   image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
 };
 
-const ViewTaskScreen = () => {
+const ViewTaskScreen = (task) => {
   return (
     <View style={styles.container}>
       <Image
@@ -32,7 +32,7 @@ const ViewTaskScreen = () => {
       <View style={styles.content}>
         <View style={styles.taskContainer}>
           <Image
-            source={{ uri: mockTask.image }}
+            source={{ uri: task.image }}
             style={styles.taskImage}
             resizeMode="cover"
           />
@@ -41,21 +41,21 @@ const ViewTaskScreen = () => {
             <View style={styles.detailGroup}>
               <Text style={styles.label}>Task Name</Text>
               <View style={styles.detailBox}>
-                <Text style={styles.value}>{mockTask.taskName}</Text>
+                <Text style={styles.value}>{task.taskName}</Text>
               </View>
             </View>
 
             <View style={styles.detailGroup}>
               <Text style={styles.label}>Description</Text>
               <View style={styles.detailBox}>
-                <Text style={styles.value}>{mockTask.description}</Text>
+                <Text style={styles.value}>{task.description}</Text>
               </View>
             </View>
 
             <View style={styles.detailGroup}>
               <Text style={styles.label}>Reward</Text>
               <View style={styles.detailBox}>
-                <Text style={styles.rewardValue}>{mockTask.reward} kd</Text>
+                <Text style={styles.rewardValue}>{task.reward} kd</Text>
               </View>
             </View>
           </View>
