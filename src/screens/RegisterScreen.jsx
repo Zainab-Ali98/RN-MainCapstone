@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,53 +10,29 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
+import LottieView from "lottie-react-native";
+
 const { width, height } = Dimensions.get("window");
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  // const [authenticated, setAuthenticated] = useContext(UserContext);
-  const [userInfo, setUserInfo] = useState({
-    email: "",
-    password: "",
-    name: "",
-  });
+  const animationRef = useRef(null);
 
-  const [image, setImage] = useState(null);
-
-  // const { mutate } = useMutation({
-  //   mutationFn: () => register(userInfo, image),
-  //   onSuccess: () => {
-  //     setAuthenticated(true);
-  //   },
-  // });
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+  useEffect(() => {
+    if (animationRef.current) {
+      animationRef.current.play();
     }
-  };
-
-  // const handleRegister = () => {
-  //   mutate();
-  // };
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/background.png")}
+      {/* <LottieView
+        ref={animationRef}
+        source={require("/Users/nuni/Documents/development/RN-MainCapstone/assets/finalbears.json")}
         style={styles.backgroundImage}
-        resizeMode="cover"
-      />
+        autoPlay
+        loop
+      /> */}
 
       <View style={styles.titleContainer}>
         <Text style={styles.title}>REGISTER</Text>
@@ -69,13 +45,9 @@ function RegisterScreen() {
       >
         <View style={styles.content}>
           <View style={styles.profileContainer}>
-            <TouchableOpacity
-              onPress={() => pickImage()}
-              style={styles.profilePicture}
-            >
+            <View style={styles.profilePicture}>
               <Text style={styles.profilePlaceholder}>Add Photo</Text>
-            </TouchableOpacity>
-            {image && <Image source={{ uri: image }} style={styles.image} />}
+            </View>
           </View>
 
           <View style={styles.inputContainer}>
@@ -137,6 +109,13 @@ function RegisterScreen() {
             <Text style={styles.loginText}>Already have an account? Login</Text>
           </TouchableOpacity>
         </View>
+         <LottieView
+        ref={animationRef}
+        source={require("/Users/nuni/Documents/development/RN-MainCapstone/assets/bearstwo.json")}
+        style={styles.backgroundImage}
+        autoPlay
+        loop
+      />
       </ScrollView>
     </View>
   );
@@ -148,10 +127,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   backgroundImage: {
-    position: "absolute",
+   position: "absolute",
     width: width,
-    height: height * 0.5,
-    top: 0,
+    height: height ,
+   top: 0,
   },
   titleContainer: {
     paddingTop: 60,
@@ -259,10 +238,6 @@ const styles = StyleSheet.create({
     color: "#4D5DFA",
     fontSize: 16,
     fontWeight: "500",
-  },
-  image: {
-    width: 200,
-    height: 200,
   },
 });
 
