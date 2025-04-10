@@ -128,15 +128,16 @@ const CreateTaskScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <Image
-          source={require("../../assets/bear.png")}
-          style={styles.bearImage}
-          resizeMode="contain"
-        />
-
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Create Task</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Create Task</Text>
+          </TouchableOpacity>
+          <Image
+            source={require("../../assets/bear.png")}
+            style={styles.bearImage}
+            resizeMode="contain"
+          />
+        </View>
       </View>
     </View>
   );
@@ -251,10 +252,11 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 14,
   },
-  bearImage: {
-    width: 100,
-    height: 70,
+  buttonContainer: {
+    width: "100%",
+    position: "relative",
     marginTop: 20,
+    marginBottom: 20,
   },
   submitButton: {
     width: "100%",
@@ -263,12 +265,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
   },
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
+  },
+  bearImage: {
+    width: 100,
+    height: 70,
+    position: "absolute",
+    right: 0,
+    top: -67,
+    zIndex: 1,
   },
 });
 

@@ -21,9 +21,9 @@ export default function App() {
           {/* <ProfileScreen/> */}
           {/* <ParentScreen /> */}
           {/* <TaskScreen /> */}
-          {/* <CreateTaskScreen /> */}
+          <CreateTaskScreen />
           {/* <ViewTaskScreen /> */}
-          <CreateNewGoal />
+          {/* <CreateNewGoal /> */}
           <StatusBar style="light" />
         </View>
       </NavigationContainer>
