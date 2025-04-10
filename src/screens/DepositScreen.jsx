@@ -98,7 +98,10 @@ const DepositScreen = ({ navigation }) => {
           <View style={styles.row}>
             {renderButton(".")}
             {renderButton("0")}
-            <TouchableOpacity style={[styles.button, styles.sendButton]}>
+            <TouchableOpacity
+              style={[styles.button, styles.sendButton]}
+              onPress={() => navigation.navigate("Profile")}
+            >
               <LinearGradient
                 colors={["#1433FF", "#4D5DFA"]}
                 style={styles.sendButtonGradient}
