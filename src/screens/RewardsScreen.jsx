@@ -1,0 +1,829 @@
+// import React, { useState } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   ScrollView,
+//   TouchableOpacity,
+//   Dimensions,
+//   Modal,
+//   Image,
+// } from "react-native";
+// import { LinearGradient } from "expo-linear-gradient";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+// const { width } = Dimensions.get("window");
+
+// const REDEMPTION_OPTIONS = [
+//   {
+//     id: 1,
+//     title: "Cash Reward",
+//     points: 1000,
+//     description: "Convert your points to cash",
+//     image: require("../../assets/bear.png"),
+//   },
+//   {
+//     id: 2,
+//     title: "PlayStation Gift Card",
+//     points: 2000,
+//     description: "Get a PlayStation Store gift card",
+//     image: require("../../assets/bear.png"),
+//   },
+//   {
+//     id: 3,
+//     title: "Shopping Gift Card",
+//     points: 1500,
+//     description: "Get a shopping gift card",
+//     image: require("../../assets/bear.png"),
+//   },
+// ];
+
+// const RewardsScreen = ({ navigation }) => {
+//   const insets = useSafeAreaInsets();
+//   const [selectedReward, setSelectedReward] = useState(null);
+//   const [showRequestModal, setShowRequestModal] = useState(false);
+
+//   const handleRedeemPress = (reward) => {
+//     setSelectedReward(reward);
+//     setShowRequestModal(true);
+//   };
+
+//   const sendRequest = () => {
+//     // Here you would implement the logic to send the request to parents
+//     setShowRequestModal(false);
+//     // Show success message or feedback
+//   };
+
+//   const RedemptionCard = ({ item }) => (
+//     <TouchableOpacity
+//       style={styles.redemptionCard}
+//       onPress={() => handleRedeemPress(item)}
+//     >
+//       <Image source={item.image} style={styles.redemptionImage} />
+//       <View style={styles.redemptionContent}>
+//         <Text style={styles.redemptionTitle}>{item.title}</Text>
+//         <Text style={styles.redemptionPoints}>{item.points} Points</Text>
+//         <Text style={styles.redemptionDescription}>{item.description}</Text>
+//       </View>
+//     </TouchableOpacity>
+//   );
+
+//   return (
+//     <View style={styles.container}>
+//       <LinearGradient
+//         colors={["#1433FF", "rgba(217, 217, 217, 0)"]}
+//         style={[styles.header, { paddingTop: insets.top + 20 }]}
+//         start={{ x: 0, y: 0 }}
+//         end={{ x: 1, y: 1 }}
+//       >
+//         <Text style={styles.headerTitle}>3yali Points</Text>
+//       </LinearGradient>
+
+//       <ScrollView
+//         style={styles.scrollView}
+//         contentContainerStyle={styles.content}
+//         showsVerticalScrollIndicator={false}
+//       >
+//         <View style={styles.pointsCard}>
+//           <View style={styles.pointsContainer}>
+//             <Text style={styles.pointsText}>658</Text>
+//             <Text style={styles.pointsLabel}>3YALI POINTS</Text>
+//             <Text style={styles.tierText}>Silver Tier</Text>
+//             <Text style={styles.nextTierText}>342 points until Gold Tier</Text>
+//           </View>
+//         </View>
+
+//         <View style={styles.rewardsInfoCard}>
+//           <Text style={styles.rewardsInfoText}>
+//             Complete <Text style={styles.boldText}>8 TASKS</Text> to get a{" "}
+//             <Text style={styles.boldText}>SPECIAL REWARD!</Text>
+//           </Text>
+
+//           <View style={styles.progressGrid}>
+//             <View style={styles.row}>
+//               {[1, 2, 3, 4].map((index) => (
+//                 <View key={index} style={styles.progressItem}>
+//                   <View
+//                     style={[
+//                       styles.progressCircle,
+//                       index <= 3 && styles.completedCircle,
+//                     ]}
+//                   >
+//                     <Text
+//                       style={[
+//                         styles.progressNumber,
+//                         index <= 3 && styles.completedNumber,
+//                       ]}
+//                     >
+//                       {index}
+//                     </Text>
+//                   </View>
+//                 </View>
+//               ))}
+//             </View>
+//             <View style={styles.row}>
+//               {[5, 6, 7, 8].map((index) => (
+//                 <View key={index} style={styles.progressItem}>
+//                   <View
+//                     style={[
+//                       styles.progressCircle,
+//                       index === 8 && styles.specialProgressCircle,
+//                     ]}
+//                   >
+//                     {index === 8 ? (
+//                       <Text style={styles.rewardText}>REWARD</Text>
+//                     ) : (
+//                       <Text style={styles.progressNumber}>{index}</Text>
+//                     )}
+//                   </View>
+//                 </View>
+//               ))}
+//             </View>
+//           </View>
+//         </View>
+
+//         <View style={styles.redeemSection}>
+//           <Text style={styles.sectionTitle}>Redeem Your Points</Text>
+//           <Text style={styles.sectionSubtitle}>
+//             Choose a reward to send a request to your parents
+//           </Text>
+
+//           {REDEMPTION_OPTIONS.map((option) => (
+//             <RedemptionCard key={option.id} item={option} />
+//           ))}
+//         </View>
+//       </ScrollView>
+
+//       {/* Request Modal */}
+//       <Modal
+//         visible={showRequestModal}
+//         transparent
+//         animationType="slide"
+//         onRequestClose={() => setShowRequestModal(false)}
+//       >
+//         <View style={styles.modalOverlay}>
+//           <View style={styles.modalContent}>
+//             <Text style={styles.modalTitle}>Send Request to Parents</Text>
+//             {selectedReward && (
+//               <>
+//                 <Text style={styles.modalDescription}>
+//                   Would you like to request to redeem {selectedReward.points}{" "}
+//                   points for:
+//                 </Text>
+//                 <Text style={styles.modalRewardTitle}>
+//                   {selectedReward.title}
+//                 </Text>
+//                 <Image
+//                   source={selectedReward.image}
+//                   style={styles.modalImage}
+//                   resizeMode="contain"
+//                 />
+//               </>
+//             )}
+//             <View style={styles.modalButtons}>
+//               <TouchableOpacity
+//                 style={[styles.modalButton, styles.modalButtonCancel]}
+//                 onPress={() => setShowRequestModal(false)}
+//               >
+//                 <Text style={styles.modalButtonTextCancel}>Cancel</Text>
+//               </TouchableOpacity>
+//               <TouchableOpacity
+//                 style={[styles.modalButton, styles.modalButtonSend]}
+//                 onPress={sendRequest}
+//               >
+//                 <Text style={styles.modalButtonTextSend}>Send Request</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </View>
+//         </View>
+//       </Modal>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#ffffff",
+//   },
+//   header: {
+//     height: 236,
+//     width: "100%",
+//     justifyContent: "flex-start",
+//     alignItems: "center",
+//   },
+//   headerTitle: {
+//     color: "#FFF",
+//     fontSize: 25,
+//     fontWeight: "800",
+//     letterSpacing: -0.333,
+//   },
+//   scrollView: {
+//     flex: 1,
+//   },
+//   content: {
+//     alignItems: "center",
+//     paddingHorizontal: 20,
+//     paddingTop: 20,
+//     paddingBottom: 40,
+//   },
+//   pointsCard: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 20,
+//     padding: 20,
+//     width: "100%",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//     marginBottom: 20,
+//   },
+//   pointsContainer: {
+//     alignItems: "center",
+//     padding: 20,
+//   },
+//   pointsText: {
+//     fontSize: 48,
+//     fontWeight: "700",
+//     color: "#4D5DFA",
+//     marginBottom: 5,
+//   },
+//   pointsLabel: {
+//     fontSize: 16,
+//     color: "#666",
+//     marginBottom: 15,
+//     fontWeight: "600",
+//   },
+//   tierText: {
+//     fontSize: 24,
+//     fontWeight: "600",
+//     color: "#7C3AED",
+//     marginBottom: 10,
+//   },
+//   nextTierText: {
+//     fontSize: 14,
+//     color: "#666",
+//   },
+//   rewardsInfoCard: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 20,
+//     padding: 20,
+//     width: "100%",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//     marginBottom: 20,
+//   },
+//   rewardsInfoText: {
+//     fontSize: 16,
+//     color: "#333",
+//     textAlign: "center",
+//     marginBottom: 20,
+//   },
+//   boldText: {
+//     fontWeight: "700",
+//     color: "#4D5DFA",
+//   },
+//   progressGrid: {
+//     width: "100%",
+//   },
+//   row: {
+//     flexDirection: "row",
+//     justifyContent: "space-around",
+//     marginBottom: 20,
+//   },
+//   progressItem: {
+//     alignItems: "center",
+//   },
+//   progressCircle: {
+//     width: 60,
+//     height: 60,
+//     borderRadius: 30,
+//     backgroundColor: "#F0F0F0",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     borderWidth: 2,
+//     borderColor: "#4D5DFA",
+//   },
+//   completedCircle: {
+//     backgroundColor: "#4D5DFA",
+//   },
+//   completedNumber: {
+//     color: "#ffffff",
+//   },
+//   specialProgressCircle: {
+//     backgroundColor: "#7C3AED",
+//   },
+//   progressNumber: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#4D5DFA",
+//   },
+//   rewardText: {
+//     fontSize: 12,
+//     fontWeight: "700",
+//     color: "#ffffff",
+//     textAlign: "center",
+//   },
+//   redeemSection: {
+//     width: "100%",
+//     paddingTop: 20,
+//   },
+//   sectionTitle: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     color: "#1F2937",
+//     marginBottom: 8,
+//   },
+//   sectionSubtitle: {
+//     fontSize: 14,
+//     color: "#6B7280",
+//     marginBottom: 20,
+//   },
+//   redemptionCard: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 16,
+//     padding: 16,
+//     marginBottom: 16,
+//     flexDirection: "row",
+//     alignItems: "center",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 3.84,
+//     elevation: 3,
+//   },
+//   redemptionImage: {
+//     width: 80,
+//     height: 80,
+//     borderRadius: 12,
+//     marginRight: 16,
+//   },
+//   redemptionContent: {
+//     flex: 1,
+//   },
+//   redemptionTitle: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#1F2937",
+//     marginBottom: 4,
+//   },
+//   redemptionPoints: {
+//     fontSize: 16,
+//     fontWeight: "700",
+//     color: "#4D5DFA",
+//     marginBottom: 4,
+//   },
+//   redemptionDescription: {
+//     fontSize: 14,
+//     color: "#6B7280",
+//   },
+//   modalOverlay: {
+//     flex: 1,
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   modalContent: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 20,
+//     padding: 24,
+//     width: width * 0.9,
+//     alignItems: "center",
+//   },
+//   modalTitle: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     color: "#1F2937",
+//     marginBottom: 16,
+//     textAlign: "center",
+//   },
+//   modalDescription: {
+//     fontSize: 16,
+//     color: "#6B7280",
+//     marginBottom: 8,
+//     textAlign: "center",
+//   },
+//   modalRewardTitle: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#4D5DFA",
+//     marginBottom: 16,
+//     textAlign: "center",
+//   },
+//   modalImage: {
+//     width: 120,
+//     height: 120,
+//     marginBottom: 24,
+//   },
+//   modalButtons: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     width: "100%",
+//     paddingHorizontal: 16,
+//   },
+//   modalButton: {
+//     flex: 1,
+//     height: 48,
+//     borderRadius: 24,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginHorizontal: 8,
+//   },
+//   modalButtonCancel: {
+//     backgroundColor: "#EF4444",
+//   },
+//   modalButtonSend: {
+//     backgroundColor: "#4D5DFA",
+//   },
+//   modalButtonTextCancel: {
+//     color: "#ffffff",
+//     fontSize: 16,
+//     fontWeight: "600",
+//   },
+//   modalButtonTextSend: {
+//     color: "#ffffff",
+//     fontSize: 16,
+//     fontWeight: "600",
+//   },
+// });
+
+// export default RewardsScreen;
+
+
+// import React, { useState, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   ScrollView,
+//   TouchableOpacity,
+//   Dimensions,
+//   Modal,
+//   Image,
+// } from "react-native";
+// import { LinearGradient } from "expo-linear-gradient";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+// import ConfettiCannon from "react-native-confetti-cannon";
+
+// const { width } = Dimensions.get("window");
+
+// const REDEMPTION_OPTIONS = [
+//   {
+//     id: 1,
+//     title: "Cash Reward",
+//     points: 1000,
+//     description: "Convert your points to cash",
+//     image: require("../../assets/bear.png"),
+//   },
+//   {
+//     id: 2,
+//     title: "PlayStation Gift Card",
+//     points: 2000,
+//     description: "Get a PlayStation Store gift card",
+//     image: require("../../assets/bear.png"),
+//   },
+//   {
+//     id: 3,
+//     title: "Shopping Gift Card",
+//     points: 1500,
+//     description: "Get a shopping gift card",
+//     image: require("../../assets/bear.png"),
+//   },
+// ];
+
+// const RewardsScreen = () => {
+//   const insets = useSafeAreaInsets();
+//   const [selectedReward, setSelectedReward] = useState(null);
+//   const [showRequestModal, setShowRequestModal] = useState(false);
+//   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+//   const [points, setPoints] = useState(3000);
+//   const confettiRef = useRef(null);
+
+//   const handleRedeemPress = (reward) => {
+//     setSelectedReward(reward);
+//     setShowRequestModal(true);
+//   };
+
+//   const sendRequest = () => {
+//     setPoints((prev) => prev - selectedReward.points);
+//     setShowRequestModal(false);
+//     setShowConfirmationModal(true);
+//     confettiRef.current?.start();
+//   };
+
+//   const RedemptionCard = ({ item }) => (
+//     <TouchableOpacity
+//       style={styles.redemptionCard}
+//       onPress={() => handleRedeemPress(item)}
+//     >
+//       <Image source={item.image} style={styles.redemptionImage} />
+//       <View style={styles.redemptionContent}>
+//         <Text style={styles.redemptionTitle}>{item.title}</Text>
+//         <Text style={styles.redemptionPoints}>{item.points} Points</Text>
+//         <Text style={styles.redemptionDescription}>{item.description}</Text>
+//       </View>
+//     </TouchableOpacity>
+//   );
+
+//   return (
+//     <View style={styles.container}>
+//       <LinearGradient
+//         colors={["#1433FF", "rgba(217, 217, 217, 0)"]}
+//         style={[styles.header, { paddingTop: insets.top + 20 }]}
+//         start={{ x: 0, y: 0 }}
+//         end={{ x: 1, y: 1 }}
+//       >
+//         <Text style={styles.headerTitle}>3yali Points</Text>
+//       </LinearGradient>
+
+//       <ScrollView
+//         style={styles.scrollView}
+//         contentContainerStyle={styles.content}
+//         showsVerticalScrollIndicator={false}
+//       >
+//         <View style={styles.pointsCard}>
+//           <View style={styles.pointsContainer}>
+//             <Text style={styles.pointsText}>{points}</Text>
+//             <Text style={styles.pointsLabel}>3YALI POINTS</Text>
+//             <Text style={styles.tierText}>Silver Tier</Text>
+//             <Text style={styles.nextTierText}>342 points until Gold Tier</Text>
+//           </View>
+//         </View>
+
+//         <View style={styles.redeemSection}>
+//           <Text style={styles.sectionTitle}>Redeem Your Points</Text>
+//           <Text style={styles.sectionSubtitle}>
+//             Choose a reward to send a request to your parents
+//           </Text>
+
+//           {REDEMPTION_OPTIONS.map((option) => (
+//             <RedemptionCard key={option.id} item={option} />
+//           ))}
+//         </View>
+//       </ScrollView>
+
+//       {/* Request Modal */}
+//       <Modal
+//         visible={showRequestModal}
+//         transparent
+//         animationType="slide"
+//         onRequestClose={() => setShowRequestModal(false)}
+//       >
+//         <View style={styles.modalOverlay}>
+//           <View style={styles.modalContent}>
+//             <Text style={styles.modalTitle}>Send Request to Parents</Text>
+//             {selectedReward && (
+//               <>
+//                 <Text style={styles.modalDescription}>
+//                   Would you like to request to redeem {selectedReward.points} points for:
+//                 </Text>
+//                 <Text style={styles.modalRewardTitle}>{selectedReward.title}</Text>
+//                 <Image
+//                   source={selectedReward.image}
+//                   style={styles.modalImage}
+//                   resizeMode="contain"
+//                 />
+//               </>
+//             )}
+//             <View style={styles.modalButtons}>
+//               <TouchableOpacity
+//                 style={[styles.modalButton, styles.modalButtonCancel]}
+//                 onPress={() => setShowRequestModal(false)}
+//               >
+//                 <Text style={styles.modalButtonTextCancel}>Cancel</Text>
+//               </TouchableOpacity>
+//               <TouchableOpacity
+//                 style={[styles.modalButton, styles.modalButtonSend]}
+//                 onPress={sendRequest}
+//               >
+//                 <Text style={styles.modalButtonTextSend}>Send Request</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </View>
+//         </View>
+//       </Modal>
+
+//       {/* Confirmation Modal */}
+//       <Modal
+//         visible={showConfirmationModal}
+//         transparent
+//         animationType="fade"
+//         onRequestClose={() => setShowConfirmationModal(false)}
+//       >
+//         <View style={styles.modalOverlay}>
+//           <View style={styles.modalContent}>
+//             <Text style={styles.modalTitle}>Request Sent!</Text>
+//             <Text style={styles.modalDescription}>
+//               Request has been sent to your parent.{"\n"}Waiting for confirmation.
+//             </Text>
+//             <TouchableOpacity
+//               style={[styles.modalButton, styles.modalButtonSend, { marginTop: 20 }]}
+//               onPress={() => setShowConfirmationModal(false)}
+//             >
+//               <Text style={styles.modalButtonTextSend}>OK</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </Modal>
+
+//       {/* Confetti */}
+//       <ConfettiCannon
+//         ref={confettiRef}
+//         count={80}
+//         origin={{ x: width / 2, y: 0 }}
+//         fadeOut
+//         autoStart={false}
+//       />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#ffffff",
+//   },
+//   header: {
+//     height: 236,
+//     width: "100%",
+//     justifyContent: "flex-start",
+//     alignItems: "center",
+//   },
+//   headerTitle: {
+//     color: "#FFF",
+//     fontSize: 25,
+//     fontWeight: "800",
+//   },
+//   scrollView: {
+//     flex: 1,
+//   },
+//   content: {
+//     alignItems: "center",
+//     paddingHorizontal: 20,
+//     paddingTop: 20,
+//     paddingBottom: 40,
+//   },
+//   pointsCard: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 20,
+//     padding: 20,
+//     width: "100%",
+//     marginBottom: 20,
+//     elevation: 5,
+//   },
+//   pointsContainer: {
+//     alignItems: "center",
+//   },
+//   pointsText: {
+//     fontSize: 48,
+//     fontWeight: "700",
+//     color: "#4D5DFA",
+//   },
+//   pointsLabel: {
+//     fontSize: 16,
+//     color: "#666",
+//     fontWeight: "600",
+//     marginBottom: 15,
+//   },
+//   tierText: {
+//     fontSize: 24,
+//     fontWeight: "600",
+//     color: "#7C3AED",
+//     marginBottom: 10,
+//   },
+//   nextTierText: {
+//     fontSize: 14,
+//     color: "#666",
+//   },
+//   redeemSection: {
+//     width: "100%",
+//     paddingTop: 20,
+//   },
+//   sectionTitle: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     color: "#1F2937",
+//     marginBottom: 8,
+//   },
+//   sectionSubtitle: {
+//     fontSize: 14,
+//     color: "#6B7280",
+//     marginBottom: 20,
+//   },
+//   redemptionCard: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 16,
+//     padding: 16,
+//     marginBottom: 16,
+//     flexDirection: "row",
+//     alignItems: "center",
+//     elevation: 3,
+//   },
+//   redemptionImage: {
+//     width: 80,
+//     height: 80,
+//     borderRadius: 12,
+//     marginRight: 16,
+//   },
+//   redemptionContent: {
+//     flex: 1,
+//   },
+//   redemptionTitle: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#1F2937",
+//     marginBottom: 4,
+//   },
+//   redemptionPoints: {
+//     fontSize: 16,
+//     fontWeight: "700",
+//     color: "#4D5DFA",
+//     marginBottom: 4,
+//   },
+//   redemptionDescription: {
+//     fontSize: 14,
+//     color: "#6B7280",
+//   },
+//   modalOverlay: {
+//     flex: 1,
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   modalContent: {
+//     backgroundColor: "#ffffff",
+//     borderRadius: 20,
+//     padding: 24,
+//     width: width * 0.9,
+//     alignItems: "center",
+//   },
+//   modalTitle: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     color: "#1F2937",
+//     marginBottom: 16,
+//     textAlign: "center",
+//   },
+//   modalDescription: {
+//     fontSize: 16,
+//     color: "#6B7280",
+//     textAlign: "center",
+//     marginBottom: 16,
+//   },
+//   modalRewardTitle: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#4D5DFA",
+//     marginBottom: 16,
+//     textAlign: "center",
+//   },
+//   modalImage: {
+//     width: 120,
+//     height: 120,
+//     marginBottom: 24,
+//   },
+//   modalButtons: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     width: "100%",
+//   },
+//   modalButton: {
+//     flex: 1,
+//     height: 48,
+//     borderRadius: 24,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginHorizontal: 8,
+//   },
+//   modalButtonCancel: {
+//     backgroundColor: "#EF4444",
+//   },
+//   modalButtonSend: {
+//     backgroundColor: "#4D5DFA",
+//   },
+//   modalButtonTextCancel: {
+//     color: "#ffffff",
+//     fontSize: 16,
+//     fontWeight: "600",
+//   },
+//   modalButtonTextSend: {
+//     color: "#ffffff",
+//     fontSize: 16,
+//     fontWeight: "600",
+//   },
+// });
+
+// export default RewardsScreen;
