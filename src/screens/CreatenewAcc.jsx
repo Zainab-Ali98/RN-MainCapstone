@@ -59,7 +59,7 @@ function RegisterScreen() {
       />
 
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>REGISTER</Text>
+        <Text style={styles.title}>Create new child account</Text>
       </View>
 
       <ScrollView

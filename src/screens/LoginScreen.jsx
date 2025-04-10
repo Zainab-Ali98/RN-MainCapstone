@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   View,
@@ -15,6 +16,9 @@ const { width, height } = Dimensions.get("window");
 function LoginScreen({ navigation }) {
   const handleRegisterPress = () => {
     navigation.navigate("Register");
+  };
+  const handleLoginPress = () => {
+    navigation.navigate("Parent");
   };
 
   return (
@@ -56,7 +60,10 @@ function LoginScreen({ navigation }) {
             resizeMode="contain"
           />
 
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLoginPress}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 
