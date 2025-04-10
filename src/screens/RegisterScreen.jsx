@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,22 +10,54 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
-
+import * as ImagePicker from "expo-image-picker";
 const { width, height } = Dimensions.get("window");
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const animationRef = useRef(null);
+  // const [authenticated, setAuthenticated] = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
 
-  useEffect(() => {
-    if (animationRef.current) {
-      animationRef.current.play();
+  const [image, setImage] = useState(null);
+
+  // const { mutate } = useMutation({
+  //   mutationFn: () => register(userInfo, image),
+  //   onSuccess: () => {
+  //     setAuthenticated(true);
+  //   },
+  // });
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
-  }, []);
+  };
+
+  // const handleRegister = () => {
+  //   mutate();
+  // };
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../assets/background.png")}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
+
       <View style={styles.titleContainer}>
         <Text style={styles.title}>REGISTER</Text>
       </View>
@@ -37,9 +69,13 @@ function RegisterScreen() {
       >
         <View style={styles.content}>
           <View style={styles.profileContainer}>
-            <View style={styles.profilePicture}>
+            <TouchableOpacity
+              onPress={() => pickImage()}
+              style={styles.profilePicture}
+            >
               <Text style={styles.profilePlaceholder}>Add Photo</Text>
-            </View>
+            </TouchableOpacity>
+            {image && <Image source={{ uri: image }} style={styles.image} />}
           </View>
 
           <View style={styles.inputContainer}>
@@ -101,13 +137,6 @@ function RegisterScreen() {
             <Text style={styles.loginText}>Already have an account? Login</Text>
           </TouchableOpacity>
         </View>
-        <LottieView
-          ref={animationRef}
-          source={require("../../assets/bearstwo.json")}
-          style={styles.backgroundImage}
-          autoPlay
-          loop
-        />
       </ScrollView>
     </View>
   );
@@ -121,7 +150,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     position: "absolute",
     width: width,
-    height: height,
+    height: height * 0.5,
     top: 0,
   },
   titleContainer: {
@@ -230,6 +259,10 @@ const styles = StyleSheet.create({
     color: "#4D5DFA",
     fontSize: 16,
     fontWeight: "500",
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
 
