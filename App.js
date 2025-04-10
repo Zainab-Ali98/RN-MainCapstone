@@ -3,10 +3,8 @@ import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { AuthNavigator } from "./src/navigation/AuthNavigator";
 import "react-native-gesture-handler";
-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ParentHomeNavigator } from "./src/navigation/ParentHomeNavigator";
-
 
 
 export default function App() {
