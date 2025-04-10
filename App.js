@@ -6,7 +6,6 @@ import "react-native-gesture-handler";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ParentHomeNavigator } from "./src/navigation/ParentHomeNavigator";
 
-
 export default function App() {
   const Stack = createNativeStackNavigator();
   return (
