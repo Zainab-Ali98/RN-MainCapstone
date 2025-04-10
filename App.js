@@ -1,30 +1,28 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AuthNavigator } from "./navigation/AuthNavigator";
-// import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthNavigator } from "./src/navigation/AuthNavigator";
 import "react-native-gesture-handler";
-import DepositScreen from "./src/screens/DepositScreen";
-import ProfileScreen from "./src/screens/ProfileScreen";
-import ParentScreen from "./src/screens/ParentScreen";
-import TaskScreen from "./src/screens/TaskScreen";
-import RewardsScreen from "./src/screens/RewardsScreen";
-import ViewTaskScreen from "./src/ViewTaskScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ParentHomeNavigator } from "./src/navigation/ParentHomeNavigator";
+
 
 export default function App() {
+  const Stack = createNativeStackNavigator();
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
-          {/* <TaskScreen /> */}
-          {/* <RewardsScreen /> */}
-       
-          
-          <StatusBar style="light" />
-        </View>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <Stack.Navigator  
+      screenOptions={{
+        headerShown: false,
+      }}>
+        
+        <Stack.Screen name="Auth" component={AuthNavigator} />
+        <Stack.Screen name="Parent" component= {ParentHomeNavigator} />
+        
+        </Stack.Navigator>
+        <StatusBar style="light" />
+    </NavigationContainer>
+
   );
 }
 
