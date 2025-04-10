@@ -40,7 +40,10 @@ const SavingGoalItem = ({ item }) => (
     <Text style={styles.goalTitle}>{item.title}</Text>
     <View style={styles.goalProgress}>
       <View
-        style={[styles.progressBar, { width: `${(item.progress / item.amount) * 100}%` }]}
+        style={[
+          styles.progressBar,
+          { width: `${(item.progress / item.amount) * 100}%` },
+        ]}
       />
     </View>
     <Text style={styles.goalAmount}>
@@ -60,7 +63,10 @@ const ProfileScreen = () => {
         resizeMode="cover"
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <Text style={styles.title}>PROFILE</Text>
 
@@ -106,8 +112,10 @@ const ProfileScreen = () => {
                 <Text style={styles.actionButtonText}>Deposit</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.actionButton}
-                onPress={() => navigation.navigate("CreateTask")}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate("CreateTask")}
+              >
                 <Text style={styles.actionButtonText}>Create Task</Text>
               </TouchableOpacity>
             </View>
