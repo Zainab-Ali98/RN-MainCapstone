@@ -9,27 +9,47 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import { register } from "../api/auth";
+import { KeyboardAvoidingView, Platform } from "react-native";
+//import {}
 const { width, height } = Dimensions.get("window");
 
-function RegisterScreen() {
+function RegisterScreen({ setIsAuth, setRole }) {
   const navigation = useNavigation();
   // const [authenticated, setAuthenticated] = useContext(UserContext);
-  const [userInfo, setUserInfo] = useState({
-    email: "",
-    password: "",
-    name: "",
+  const [userInfo, setUserInfo] = useState({});
+  const [image, setImage] = useState("");
+  const [error, setError] = useState(null);
+
+  const { mutate, isError } = useMutation({
+    mutationKey: ["register"],
+    mutationFn: (ui, im) => register(ui, im),
+    onSuccess: (data) => {
+      setIsAuth(true);
+      setRole(data.role);
+    },
+    onError: (error) => {
+      setError(error.message || "Something went wrong");
+      console.log("\nError message: ", error, "\n");
+    },
   });
 
-  const [image, setImage] = useState(null);
-
-  // const { mutate } = useMutation({
-  //   mutationFn: () => register(userInfo, image),
-  //   onSuccess: () => {
-  //     setAuthenticated(true);
-  //   },
-  // });
+  const handleRegister = () => {
+    if (
+      !userInfo.email ||
+      !userInfo.password ||
+      !userInfo.FirstName ||
+      !userInfo.LastName
+    ) {
+      setError("Please enter all details");
+      return;
+    }
+    setError(null);
+    mutate(userInfo, image);
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -51,94 +71,120 @@ function RegisterScreen() {
   // };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/background.png")}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/background.png")}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        />
 
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>REGISTER</Text>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          <View style={styles.profileContainer}>
-            <TouchableOpacity
-              onPress={() => pickImage()}
-              style={styles.profilePicture}
-            >
-              <Text style={styles.profilePlaceholder}>Add Photo</Text>
-            </TouchableOpacity>
-            {image && <Image source={{ uri: image }} style={styles.image} />}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="First Name"
-              placeholderTextColor="#9E9E9E"
-              autoCapitalize="words"
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Last Name"
-              placeholderTextColor="#9E9E9E"
-              autoCapitalize="words"
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#9E9E9E"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#9E9E9E"
-              secureTextEntry
-            />
-          </View>
-
-          <View style={styles.buttonSection}>
-            <Image
-              source={require("../../assets/registerbear.png")}
-              style={styles.bearImage}
-              resizeMode="contain"
-            />
-
-            <TouchableOpacity
-              style={styles.registerButton}
-              onPress={() => navigation.navigate("Profile")}
-            >
-              <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.divider} />
-          </View>
-
-          <TouchableOpacity
-            style={styles.loginLink}
-            onPress={() => navigation.navigate("Login")}
-          >
-            <Text style={styles.loginText}>Already have an account? Login</Text>
-          </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>REGISTER</Text>
         </View>
-      </ScrollView>
-    </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            <View style={styles.profileContainer}>
+              <TouchableOpacity
+                onPress={() => pickImage()}
+                style={styles.profilePicture}
+              >
+                <Text style={styles.profilePlaceholder}>Add Photo</Text>
+              </TouchableOpacity>
+              {image && <Image source={{ uri: image }} style={styles.image} />}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="First Name"
+                placeholderTextColor="#9E9E9E"
+                autoCapitalize="words"
+                onFocus={() => console.log("First Name input focused")}
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, FirstName: value });
+                  setError(null);
+                }}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Last Name"
+                placeholderTextColor="#9E9E9E"
+                autoCapitalize="words"
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, LastName: value });
+                  setError(null);
+                }}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#9E9E9E"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, email: value });
+                  setError(null);
+                }}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#9E9E9E"
+                secureTextEntry
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, password: value });
+                  setError(null);
+                }}
+              />
+            </View>
+
+            <View style={styles.buttonSection}>
+              <Image
+                source={require("../../assets/registerbear.png")}
+                style={styles.bearImage}
+                resizeMode="contain"
+              />
+
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress={handleRegister}
+              >
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.dividerContainer}>
+              <View style={styles.divider} />
+              <Text style={styles.dividerText}>OR</Text>
+              <View style={styles.divider} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.loginLink}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <Text style={styles.loginText}>
+                Already have an account? Login
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 

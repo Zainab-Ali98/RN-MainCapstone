@@ -6,22 +6,57 @@ import "react-native-gesture-handler";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ParentHomeNavigator } from "./src/navigation/ParentHomeNavigator";
 import { ChildHomeNavigator } from "./src/navigation/ChildHomeNavigator";
+import { getToken, getRole } from "./src/api/storage";
+import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import UserContext from "./src/context/UserContext";
+
+const queryClient = new QueryClient();
+
 export default function App() {
+  const [isAuth, setIsAuth] = useState(false);
+  const [role, setRole] = useState(null);
+
   const Stack = createNativeStackNavigator();
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await getToken();
+        const storedRole = await getRole();
+        if (token && storedRole) {
+          setIsAuth(true);
+          setRole(storedRole);
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+      } finally {
+      }
+    };
+    checkAuth();
+  }, []);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator  
-      screenOptions={{
-        headerShown: false,
-      }}>
-        
-        <Stack.Screen name="Auth" component={AuthNavigator} />
-        <Stack.Screen name="Parent" component= {ParentHomeNavigator} />
-        <Stack.Screen name="Child" component= {ChildHomeNavigator} />
-        </Stack.Navigator>
-        <StatusBar style="light" />
-    </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
+          {isAuth ? (
+            role === "Parent" ? (
+              <ParentHomeNavigator />
+            ) : (
+              <ChildHomeNavigator />
+            )
+          ) : (
+            <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
+          )}
 
+          {/* <Stack.Screen name="Auth" component={AuthNavigator} />
+        <Stack.Screen name="Parent" component={ParentHomeNavigator} />
+        <Stack.Screen name="Child" component={ChildHomeNavigator} /> */}
+
+          <StatusBar style="light" />
+        </UserContext.Provider>{" "}
+      </QueryClientProvider>
+    </NavigationContainer>
   );
 }
 
