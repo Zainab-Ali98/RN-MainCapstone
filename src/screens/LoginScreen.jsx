@@ -17,8 +17,12 @@ function LoginScreen({ navigation }) {
   const handleRegisterPress = () => {
     navigation.navigate("Register");
   };
-  const handleLoginPress = () => {
-    navigation.navigate("Parent");
+  // const handleLoginPress = () => {
+  //   navigation.navigate("Parent");
+  // };
+
+  const handleLoginChildPress = () => {
+    navigation.navigate("Child");
   };
 
   return (
@@ -62,7 +66,8 @@ function LoginScreen({ navigation }) {
 
           <TouchableOpacity
             style={styles.loginButton}
-            onPress={handleLoginPress}
+            // onPress={handleLoginPress}
+            onPress={handleLoginChildPress}
           >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>

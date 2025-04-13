@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import {
   View,
@@ -50,7 +48,14 @@ const mockTasks = [
 
 const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
-const TaskListScreen = () => {
+const TaskListScreen = ({ navigation }) => {
+  const handlTaskListPress = () => {
+    navigation.navigate("TaskProfile");
+  };
+
+  const handlRewarsPress = () => {
+    navigation.navigate("Reward");
+  };
   const [selectedTask, setSelectedTask] = useState(null);
 
   const handleImagePick = async (taskId) => {
@@ -77,7 +82,10 @@ const TaskListScreen = () => {
         resizeMode="cover"
       />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <View style={styles.headerSection}>
             <Text style={styles.title}>My Missions</Text>
@@ -95,7 +103,8 @@ const TaskListScreen = () => {
                   styles.taskCard,
                   selectedTask === task.id && styles.selectedTask,
                 ]}
-                onPress={() => setSelectedTask(task.id)}
+                // onPress={() => setSelectedTask(task.id)}
+                onPress={() => handlTaskListPress()} 
               >
                 <View style={styles.taskHeader}>
                   <View style={styles.taskTitleContainer}>
@@ -118,7 +127,9 @@ const TaskListScreen = () => {
                       <Text
                         style={[
                           styles.stepLabel,
-                          index <= task.statusStep ? styles.stepLabelActive : {},
+                          index <= task.statusStep
+                            ? styles.stepLabelActive
+                            : {},
                         ]}
                       >
                         {step}
@@ -158,7 +169,9 @@ const TaskListScreen = () => {
                           style={styles.cameraIcon}
                           resizeMode="contain"
                         />
-                        <Text style={styles.uploadButtonText}>Add Proof Photo</Text>
+                        <Text style={styles.uploadButtonText}>
+                          Add Proof Photo
+                        </Text>
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -177,7 +190,8 @@ const TaskListScreen = () => {
               style={[styles.button, !selectedTask && styles.buttonDisabled]}
               disabled={!selectedTask}
             >
-              <Text style={styles.buttonText}>Complete Mission</Text>
+              <Text style={styles.buttonText}
+              onPress={() => handlRewarsPress()} >Complete Mission</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -411,4 +425,3 @@ const styles = StyleSheet.create({
 });
 
 export default TaskListScreen;
-
