@@ -12,13 +12,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserContext from "./src/context/UserContext";
 
 const queryClient = new QueryClient();
-import DepositScreen from "./src/screens/DepositScreen";
-import ProfileScreen from "./src/screens/ProfileScreen";
-import ParentScreen from "./src/screens/ParentScreen";
-import TaskScreen from "./src/screens/TaskScreen";
-import CreateTaskScreen from "./src/screens/CreateTaskScreen";
-import ViewTaskScreen from "./src/screens/ViewTaskScreen";
-import CreateNewGoal from "./src/screens/CreateNewGoal";
 
 export default function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -44,8 +37,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <QueryClientProvider client={queryClient}/>
-        <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}/>
+      <QueryClientProvider client={queryClient}>
+        <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
           {isAuth ? (
             role === "Parent" ? (
               <ParentHomeNavigator />
@@ -56,23 +49,9 @@ export default function App() {
             <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
           )}
 
-          {/* <Stack.Screen name="Auth" component={AuthNavigator} />
-        <Stack.Screen name="Parent" component={ParentHomeNavigator} />
-        <Stack.Screen name="Child" component={ChildHomeNavigator} /> */}
-
-    <SafeAreaProvider/>
-      <NavigationContainer/>
-        <View style={styles.container}/>
-          {/* <AuthNavigator /> */}
-          {/* <ProfileScreen/> */}
-          {/* <ParentScreen /> */}
-          {/* <TaskScreen /> */}
-          {/* <CreateTaskScreen /> */}
-          {/* <ViewTaskScreen /> */}
-          <CreateNewGoal />
           <StatusBar style="light" />
-        <UserContext.Provider/>{" "}
-      <QueryClientProvider/>
+        </UserContext.Provider>{" "}
+      </QueryClientProvider>
     </NavigationContainer>
   );
 }
