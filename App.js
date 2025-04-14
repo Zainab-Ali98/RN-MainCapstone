@@ -10,6 +10,8 @@ import { getToken, getRole } from "./src/api/storage";
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserContext from "./src/context/UserContext";
+import { ParkingMeterIcon } from "lucide-react";
+
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,7 @@ export default function App() {
           {isAuth ? (
             role === "Parent" ? (
               <ParentHomeNavigator />
+          
             ) : (
               <ChildHomeNavigator />
             )
