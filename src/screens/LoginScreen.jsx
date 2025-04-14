@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,45 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../api/auth";
 
 const { width, height } = Dimensions.get("window");
 
-function LoginScreen({ navigation }) {
+function LoginScreen({ navigation, setIsAuth, setRole }) {
+  const [userInfo, setUserInfo] = useState({});
+  const [error, setError] = useState(null);
+
+  const { mutate, isError } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => login(userInfo),
+    onSuccess: (data) => {
+      setIsAuth(true);
+      setRole(data.role);
+    },
+    onError: (error) => {
+      setError(error.message || "Something went wrong");
+      console.log("\nError message: ", error, "\n");
+    },
+  });
+
   const handleRegisterPress = () => {
     navigation.navigate("Register");
+  };
+  // const handleLoginPress = () => {
+  //   navigation.navigate("Parent");
+  // };
+
+  // const handleLoginChildPress = () => {
+  //   navigation.navigate("Child");
+  // };
+  const handleLoginPress = () => {
+    if (!userInfo.email || !userInfo.password) {
+      setError("Please enter email and password");
+      return;
+    }
+    setError(null);
+    mutate();
   };
 
   return (
@@ -40,6 +73,10 @@ function LoginScreen({ navigation }) {
               placeholderTextColor="#9E9E9E"
               keyboardType="email-address"
               autoCapitalize="none"
+              onChangeText={(value) => {
+                setUserInfo({ ...userInfo, email: value });
+                setError(null);
+              }}
             />
 
             <TextInput
@@ -47,7 +84,12 @@ function LoginScreen({ navigation }) {
               placeholder="Password"
               placeholderTextColor="#9E9E9E"
               secureTextEntry
+              onChangeText={(value) => {
+                setUserInfo({ ...userInfo, password: value });
+                setError(null);
+              }}
             />
+            {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
 
           <Image
@@ -56,7 +98,12 @@ function LoginScreen({ navigation }) {
             resizeMode="contain"
           />
 
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            // onPress={handleLoginPress}
+            // onPress={handleLoginChildPress}
+            onPress={handleLoginPress}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 
@@ -126,7 +173,7 @@ const styles = StyleSheet.create({
     borderColor: "#D9D9D9",
     paddingHorizontal: 16,
     fontSize: 14,
-    color: "#ffffff",
+    color: "#000",
     backgroundColor: "transparent",
   },
   loginButton: {
@@ -170,6 +217,10 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     marginHorizontal: 10,
     fontSize: 14,
+  },
+  errorText: {
+    color: "red",
+    marginTop: 5,
   },
 });
 

@@ -1,9 +1,17 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthNavigator } from "./navigation/AuthNavigator";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthNavigator } from "./src/navigation/AuthNavigator";
 import "react-native-gesture-handler";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ParentHomeNavigator } from "./src/navigation/ParentHomeNavigator";
+import { ChildHomeNavigator } from "./src/navigation/ChildHomeNavigator";
+import { getToken, getRole } from "./src/api/storage";
+import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import UserContext from "./src/context/UserContext";
+
+const queryClient = new QueryClient();
 import DepositScreen from "./src/screens/DepositScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ParentScreen from "./src/screens/ParentScreen";
@@ -13,10 +21,48 @@ import ViewTaskScreen from "./src/screens/ViewTaskScreen";
 import CreateNewGoal from "./src/screens/CreateNewGoal";
 
 export default function App() {
+  const [isAuth, setIsAuth] = useState(false);
+  const [role, setRole] = useState(null);
+
+  const Stack = createNativeStackNavigator();
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await getToken();
+        const storedRole = await getRole();
+        if (token && storedRole) {
+          setIsAuth(true);
+          setRole(storedRole);
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+      } finally {
+      }
+    };
+    checkAuth();
+  }, []);
+
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
+    <NavigationContainer>
+      <QueryClientProvider client={queryClient}/>
+        <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}/>
+          {isAuth ? (
+            role === "Parent" ? (
+              <ParentHomeNavigator />
+            ) : (
+              <ChildHomeNavigator />
+            )
+          ) : (
+            <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
+          )}
+
+          {/* <Stack.Screen name="Auth" component={AuthNavigator} />
+        <Stack.Screen name="Parent" component={ParentHomeNavigator} />
+        <Stack.Screen name="Child" component={ChildHomeNavigator} /> */}
+
+    <SafeAreaProvider/>
+      <NavigationContainer/>
+        <View style={styles.container}/>
           {/* <AuthNavigator /> */}
           {/* <ProfileScreen/> */}
           {/* <ParentScreen /> */}
@@ -25,9 +71,9 @@ export default function App() {
           {/* <ViewTaskScreen /> */}
           <CreateNewGoal />
           <StatusBar style="light" />
-        </View>
-      </NavigationContainer>
-    </SafeAreaProvider>
+        <UserContext.Provider/>{" "}
+      <QueryClientProvider/>
+    </NavigationContainer>
   );
 }
 

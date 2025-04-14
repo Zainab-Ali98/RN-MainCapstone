@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   View,
@@ -52,6 +53,8 @@ const SavingGoalItem = ({ item }) => (
 );
 
 const ProfileScreen = () => {
+  const navigation = useNavigation(); // Correctly placed inside the component
+
   return (
     <View style={styles.container}>
       <Image
@@ -102,11 +105,17 @@ const ProfileScreen = () => {
             />
 
             <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate("Deposit")} // This should work now
+              >
                 <Text style={styles.actionButtonText}>Deposit</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate("CreateTask")}
+              >
                 <Text style={styles.actionButtonText}>Create Task</Text>
               </TouchableOpacity>
             </View>
