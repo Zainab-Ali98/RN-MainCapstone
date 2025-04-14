@@ -49,10 +49,6 @@ export default function App() {
             <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
           )}
 
-          {/* <Stack.Screen name="Auth" component={AuthNavigator} />
-        <Stack.Screen name="Parent" component={ParentHomeNavigator} />
-        <Stack.Screen name="Child" component={ChildHomeNavigator} /> */}
-
           <StatusBar style="light" />
         </UserContext.Provider>{" "}
       </QueryClientProvider>
