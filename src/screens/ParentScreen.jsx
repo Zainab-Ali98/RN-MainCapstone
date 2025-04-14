@@ -11,23 +11,32 @@ import { ChildCard } from "../components/ChildCard";
 
 const statuses = ["Ongoing", "Verified", "Completed", "Rejected"];
 
-const ParentScreen = ({navigation}) => {
-  const [children, setChildren] = useState([{"id": 1, name: "John Doe", status: "Ongoing", imageSrc: "../assets/bear.png" }, { id: 2, name: "Jane Smith", status: "Verified", imageSrc: null }, { id: 3, name: "Sam Brown", status: "Completed", imageSrc: null }, { id: 4, name: "Lucy Green", status: "Rejected", imageSrc: null }]);
+const ParentScreen = ({ navigation }) => {
+  const [children, setChildren] = useState([
+    {
+      id: 1,
+      name: "John Doe",
+      status: "Ongoing",
+      imageSrc: "../assets/bear.png",
+    },
+    { id: 2, name: "Jane Smith", status: "Verified", imageSrc: null },
+    { id: 3, name: "Sam Brown", status: "Completed", imageSrc: null },
+    { id: 4, name: "Lucy Green", status: "Rejected", imageSrc: null },
+  ]);
   const [filterStatus, setFilterStatus] = useState(null);
 
   const handelChildProfilenPress = (child_id) => {
     navigation.navigate("Profile");
-  };  
-  
+  };
+
   const handleAddChildPress = () => {
     navigation.navigate("CreateChildAcc");
   };
 
-    
   const handleCreateTask = () => {
     navigation.navigate("CreateTask");
   };
-  
+
   const cycleStatus = (childId) => {
     setChildren((prevChildren) =>
       prevChildren.map((child) => {
@@ -44,12 +53,13 @@ const ParentScreen = ({navigation}) => {
   const filteredChildren = filterStatus
     ? children.filter((child) => child.status === filterStatus)
     : children;
-  
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* 💰 Balance Card with Purple Border */}
+    
+          {/* 💰 Balance Card */}
           <View style={styles.balanceCard}>
             <Text style={styles.balanceCardLabel}>Balance</Text>
             <Text style={styles.balanceCardAmount}>245.500 KD</Text>
@@ -66,7 +76,7 @@ const ParentScreen = ({navigation}) => {
               </View>
               <TouchableOpacity
                 style={styles.addButton}
-                onPress={() => handleAddChildPress()}
+                onPress={handleAddChildPress}
               >
                 <Text style={styles.addButtonText}>+ Add</Text>
               </TouchableOpacity>
@@ -120,7 +130,13 @@ const ParentScreen = ({navigation}) => {
               </View>
 
               {filteredChildren.map((child) => (
-                <ChildCard child={child} cycleStatus={cycleStatus} handleCreateTask={handleCreateTask} openChildProfile={handelChildProfilenPress} key={child.id} />
+                <ChildCard
+                  key={child.id}
+                  child={child}
+                  cycleStatus={cycleStatus}
+                  handleCreateTask={handleCreateTask}
+                  openChildProfile={handelChildProfilenPress}
+                />
               ))}
             </>
           )}

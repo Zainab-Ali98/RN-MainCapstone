@@ -19,6 +19,7 @@ const mockChildren = [
 const ChildListScreen = () => {
   return (
     <View style={styles.container}>
+      
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
