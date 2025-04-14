@@ -12,7 +12,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-<
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -100,7 +100,6 @@ function RegisterScreen({ setIsAuth, setRole }) {
     mutate(userInfo, image);
   };
 
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -127,85 +126,94 @@ function RegisterScreen({ setIsAuth, setRole }) {
           resizeMode="cover"
         />
 
+        {/* Header */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.welcomeStatic}>Welcome to </Text>
+          <Animated.Text
+            style={[styles.abkidsText, animatedStyle, rainbowTextStyle]}
+          >
+            ABKIDS
+          </Animated.Text>
+        </View>
 
-      {/* Header */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.welcomeStatic}>Welcome to </Text>
-        <Animated.Text style={[styles.abkidsText, animatedStyle, rainbowTextStyle]}>
-          ABKIDS
-        </Animated.Text>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          {/* Upload Photo */}
-          <View style={styles.profileContainer}>
-            <TouchableOpacity onPress={pickImage} style={styles.profilePicture}>
-              {image ? (
-                <Image source={{ uri: image }} style={styles.profileImageUploaded} />
-              ) : (
-                <Text style={styles.profilePlaceholder}>Add Photo</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          {/* Form Card */}
-          <View style={styles.inputCard}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="First Name"
-                placeholderTextColor="#6B7280"
-                autoCapitalize="words"
-                onFocus={() => console.log("First Name input focused")}
-                onChangeText={(value) => {
-                  setUserInfo({ ...userInfo, FirstName: value });
-                  setError(null);
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Last Name"
-                placeholderTextColor="#6B7280"
-                autoCapitalize="words"
-                onChangeText={(value) => {
-                  setUserInfo({ ...userInfo, LastName: value });
-                  setError(null);
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#6B7280"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                onChangeText={(value) => {
-                  setUserInfo({ ...userInfo, email: value });
-                  setError(null);
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#6B7280"
-                secureTextEntry
-                onChangeText={(value) => {
-                  setUserInfo({ ...userInfo, password: value });
-                  setError(null);
-              />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            {/* Upload Photo */}
+            <View style={styles.profileContainer}>
+              <TouchableOpacity
+                onPress={pickImage}
+                style={styles.profilePicture}
+              >
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={styles.profileImageUploaded}
+                  />
+                ) : (
+                  <Text style={styles.profilePlaceholder}>Add Photo</Text>
+                )}
+              </TouchableOpacity>
             </View>
-          </View>
 
-          {/* Register Button */}
-          <View style={styles.buttonSection}>
-            <Image
-              source={require("../../assets/registerbear.png")}
-              style={styles.bearImage}
-              resizeMode="contain"
-            />
-               
+            {/* Form Card */}
+            <View style={styles.inputCard}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#6B7280"
+                  autoCapitalize="words"
+                  onFocus={() => console.log("First Name input focused")}
+                  onChangeText={(value) => {
+                    setUserInfo({ ...userInfo, FirstName: value });
+                    setError(null);
+                  }}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Last Name"
+                  placeholderTextColor="#6B7280"
+                  autoCapitalize="words"
+                  onChangeText={(value) => {
+                    setUserInfo({ ...userInfo, LastName: value });
+                    setError(null);
+                  }}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor="#6B7280"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  onChangeText={(value) => {
+                    setUserInfo({ ...userInfo, email: value });
+                    setError(null);
+                  }}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor="#6B7280"
+                  secureTextEntry
+                  onChangeText={(value) => {
+                    setUserInfo({ ...userInfo, password: value });
+                    setError(null);
+                  }}
+                />
+              </View>
+            </View>
+
+            {/* Register Button */}
+            <View style={styles.buttonSection}>
+              <Image
+                source={require("../../assets/registerbear.png")}
+                style={styles.bearImage}
+                resizeMode="contain"
+              />
               <TouchableOpacity
                 style={styles.registerButton}
                 onPress={handleRegister}
@@ -214,36 +222,26 @@ function RegisterScreen({ setIsAuth, setRole }) {
               </TouchableOpacity>
             </View>
 
+            {/* Divider */}
             <View style={styles.dividerContainer}>
               <View style={styles.divider} />
               <Text style={styles.dividerText}>OR</Text>
               <View style={styles.divider} />
             </View>
+
+            {/* Login Link */}
             <TouchableOpacity
               style={styles.loginLink}
               onPress={() => navigation.navigate("Login")}
             >
-              <Text style={styles.buttonText}>Create Account</Text>
+              <Text style={styles.loginText}>
+                Already have an account? Login
+              </Text>
             </TouchableOpacity>
           </View>
-
-          {/* Divider */}
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.divider} />
-          </View>
-
-          {/* Login Link */}
-          <TouchableOpacity
-            style={styles.loginLink}
-            onPress={() => navigation.navigate("Login")}
-          >
-            <Text style={styles.loginText}>Already have an account? Login</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
