@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -61,6 +62,7 @@ const CreateTaskScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}

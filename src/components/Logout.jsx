@@ -3,8 +3,7 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { deleteToken } from "../api/storage";
 import UserContext from "../context/UserContext";
-
-const TopLogoutButton = () => {
+const Logout = () => {
   const { isAuth, setIsAuth } = useContext(UserContext);
   return (
     <TouchableOpacity
@@ -20,13 +19,15 @@ const TopLogoutButton = () => {
   );
 };
 
+export default Logout;
+
 const styles = StyleSheet.create({
   logoutButton: {
     position: "absolute",
-    top: 16,
+    top: 17,
     right: 16,
     zIndex: 10,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     padding: 8,
     borderRadius: 24,
     shadowColor: "#000",
@@ -36,5 +37,3 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
 });
-
-export default TopLogoutButton;

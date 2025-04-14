@@ -7,20 +7,24 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
 // Mock data for testing
 const mockTask = {
   taskName: "Clean Your Room",
-  description: "Make sure to organize your toys and put away your clothes. Don't forget to vacuum the floor!",
+  description:
+    "Make sure to organize your toys and put away your clothes. Don't forget to vacuum the floor!",
   reward: 15,
-  image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+  image:
+    "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
 };
 
 const ViewTaskScreen = () => {
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}

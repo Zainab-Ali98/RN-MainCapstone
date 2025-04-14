@@ -13,7 +13,10 @@ import { deleteToken } from "../api/storage";
 import UserContext from "../context/UserContext";
 
 
+
+
 const Tab = createBottomTabNavigator();
+
 
 export const ParentHomeNavigator = () => {
   const { isAuth, setIsAuth } = useContext(UserContext);
@@ -49,6 +52,8 @@ export const ParentHomeNavigator = () => {
           tabBarLabel: "Home",
         }}
       />
+    
+
       <Tab.Screen name="Profile" component={ProfileScreen} />
 
       <Tab.Screen name="CreateChildAcc" component={CreatenewAcc} />

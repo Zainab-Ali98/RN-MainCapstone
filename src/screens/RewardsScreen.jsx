@@ -987,6 +987,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -1086,6 +1087,7 @@ const RewardsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { ChildCard } from "../components/ChildCard";
+import Logout from "../components/Logout";
 
 const statuses = ["Ongoing", "Verified", "Completed", "Rejected"];
 
@@ -26,11 +27,11 @@ const ParentScreen = ({ navigation }) => {
   const [filterStatus, setFilterStatus] = useState(null);
 
   const handelChildProfilenPress = (child_id) => {
-    navigation.navigate("Profile");
+    navigation.navigate("ProfileScreen");
   };
 
   const handleAddChildPress = () => {
-    navigation.navigate("CreateChildAcc");
+    navigation.navigate("CreatenewAcc");
   };
 
   const handleCreateTask = () => {
@@ -58,7 +59,7 @@ const ParentScreen = ({ navigation }) => {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-    
+        <Logout/>
           {/* 💰 Balance Card */}
           <View style={styles.balanceCard}>
             <Text style={styles.balanceCardLabel}>Balance</Text>

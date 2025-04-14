@@ -12,6 +12,7 @@ import {
   FlatList,
   Image,
 } from "react-native";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,6 +58,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
@@ -107,14 +109,14 @@ const ProfileScreen = () => {
             <View style={styles.actionButtonsContainer}>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => navigation.navigate("Deposit")} // This should work now
+                onPress={() => navigation.navigate("DepositScreen")} // This should work now
               >
                 <Text style={styles.actionButtonText}>Deposit</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => navigation.navigate("CreateTask")}
+                onPress={() => navigation.navigate("CreateTaskScreen")}
               >
                 <Text style={styles.actionButtonText}>Create Task</Text>
               </TouchableOpacity>
