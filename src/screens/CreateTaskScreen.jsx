@@ -11,7 +11,9 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import Logout from "../components/Logout";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -52,7 +54,7 @@ const CreateTaskScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    console.log({
+    navigation.navigate("ViewTask", {
       taskName,
       description,
       reward,
@@ -277,6 +279,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
+  },
+  bearImage: {
+    width: 100,
+    height: 70,
+    position: "absolute",
+    right: 0,
+    top: -67,
+    zIndex: 1,
   },
 });
 
