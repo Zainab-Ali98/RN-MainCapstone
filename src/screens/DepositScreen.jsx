@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Logout from "../components/Logout";
 
 const { width } = Dimensions.get("window");
 
@@ -60,24 +61,20 @@ const DepositScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={["#1433FF", "rgba(217, 217, 217, 0)"]}
-        style={[styles.header, { paddingTop: insets.top + 20 }]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <Text style={styles.headerTitle}>Deposit</Text>
-      </LinearGradient>
-
+      <Logout />
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: insets.top + 20 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.label}>Enter Amount</Text>
-        <Text style={styles.amount}>{amount} KD</Text>
-
-        <View style={styles.divider} />
+        <View style={styles.amountSection}>
+          <Text style={styles.label}>Enter Amount</Text>
+          <Text style={styles.amount}>{amount} KD</Text>
+          <View style={styles.divider} />
+        </View>
 
         <View style={styles.keypad}>
           <View style={styles.row}>
@@ -98,30 +95,30 @@ const DepositScreen = ({ navigation }) => {
           <View style={styles.row}>
             {renderButton(".")}
             {renderButton("0")}
-            <TouchableOpacity
-              style={[styles.button, styles.sendButton]}
-              onPress={() => navigation.navigate("Profile")}
-            >
+            <TouchableOpacity style={[styles.button]} onPress={handleClear}>
               <LinearGradient
-                colors={["#1433FF", "#4D5DFA"]}
-                style={styles.sendButtonGradient}
+                colors={["#4D5DFA", "#4D5DFA"]}
+                style={styles.clearButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Text style={styles.sendButtonText}>→</Text>
+                <Text style={styles.clearButtonText}>Clear</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
 
-        <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
+        <TouchableOpacity
+          style={styles.enterButton}
+          onPress={() => navigation.navigate("Profile")}
+        >
           <LinearGradient
-            colors={["#1433FF", "#4D5DFA"]}
-            style={styles.clearButtonGradient}
+            colors={["#4D5DFA", "#4D5DFA"]}
+            style={styles.enterButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text style={styles.clearButtonText}>Clear</Text>
+            <Text style={styles.enterButtonText}> Enter </Text>
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
@@ -134,35 +131,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
-  header: {
-    height: 236,
-    width: "100%",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 25,
-    fontWeight: "800",
-    letterSpacing: -0.333,
-  },
   scrollView: {
     flex: 1,
+    backgroundColor: "#ffffff",
   },
   content: {
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 45,
     paddingBottom: 45,
+    flex: 1,
+  },
+  amountSection: {
+    alignItems: "center",
+    marginTop: 40,
   },
   label: {
-    color: "#2747FD",
-    fontSize: 18,
-    fontWeight: "400",
+    color: "#000000",
+    fontSize: 24,
+    fontWeight: "600",
     textAlign: "center",
   },
   amount: {
-    color: "#B6BFFF",
+    color: "#4D5DFA",
     fontSize: 36,
     fontWeight: "700",
     marginTop: 24,
@@ -171,7 +161,7 @@ const styles = StyleSheet.create({
   divider: {
     width: 224,
     height: 1,
-    backgroundColor: "#DEE1EF",
+    backgroundColor: "#4D5DFA",
     marginTop: 44,
     marginBottom: 41,
   },
@@ -197,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#2743FD",
+    color: "#4D5DFA",
     fontSize: 24,
     fontWeight: "500",
     textAlign: "center",
@@ -215,13 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
   },
-  clearButton: {
-    width: 225,
-    height: 68,
-    borderRadius: 17,
-    marginTop: 32,
-    overflow: "hidden",
-  },
   clearButtonGradient: {
     flex: 1,
     justifyContent: "center",
@@ -229,9 +212,26 @@ const styles = StyleSheet.create({
   },
   clearButtonText: {
     color: "#FFFFFF",
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
+  },
+  enterButton: {
+    width: 225,
+    height: 68,
+    borderRadius: 17,
+    marginTop: 32,
+    overflow: "hidden",
+  },
+  enterButtonGradient: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  enterButtonText: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "500",
   },
   specialButton: {
     backgroundColor: "transparent",
