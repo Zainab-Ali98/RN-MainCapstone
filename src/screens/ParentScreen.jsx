@@ -113,17 +113,8 @@ const ParentScreen = ({ navigation }) => {
         </View>
       </View>
 
-  const handelChildProfilenPress = (child_id) => {
-    navigation.navigate("ProfileScreen");
-  };
 
-  const handleAddChildPress = () => {
-    navigation.navigate("CreatenewAcc");
-  };
 
-  const handleCreateTask = () => {
-    navigation.navigate("CreateTask");
-  };
 
       {/* Tabs */}
       <View style={styles.tabs}>
@@ -159,13 +150,13 @@ const ParentScreen = ({ navigation }) => {
   key={child.id}
   child={child}
   onImagePick={handleImagePick}
-  onNavigate={(id) => navigation.navigate("Profile", { childId: id })}
+  onNavigate={(id) => navigation.navigate("ProfileScreen", { childId: id })}
 />
 
             ))}
             <TouchableOpacity
               style={styles.addCard}
-              onPress={() => navigation.navigate("CreateChildAcc")}
+              onPress={() => navigation.navigate("CreatenewAcc")}
             >
               <MaterialIcons name="add" size={30} color="#7C3AED" />
               <Text style={styles.addText}>Add a child</Text>
