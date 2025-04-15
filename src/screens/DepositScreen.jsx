@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Logout from "../components/Logout";
 
 const { width } = Dimensions.get("window");
 
@@ -60,6 +61,7 @@ const DepositScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Logout />
       <LinearGradient
         colors={["#1433FF", "rgba(217, 217, 217, 0)"]}
         style={[styles.header, { paddingTop: insets.top + 20 }]}
