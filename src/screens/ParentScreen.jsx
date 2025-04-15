@@ -1724,14 +1724,21 @@ const ParentScreen = ({ navigation }) => {
         <>
           <View style={styles.grid}>
             {children.map((child) => (
+              // <KidBox
+              //   key={child.id}
+              //   child={child}
+              //   onImagePick={handleImagePick}
+              //   onPress={() =>
+              //     navigation.navigate("Profile", { childId: child.id })
+              //   }
+              // />
               <KidBox
-                key={child.id}
-                child={child}
-                onImagePick={handleImagePick}
-                onPress={() =>
-                  navigation.navigate("Profile", { childId: child.id })
-                }
-              />
+  key={child.id}
+  child={child}
+  onImagePick={handleImagePick}
+  onNavigate={(id) => navigation.navigate("Profile", { childId: id })}
+/>
+
             ))}
             <TouchableOpacity
               style={styles.addCard}
@@ -1742,7 +1749,7 @@ const ParentScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Tasks to Review */}
+          {/* Tasks to Review
           <Text style={styles.sectionTitle}>Tasks to Review</Text>
           <View style={styles.grid}>
             {tasks
@@ -1756,7 +1763,21 @@ const ParentScreen = ({ navigation }) => {
                   }
                 />
               ))}
-          </View>
+          </View> */}
+
+          {/* Tasks to Review */}
+<Text style={styles.sectionTitle}>Tasks to Review</Text>
+<View style={styles.grid}>
+  {tasks
+    .filter((t) => t.status === "Verified")
+    .map((task) => (
+      <TaskBox
+        key={task.id}
+        task={task}
+      />
+    ))}
+</View>
+
         </>
       ) : (
         <>

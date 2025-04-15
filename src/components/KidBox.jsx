@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     fontSize: 12,
-    color: "#FF69B4", // Updated color
+    color: "#FF69B4", 
     marginTop: 2,
   },
 });
