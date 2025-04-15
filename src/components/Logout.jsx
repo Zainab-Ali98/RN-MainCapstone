@@ -24,7 +24,7 @@ export default Logout;
 const styles = StyleSheet.create({
   logoutButton: {
     position: "absolute",
-    top: 17,
+    top: 30,
     right: 16,
     zIndex: 10,
     // backgroundColor: "#fff",
