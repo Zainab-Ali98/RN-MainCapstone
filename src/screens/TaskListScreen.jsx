@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "react-native-image-picker";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -76,6 +77,7 @@ const TaskListScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}

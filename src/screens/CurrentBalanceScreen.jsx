@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,6 +20,7 @@ const mockTasks = [
 const CurrentBalanceScreen = () => {
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
