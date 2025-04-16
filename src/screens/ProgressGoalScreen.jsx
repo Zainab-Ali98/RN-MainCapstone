@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import CircleProgress from "../components/CircleProgress";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,24 +19,68 @@ const CIRCLE_SIZE = 200;
 
 const ProgressGoalScreen = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [savedAmount, setSavedAmount] = useState(150); // Initial saved amount
 
   const products = [
     {
       id: "1",
       name: "iPhone 14 Pro",
-      image: require("../../assets/phone.png"), // Replace with actual iPhone image
+      price: 399.99,
+      saved: 150,
+      image: require("../../assets/phone.png"),
     },
     {
       id: "2",
       name: "iPad Pro",
-      image: require("../../assets/ipad.png"), // Replace with actual iPad image
+      price: 799.99,
+      saved: 150,
+      image: require("../../assets/ipad.png"),
     },
     {
       id: "3",
       name: "MacBook Air",
-      image: require("../../assets/macbook.png"), // Replace with actual MacBook image
+      price: 999.99,
+      saved: 150,
+      image: require("../../assets/macbook.png"),
     },
   ];
+
+  const currentProduct = products[currentImageIndex];
+  const progress = Math.min(
+    Math.round((savedAmount / currentProduct.price) * 100),
+    100,
+  );
+
+  const handleDeposit = () => {
+    // Example deposit amount
+    const depositAmount = 50;
+    const newSavedAmount = savedAmount + depositAmount;
+
+    if (newSavedAmount >= currentProduct.price) {
+      Alert.alert(
+        "Congratulations!",
+        "You've saved enough to buy your " + currentProduct.name + "!",
+        [{ text: "OK" }],
+      );
+    }
+
+    setSavedAmount(newSavedAmount);
+  };
+
+  const handleBreak = () => {
+    Alert.alert(
+      "Break Goal",
+      "Are you sure you want to break this saving goal? You'll lose your progress.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Break",
+          style: "destructive",
+          onPress: () => setSavedAmount(0),
+        },
+      ],
+    );
+  };
 
   const renderProduct = ({ item }) => (
     <View style={styles.imageContainer}>
@@ -62,18 +107,23 @@ const ProgressGoalScreen = () => {
       <StatusBar barStyle="dark-content" />
 
       <View style={styles.content}>
+        <View style={styles.priceContainer}>
+          <Text style={styles.savedAmount}>{savedAmount.toFixed(2)} KWD</Text>
+          <Text style={styles.targetAmount}>
+            / {currentProduct.price.toFixed(2)} KWD
+          </Text>
+        </View>
+
         <View style={styles.circleWrapper}>
-          {/* Progress circle */}
           <View style={styles.progressCircle}>
             <CircleProgress
               size={CIRCLE_SIZE + 30}
               strokeWidth={15}
-              percentage={75}
+              percentage={progress}
               color="#4CAF50"
             />
           </View>
 
-          {/* Circular mask for images */}
           <View style={styles.circularMask}>
             <FlatList
               data={products}
@@ -89,16 +139,15 @@ const ProgressGoalScreen = () => {
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.productName}>
-            {products[currentImageIndex]?.name}
-          </Text>
+          <Text style={styles.productName}>{currentProduct.name}</Text>
           <View style={styles.statusSection}>
             <View style={styles.statusDot} />
-            <Text style={styles.statusText}>In Progress</Text>
+            <Text style={styles.statusText}>
+              {progress === 100 ? "Ready to Purchase!" : "In Progress"}
+            </Text>
           </View>
         </View>
 
-        {/* Pagination dots */}
         <View style={styles.pagination}>
           {products.map((_, index) => (
             <View
@@ -111,9 +160,8 @@ const ProgressGoalScreen = () => {
           ))}
         </View>
 
-        {/* Action Buttons */}
         <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleDeposit}>
             <MaterialIcons
               name="account-balance-wallet"
               size={24}
@@ -122,7 +170,10 @@ const ProgressGoalScreen = () => {
             <Text style={styles.buttonText}>Deposit</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.actionButton, styles.breakButton]}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.breakButton]}
+            onPress={handleBreak}
+          >
             <MaterialIcons
               name="pause-circle-filled"
               size={24}
@@ -148,7 +199,22 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     paddingHorizontal: 20,
-    marginTop: height * 0.1, // Brings circle up
+    marginTop: height * 0.1,
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: 20,
+  },
+  savedAmount: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#4CAF50",
+  },
+  targetAmount: {
+    fontSize: 18,
+    color: "#6B7280",
+    marginLeft: 4,
   },
   circleWrapper: {
     width: CIRCLE_SIZE + 30,
