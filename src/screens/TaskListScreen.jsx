@@ -51,12 +51,14 @@ const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
 const TaskListScreen = ({ navigation }) => {
   const handlTaskListPress = () => {
-    navigation.navigate("TaskProfile");
+    navigation.navigate("ViewTaskScreen");
   };
 
   const handlRewarsPress = () => {
     navigation.navigate("Reward");
   };
+
+
   const [selectedTask, setSelectedTask] = useState(null);
 
   const handleImagePick = async (taskId) => {

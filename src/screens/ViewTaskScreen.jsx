@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import Logout from "../components/Logout";
 
@@ -21,7 +22,7 @@ const mockTask = {
     "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
 };
 
-const ViewTaskScreen = () => {
+const ViewTaskScreen = (task) => {
   return (
     <View style={styles.container}>
       <Logout />
@@ -31,9 +32,9 @@ const ViewTaskScreen = () => {
         resizeMode="cover"
       />
 
-      <Text style={styles.title}>TASK DETAILS</Text>
+      {/* <Text style={styles.title}>TASK DETAILS</Text> */}
 
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.taskContainer}>
           <Image
             source={{ uri: mockTask.image }}
@@ -75,7 +76,7 @@ const ViewTaskScreen = () => {
             resizeMode="contain"
           />
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -101,12 +102,11 @@ const styles = StyleSheet.create({
     letterSpacing: -0.333,
     zIndex: 10,
   },
-  content: {
-    flex: 1,
+  scrollContent: {
     paddingHorizontal: 39,
     paddingTop: 180,
+    paddingBottom: 40,
     alignItems: "center",
-    justifyContent: "space-between",
   },
   taskContainer: {
     width: "100%",
@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
   },
   rewardValue: {
     color: "#000000",
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 15,
+    // fontWeight: "bold",
   },
   buttonContainer: {
     width: "100%",
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     height: 70,
     position: "absolute",
     right: 0,
-    top: -50,
+    top: -67,
     zIndex: 1,
   },
 });
