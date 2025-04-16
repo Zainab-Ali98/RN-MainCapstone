@@ -48,7 +48,7 @@ const ProgressGoalScreen = () => {
   const currentProduct = products[currentImageIndex];
   const progress = Math.min(
     Math.round((savedAmount / currentProduct.price) * 100),
-    100,
+    100
   );
 
   const handleDeposit = () => {
@@ -60,7 +60,7 @@ const ProgressGoalScreen = () => {
       Alert.alert(
         "Congratulations!",
         "You've saved enough to buy your " + currentProduct.name + "!",
-        [{ text: "OK" }],
+        [{ text: "OK" }]
       );
     }
 
@@ -78,7 +78,7 @@ const ProgressGoalScreen = () => {
           style: "destructive",
           onPress: () => setSavedAmount(0),
         },
-      ],
+      ]
     );
   };
 
