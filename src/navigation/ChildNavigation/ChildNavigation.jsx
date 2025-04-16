@@ -1,14 +1,59 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import ChildHomeNavigation from "./BottomNavigation/ChildHomeNavigation";
+import RewardsNavigation from "./BottomNavigation/RewardsNavigation";
+import ChildProfileNavigation from "./BottomNavigation/ChildProfileNavigation";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
+const Tab = createBottomTabNavigator();
 
 const ChildNavigation = () => {
   return (
-    <View>
-      <Text>ChildNavigation</Text>
-    </View>
-  )
-}
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          borderTopWidth: 0,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={ChildHomeNavigation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="home" size={24} color={color} />
+          ),
+        }}
+      />
 
-export default ChildNavigation
+      <Tab.Screen
+        name="Rewards"
+        component={RewardsNavigation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="star" size={24} color={color} />
+          ),
+        }}
+      />
 
-const styles = StyleSheet.create({})
+      <Tab.Screen
+        name="Profile"
+        component={ChildProfileNavigation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" size={24} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+export default ChildNavigation;
+
+const styles = StyleSheet.create({});
