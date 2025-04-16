@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "react-native-image-picker";
+import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -50,12 +51,14 @@ const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
 const TaskListScreen = ({ navigation }) => {
   const handlTaskListPress = () => {
-    navigation.navigate("TaskProfile");
+    navigation.navigate("ViewTaskScreen");
   };
 
   const handlRewarsPress = () => {
     navigation.navigate("Reward");
   };
+
+
   const [selectedTask, setSelectedTask] = useState(null);
 
   const handleImagePick = async (taskId) => {
@@ -76,6 +79,7 @@ const TaskListScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}

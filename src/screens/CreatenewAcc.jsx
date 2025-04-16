@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import Logout from "../components/Logout";
 const { width, height } = Dimensions.get("window");
 
 function RegisterScreen() {
@@ -52,6 +53,7 @@ function RegisterScreen() {
 
   return (
     <View style={styles.container}>
+      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}

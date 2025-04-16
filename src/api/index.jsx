@@ -2,10 +2,12 @@ import axios from "axios";
 import { getToken } from "./storage";
 
 const instance = axios.create({
-  baseURL: "http://192.168.2.87:5209/api",
+
+  baseURL: "http://192.168.2.86:5209/api",
+
 });
 
-//==========================================================
+
 instance.interceptors.request.use(
   async (config) => {
     const token = await getToken();
