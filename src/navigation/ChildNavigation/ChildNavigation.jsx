@@ -6,6 +6,7 @@ import RewardsNavigation from "./BottomNavigation/RewardsNavigation";
 import ChildProfileNavigation from "./BottomNavigation/ChildProfileNavigation";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import CurrentBalanceScreen from "../../screens/CurrentBalanceScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -50,6 +51,11 @@ const ChildNavigation = () => {
           ),
         }}
       />
+
+
+
+
+
     </Tab.Navigator>
   );
 };
