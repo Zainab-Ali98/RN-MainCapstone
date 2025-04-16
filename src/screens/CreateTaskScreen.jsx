@@ -15,7 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const CreateTaskScreen = ({ navigation }) => {
+const CreateTaskScreen = () => {
+  const navigation = useNavigation();
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
   const [reward, setReward] = useState(12);
@@ -111,7 +112,10 @@ const CreateTaskScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+          <TouchableOpacity
+            style={styles.imageContainer}
+            onPress={pickImage}
+          >
             {image ? (
               <Image source={{ uri: image }} style={styles.image} />
             ) : (
@@ -130,10 +134,7 @@ const CreateTaskScreen = ({ navigation }) => {
           resizeMode="contain"
         />
 
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => navigation.navigate("Parent")}
-        >
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Create Task</Text>
         </TouchableOpacity>
       </View>
@@ -250,18 +251,10 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 14,
   },
-  // bearImage: {
-  //   width: 100,
-  //   height: 70,
-  //   // position: "absolute",
-  //   right: 0,
-  //   // top: -50,
-  //   zIndex: 1,
-  // },
   bearImage: {
-    width: 118,
-    height: 78,
-    marginTop: 28,
+    width: 100,
+    height: 70,
+    marginTop: 20,
   },
   submitButton: {
     width: "100%",
@@ -270,20 +263,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
-    // marginTop: 20,
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 20,
   },
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
-  },
-  bearImage: {
-    width: 100,
-    height: 70,
-    position: "absolute",
-    right: 0,
-    top: -67,
-    zIndex: 1,
   },
 });
 
