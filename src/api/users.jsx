@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { UsersEndpoints } from './endpoints';
 
-// Get user's balance
-export const getUserBalance = async () => {
+export const balance = async () => {
   try {
     const response = await axios.get(UsersEndpoints.balance);
     return response.data;
@@ -12,8 +11,7 @@ export const getUserBalance = async () => {
   }
 };
 
-// Get user's profile
-export const getUserProfile = async () => {
+export const profile = async () => {
   try {
     const response = await axios.get(UsersEndpoints.profile);
     return response.data;
