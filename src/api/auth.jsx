@@ -1,4 +1,5 @@
 import instance from ".";
+import { AuthEndpoints } from "./endpoints";
 import { setRole, setToken } from "./storage";
 
 const register = async (userInfo, image) => {
@@ -12,7 +13,7 @@ const register = async (userInfo, image) => {
     uri: image,
   });
   try {
-    const res = await instance.post("/auth/register", formData);
+    const res = await instance.post(AuthEndpoints.register, formData);
     console.log(res.data);
     setToken(res.data.token);
     setRole(res.data.role);
@@ -27,7 +28,7 @@ const register = async (userInfo, image) => {
 };
 const login = async (userInfo) => {
   try {
-    const res = await instance.post("/auth/login", userInfo);
+    const res = await instance.post(AuthEndpoints.login, userInfo);
     console.log("LOGIN TOKEN", res.data.token);
     setToken(res.data.token);
     return res.data;
