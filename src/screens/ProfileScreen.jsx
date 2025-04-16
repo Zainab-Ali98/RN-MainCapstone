@@ -1,26 +1,26 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
-  Platform,
   ScrollView,
   TouchableOpacity,
   Dimensions,
   FlatList,
   Image,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
+import CircleProgress from "../components/CircleProgress";
 import Logout from "../components/Logout";
 
 const { width, height } = Dimensions.get("window");
 
 const mockTasks = [
-  { id: "1", title: "Complete homework", amount: 5.0 },
-  { id: "2", title: "Clean room", amount: 3.0 },
-  { id: "3", title: "Read a book", amount: 4.0 },
-  { id: "4", title: "Exercise", amount: 6.0 },
+  { id: "1", title: "Complete homework", amount: 5.0, status: "Verified" },
+  { id: "2", title: "Clean room", amount: 3.0, status: "Rejected" },
+  { id: "3", title: "Read a book", amount: 4.0, status: "Approved" },
+  { id: "4", title: "Exercise", amount: 6.0, status: "Verified" },
 ];
 
 const mockSavingGoals = [
@@ -29,32 +29,52 @@ const mockSavingGoals = [
   { id: "3", title: "School Supplies", amount: 100, progress: 80 },
 ];
 
-const TaskItem = ({ item }) => (
-  <View style={styles.taskItem}>
-    <Text style={styles.taskTitle}>{item.title}</Text>
-    <Text style={styles.taskAmount}>{item.amount.toFixed(2)} KD</Text>
-  </View>
-);
+const TaskItem = ({ item }) => {
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case "verified":
+        return "#3B82F6";
+      case "approved":
+        return "#10B981";
+      case "rejected":
+        return "#EF4444";
+      default:
+        return "#9CA3AF";
+    }
+  };
 
-const SavingGoalItem = ({ item }) => (
-  <View style={styles.goalItem}>
-    <Text style={styles.goalTitle}>{item.title}</Text>
-    <View style={styles.goalProgress}>
+  return (
+    <View style={styles.taskBox}>
+      <Text style={styles.taskTitle}>{item.title}</Text>
+      <Text style={styles.taskAmount}>{item.amount.toFixed(2)} KWD</Text>
       <View
         style={[
-          styles.progressBar,
-          { width: `${(item.progress / item.amount) * 100}%` },
+          styles.statusBadge,
+          { backgroundColor: getStatusColor(item.status) },
         ]}
-      />
+      >
+        <Text style={styles.statusText}>{item.status}</Text>
+      </View>
     </View>
-    <Text style={styles.goalAmount}>
-      {item.progress} KD / {item.amount} KD
-    </Text>
-  </View>
-);
+  );
+};
+
+const SavingGoalItem = ({ item }) => {
+  const percentage = Math.round((item.progress / item.amount) * 100);
+
+  return (
+    <View style={styles.goalCard}>
+      <CircleProgress percentage={percentage} />
+      <Text style={styles.goalTitle}>{item.title}</Text>
+      <Text style={styles.goalAmount}>
+        {item.progress} KWD / {item.amount} KWD
+      </Text>
+    </View>
+  );
+};
 
 const ProfileScreen = () => {
-  const navigation = useNavigation(); // Correctly placed inside the component
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -65,60 +85,67 @@ const ProfileScreen = () => {
         resizeMode="cover"
       />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
-          <Text style={styles.title}>PROFILE</Text>
-
-          <View style={styles.balanceSection}>
-            <Text style={styles.balanceLabel}>Total balance</Text>
-            <Text style={styles.balanceAmount}>3077.20 KD</Text>
+          {/* Balance Card */}
+          <View style={styles.balanceCard}>
+            <Text style={styles.balanceLabel}>Total Available Balance</Text>
+            <Text style={styles.balanceAmount}>3077.20 KWD</Text>
           </View>
 
-          <View style={styles.mainContent}>
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Saving goals</Text>
-              <FlatList
-                data={mockSavingGoals}
-                renderItem={({ item }) => <SavingGoalItem item={item} />}
-                keyExtractor={(item) => item.id}
-                scrollEnabled={false}
-              />
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Tasks</Text>
-              <FlatList
-                data={mockTasks}
-                renderItem={({ item }) => <TaskItem item={item} />}
-                keyExtractor={(item) => item.id}
-                scrollEnabled={false}
-              />
-            </View>
+          {/* Saving Goals */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Saving Goals</Text>
+            <FlatList
+              data={mockSavingGoals}
+              renderItem={({ item }) => <SavingGoalItem item={item} />}
+              keyExtractor={(item) => item.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
 
+          {/* Task List */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Tasks</Text>
+            <FlatList
+              data={mockTasks}
+              renderItem={({ item }) => <TaskItem item={item} />}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+          </View>
+
+          {/* Buttons */}
           <View style={styles.buttonSection}>
             <Image
-              source={require("../../assets/bear.png")}
+              // source={require("../../assets/bear.png")}
               style={styles.bearImage}
               resizeMode="contain"
             />
-
             <View style={styles.actionButtonsContainer}>
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() => navigation.navigate("DepositScreen")} // This should work now
               >
-                <Text style={styles.actionButtonText}>Deposit</Text>
+                <MaterialIcons
+                  name="account-balance-wallet"
+                  size={24}
+                  color="#6C63FF"
+                />
+                <Text style={styles.whiteButtonText}>Send Money</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() => navigation.navigate("CreateTaskScreen")}
               >
-                <Text style={styles.actionButtonText}>Create Task</Text>
+                <MaterialIcons
+                  name="playlist-add-check"
+                  size={24}
+                  color="#6C63FF"
+                />
+                <Text style={styles.whiteButtonText}>Create Task</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -128,116 +155,104 @@ const ProfileScreen = () => {
   );
 };
 
+export default ProfileScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
+  container: { flex: 1, backgroundColor: "#ffffff" },
   backgroundImage: {
     position: "absolute",
     width: width,
     height: height * 0.5,
     top: 0,
   },
+  scrollContent: { paddingBottom: 40 },
   content: {
     flex: 1,
     paddingHorizontal: 39,
     paddingTop: 60,
     alignItems: "center",
   },
-  title: {
-    color: "#ffffff",
-    fontSize: 25,
-    fontWeight: "800",
-    letterSpacing: -0.333,
-    marginBottom: 20,
-  },
-  balanceSection: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  balanceLabel: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  balanceAmount: {
-    color: "#ffffff",
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  mainContent: {
+  balanceCard: {
     width: "100%",
     backgroundColor: "#ffffff",
-    borderRadius: 20,
     padding: 20,
-    marginBottom: 20,
+    borderRadius: 16,
+    alignItems: "center",
     elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowColor: "#000000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    marginBottom: 24,
+  },
+  balanceLabel: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 4,
+  },
+  balanceAmount: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#000000",
   },
   section: {
-    marginBottom: 20,
+    width: "100%",
+    marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 16,
-    color: "#111827",
-    fontWeight: "600",
-    marginBottom: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1F2937",
+    marginBottom: 12,
   },
-  taskItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  taskBox: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
+  taskTitle: { fontSize: 16, fontWeight: "600", color: "#1F2937" },
+  taskAmount: { fontSize: 14, color: "#6B7280", marginVertical: 4 },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: "flex-start",
+  },
+  statusText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 12,
+  },
+  goalCard: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: 16,
+    padding: 16,
+    width: 130,
     alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  taskTitle: {
-    fontSize: 14,
-    color: "#111827",
-    fontWeight: "500",
-  },
-  taskAmount: {
-    fontSize: 14,
-    color: "#4D5DFA",
-    fontWeight: "600",
-  },
-  goalItem: {
-    marginBottom: 16,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   goalTitle: {
     fontSize: 14,
-    color: "#111827",
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  goalProgress: {
-    height: 8,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 4,
-    overflow: "hidden",
+    fontWeight: "600",
+    color: "#1F2937",
     marginBottom: 4,
-  },
-  progressBar: {
-    height: "100%",
-    backgroundColor: "#4D5DFA",
-    borderRadius: 4,
+    textAlign: "center",
   },
   goalAmount: {
     fontSize: 12,
     color: "#6B7280",
+    textAlign: "center",
   },
   buttonSection: {
     width: "100%",
+    marginTop: 24,
     position: "relative",
-    marginTop: 20,
   },
   bearImage: {
     width: 118,
@@ -252,19 +267,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 16,
   },
-  actionButton: {
+  whiteButton: {
     flex: 1,
     height: 72,
-    backgroundColor: "#4D5DFA",
+    backgroundColor: "#ffffff",
     borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
+    borderColor: "#6C63FF",
+    borderWidth: 2,
+    flexDirection: "row",
+    gap: 8,
   },
-  actionButtonText: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "500",
+  whiteButtonText: {
+    color: "#6C63FF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
-
-export default ProfileScreen;
