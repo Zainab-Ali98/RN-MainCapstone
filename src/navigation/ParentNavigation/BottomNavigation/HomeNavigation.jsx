@@ -6,6 +6,7 @@ import CreatenewAcc from "../../../screens/CreatenewAcc";
 import ProfileScreen from "../../../screens/ProfileScreen";
 import DepositScreen from "../../../screens/DepositScreen";
 import CreateTaskScreen from "../../../screens/CreateTaskScreen";
+import TaskDetailsScreen from "../../../screens/TaskDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,13 @@ const HomeNavigation = () => {
             headerBackButtonMenuEnabled="false"
             options={{ headerShown: false }}
           />
+           <Stack.Screen
+            name="TaskDetailsScreen"
+            component={TaskDetailsScreen}
+            headerBackButtonMenuEnabled="false"
+            options={{ headerShown: false }}
+          />
+
       
     </Stack.Navigator>
   );

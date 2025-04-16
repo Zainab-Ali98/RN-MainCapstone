@@ -173,8 +173,13 @@ const ParentScreen = ({ navigation }) => {
       <TaskBox
         key={task.id}
         task={task}
+        onPress={() => navigation.navigate("TaskDetailsScreen", { task })}
       />
     ))}
+
+
+
+
 </View>
 
         </>
@@ -190,9 +195,15 @@ const ParentScreen = ({ navigation }) => {
                   task={task}
                   onPress={() =>
                     navigation.navigate("TaskScreen", { taskId: task.id })
+
+
                   }
                 />
+                
               ))}
+
+
+              
           </View>
         </>
       )}
@@ -263,3 +274,7 @@ const styles = StyleSheet.create({
     color: "#1F2937",
   },
 });
+
+
+
+
