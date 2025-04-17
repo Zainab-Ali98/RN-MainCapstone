@@ -12,9 +12,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logout from "../components/Logout";
 
+
 const { width } = Dimensions.get("window");
 
-const DepositScreen = ({ navigation }) => {
+const ChildDepositScreen = ({ navigation }) => {
   const [amount, setAmount] = useState("0");
   const insets = useSafeAreaInsets();
 
@@ -110,7 +111,7 @@ const DepositScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.enterButton}
-          onPress={() => navigation.navigate("Profile")}  
+          onPress={() => navigation.navigate("ProgressGoalScreen")}
         >
           <LinearGradient
             colors={["#4D5DFA", "#4D5DFA"]}
@@ -244,4 +245,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DepositScreen;
+export default ChildDepositScreen;

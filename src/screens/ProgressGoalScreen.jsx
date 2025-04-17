@@ -11,13 +11,15 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import CircleProgress from "../components/CircleProgress";
+import * as Progress from "react-native-progress";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 const CIRCLE_SIZE = 200;
 
 const ProgressGoalScreen = () => {
+  const navigation = useNavigation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [savedAmount, setSavedAmount] = useState(150); // Initial saved amount
 
@@ -46,13 +48,9 @@ const ProgressGoalScreen = () => {
   ];
 
   const currentProduct = products[currentImageIndex];
-  const progress = Math.min(
-    Math.round((savedAmount / currentProduct.price) * 100),
-    100
-  );
+  const progress = Math.min(savedAmount / currentProduct.price, 1); // Progress value between 0 and 1
 
   const handleDeposit = () => {
-    // Example deposit amount
     const depositAmount = 50;
     const newSavedAmount = savedAmount + depositAmount;
 
@@ -105,7 +103,6 @@ const ProgressGoalScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-
       <View style={styles.content}>
         <View style={styles.priceContainer}>
           <Text style={styles.savedAmount}>{savedAmount.toFixed(2)} KWD</Text>
@@ -116,11 +113,14 @@ const ProgressGoalScreen = () => {
 
         <View style={styles.circleWrapper}>
           <View style={styles.progressCircle}>
-            <CircleProgress
+            <Progress.Circle
               size={CIRCLE_SIZE + 30}
-              strokeWidth={15}
-              percentage={progress}
+              progress={progress}
+              thickness={15}
               color="#4CAF50"
+              unfilledColor="#E5E7EB"
+              borderWidth={0}
+              showsText={false}
             />
           </View>
 
@@ -143,7 +143,7 @@ const ProgressGoalScreen = () => {
           <View style={styles.statusSection}>
             <View style={styles.statusDot} />
             <Text style={styles.statusText}>
-              {progress === 100 ? "Ready to Purchase!" : "In Progress"}
+              {progress >= 1 ? "Ready to Purchase!" : "In Progress"}
             </Text>
           </View>
         </View>
@@ -161,7 +161,10 @@ const ProgressGoalScreen = () => {
         </View>
 
         <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity style={styles.actionButton} onPress={handleDeposit}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => navigation.navigate("ChildDepositScreen")}
+          >
             <MaterialIcons
               name="account-balance-wallet"
               size={24}

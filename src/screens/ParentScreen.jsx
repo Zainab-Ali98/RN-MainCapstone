@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -18,12 +16,10 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { ChildCard } from "../components/ChildCard";
 import Logout from "../components/Logout";
 
-
 import KidBox from "../components/KidBox";
 import TaskBox from "../components/TaskBox";
 
 const ParentScreen = ({ navigation }) => {
-
   const [activeTab, setActiveTab] = useState("kids");
   const [greeting, setGreeting] = useState("");
   const [children, setChildren] = useState([
@@ -75,9 +71,7 @@ const ParentScreen = ({ navigation }) => {
 
     if (!result.canceled) {
       const updated = children.map((child) =>
-        child.id === childId
-          ? { ...child, image: result.assets[0].uri }
-          : child
+        child.id === childId ? { ...child, image: result.assets[0].uri } : child
       );
       setChildren(updated);
     }
@@ -87,7 +81,7 @@ const ParentScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-     <Logout/>
+      <Logout />
       <View style={styles.header}>
         <Text style={styles.greeting}>
           {greeting}, <Text style={styles.boldName}>{parentName}</Text>
@@ -107,14 +101,10 @@ const ParentScreen = ({ navigation }) => {
               <Text style={styles.balanceValue}>
                 KWD {totalBalance.toFixed(3)}
               </Text>
- 
             </View>
           </View>
         </View>
       </View>
-
-
-
 
       {/* Tabs */}
       <View style={styles.tabs}>
@@ -145,14 +135,14 @@ const ParentScreen = ({ navigation }) => {
         <>
           <View style={styles.grid}>
             {children.map((child) => (
-    
               <KidBox
-  key={child.id}
-  child={child}
-  onImagePick={handleImagePick}
-  onNavigate={(id) => navigation.navigate("ProfileScreen", { childId: id })}
-/>
-
+                key={child.id}
+                child={child}
+                onImagePick={handleImagePick}
+                onNavigate={(id) =>
+                  navigation.navigate("ProfileScreen", { childId: id })
+                }
+              />
             ))}
             <TouchableOpacity
               style={styles.addCard}
@@ -161,27 +151,23 @@ const ParentScreen = ({ navigation }) => {
               <MaterialIcons name="add" size={30} color="#7C3AED" />
               <Text style={styles.addText}>Add a child</Text>
             </TouchableOpacity>
-</View>
+          </View>
 
-          
           {/* Tasks to Review */}
-<Text style={styles.sectionTitle}>Tasks to Review</Text>
-<View style={styles.grid}>
-  {tasks
-    .filter((t) => t.status === "Verified")
-    .map((task) => (
-      <TaskBox
-        key={task.id}
-        task={task}
-        onPress={() => navigation.navigate("TaskDetailsScreen", { task })}
-      />
-    ))}
-
-
-
-
-</View>
-
+          <Text style={styles.sectionTitle}>Tasks to Review</Text>
+          <View style={styles.grid}>
+            {tasks
+              .filter((t) => t.status === "Verified")
+              .map((task) => (
+                <TaskBox
+                  key={task.id}
+                  task={task}
+                  onPress={() =>
+                    navigation.navigate("TaskDetailsScreen", { task })
+                  }
+                />
+              ))}
+          </View>
         </>
       ) : (
         <>
@@ -195,15 +181,9 @@ const ParentScreen = ({ navigation }) => {
                   task={task}
                   onPress={() =>
                     navigation.navigate("TaskScreen", { taskId: task.id })
-
-
                   }
                 />
-                
               ))}
-
-
-              
           </View>
         </>
       )}
@@ -274,7 +254,3 @@ const styles = StyleSheet.create({
     color: "#1F2937",
   },
 });
-
-
-
-
