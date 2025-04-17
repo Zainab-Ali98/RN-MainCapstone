@@ -51,7 +51,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
           {/* For debugging */}
-          <Stack.Navigator
+          {/* <Stack.Navigator
             screenOptions={{
               headerShown: false,
             }}
@@ -68,14 +68,14 @@ export default function App() {
               headerBackButtonMenuEnabled="false"
               options={{ headerShown: false }}
             />
-          </Stack.Navigator>
+          </Stack.Navigator> */}
           {/* For debugging */}
 
           {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
           {/* <ChildListScreen/> */}
 
-          {/* {isAuth ? (
+          {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
           
@@ -84,7 +84,7 @@ export default function App() {
             )
           ) : (
             <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
-          )} */}
+          )}
 
           <StatusBar style="light" />
         </UserContext.Provider>
