@@ -51,8 +51,8 @@ export default function App() {
         {/* <ViewTaskScreen/> */}
         {/* <CreateNewGoal/> */}
         {/* <ChildListScreen/> */}
-        <ProgressGoalScreen/>
-{/*        
+        {/* <ProgressGoalScreen/> */}
+       
           {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
@@ -62,7 +62,7 @@ export default function App() {
             )
           ) : (
             <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
-          )} */}
+          )}
 
           <StatusBar style="light" />
         </UserContext.Provider>
