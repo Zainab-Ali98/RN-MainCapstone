@@ -7,8 +7,8 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
 } from "react-native";
+
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/auth";
 
@@ -34,13 +34,7 @@ function LoginScreen({ navigation, setIsAuth, setRole }) {
   const handleRegisterPress = () => {
     navigation.navigate("Register");
   };
-  // const handleLoginPress = () => {
-  //   navigation.navigate("Parent");
-  // };
 
-  // const handleLoginChildPress = () => {
-  //   navigation.navigate("Child");
-  // };
   const handleLoginPress = () => {
     if (!userInfo.email || !userInfo.password) {
       setError("Please enter email and password");
@@ -58,38 +52,34 @@ function LoginScreen({ navigation, setIsAuth, setRole }) {
         resizeMode="cover"
       />
 
-      <Text style={styles.title}>LOGIN</Text>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.contentWrapper}>
         <View style={styles.content}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#9E9E9E"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              onChangeText={(value) => {
-                setUserInfo({ ...userInfo, email: value });
-                setError(null);
-              }}
-            />
+          <View style={styles.inputCard}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#6B7280"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, email: value });
+                  setError(null);
+                }}
+              />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#9E9E9E"
-              secureTextEntry
-              onChangeText={(value) => {
-                setUserInfo({ ...userInfo, password: value });
-                setError(null);
-              }}
-            />
-            {error && <Text style={styles.errorText}>{error}</Text>}
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#6B7280"
+                secureTextEntry
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, password: value });
+                  setError(null);
+                }}
+              />
+              {error && <Text style={styles.errorText}>{error}</Text>}
+            </View>
           </View>
 
           <Image
@@ -100,8 +90,6 @@ function LoginScreen({ navigation, setIsAuth, setRole }) {
 
           <TouchableOpacity
             style={styles.loginButton}
-            // onPress={handleLoginPress}
-            // onPress={handleLoginChildPress}
             onPress={handleLoginPress}
           >
             <Text style={styles.buttonText}>Login</Text>
@@ -122,7 +110,7 @@ function LoginScreen({ navigation, setIsAuth, setRole }) {
             </Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -138,43 +126,47 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     top: 0,
   },
-  title: {
-    position: "absolute",
-    top: 140,
-    alignSelf: "center",
-    color: "#ffffff",
-    fontSize: 25,
-    fontWeight: "800",
-    letterSpacing: -0.333,
-    zIndex: 10,
-  },
-  scrollView: {
+  contentWrapper: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: 200,
+    justifyContent: "center",
+    paddingHorizontal: 39,
+    marginTop: height * 0.15, // Added margin from top
   },
   content: {
-    flex: 1,
-    paddingHorizontal: 39,
+    width: "100%",
     alignItems: "center",
+  },
+  inputCard: {
+    width: "100%",
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    borderColor: "#E5E7EB",
+    borderWidth: 1,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
   },
   inputContainer: {
     width: "100%",
-    gap: 37,
-    marginTop: 142,
+    gap: 18,
   },
   input: {
     width: "100%",
     height: 50,
-    borderRadius: 8,
+    borderRadius: 10,
+    backgroundColor: "#F9FAFB",
+    borderColor: "#CBD5E1",
     borderWidth: 1,
-    borderColor: "#D9D9D9",
     paddingHorizontal: 16,
     fontSize: 14,
-    color: "#000",
-    backgroundColor: "transparent",
+    color: "#111827",
   },
   loginButton: {
     width: "100%",
@@ -183,24 +175,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   bearImage: {
     width: 118,
     height: 78,
     marginTop: 28,
+    marginBottom: -20,
   },
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
-  },
-  registerLink: {
-    marginTop: 20,
-    padding: 10,
-  },
-  registerText: {
-    color: "#4D5DFA",
-    fontSize: 16,
-    textAlign: "center",
   },
   orContainer: {
     flexDirection: "row",
@@ -218,9 +203,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     fontSize: 14,
   },
+  registerLink: {
+    padding: 10,
+  },
+  registerText: {
+    color: "#4D5DFA",
+    fontSize: 16,
+    fontWeight: "500",
+  },
   errorText: {
     color: "red",
     marginTop: 5,
+    textAlign: "center",
   },
 });
 
