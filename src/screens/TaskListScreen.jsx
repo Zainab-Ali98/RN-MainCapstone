@@ -77,7 +77,7 @@ const TaskListScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Logout />
+      {/* <Logout /> */}
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -106,26 +106,7 @@ const TaskListScreen = ({ navigation }) => {
             </View>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity
-              style={styles.balanceCardContainer}
-              onPress={handleBalancePress}
-              activeOpacity={0.7}
-            >
-              <LinearGradient
-                colors={["#FFFFFF", "#F8F9FF"]}
-                style={styles.balanceCard}
-              >
-                <LottieView
-                  source={require("../../assets/coin.json")}
-                  autoPlay
-                  loop
-                  style={styles.balanceAnimation}
-                />
-                <Text style={styles.balanceTitle}>Your Treasure Box</Text>
-                <Text style={styles.balanceAmount}>225 KWD</Text>
-              </LinearGradient>
-            </TouchableOpacity> */}
-          {/* Create Goal Button */}
+  
           <TouchableOpacity
             style={styles.createGoalButton}
             onPress={() => navigation.navigate("CreateNewGoal")}
