@@ -1,4 +1,4 @@
-import instance from ".";
+import instance from "../api/index";
 import { AuthEndpoints } from "./endpoints";
 import { setRole, setToken } from "./storage";
 
@@ -26,6 +26,7 @@ const register = async (userInfo, image) => {
     throw error;
   }
 };
+
 const login = async (userInfo) => {
   try {
     const res = await instance.post(AuthEndpoints.login, userInfo);

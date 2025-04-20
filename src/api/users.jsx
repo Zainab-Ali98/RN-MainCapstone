@@ -15,7 +15,7 @@ export const balance = async () => {
 
 export const profile = async () => {
   try {
-    const response = await axios.get(UsersEndpoints.profile);
+    const response = await instance.get(UsersEndpoints.profile);
     return response.data;
   } catch (error) {
     console.error("Error fetching user profile:", error.response.status);
