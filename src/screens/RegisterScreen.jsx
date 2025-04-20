@@ -24,7 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { register } from "../api/auth";
 import { KeyboardAvoidingView, Platform } from "react-native";
-//import {}
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -387,3 +387,4 @@ const styles = StyleSheet.create({
 });
 
 export default RegisterScreen;
+
