@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { balance } from "../api/users";
+import { useQuery } from "@tanstack/react-query";
 
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -52,8 +54,12 @@ const ParentScreen = ({ navigation }) => {
       date: "2025-04-12",
     },
   ]);
-
-  const parentName = "Ali";
+  // Fetch Parent Name from backend using the balance endpoint
+  const { data, isError, error } = useQuery({
+    queryKey: ["fetchBalance"],
+    queryFn: () => balance(),
+  });
+  const parentName = data?.name || "Parent";
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -141,9 +147,7 @@ const ParentScreen = ({ navigation }) => {
                 onImagePick={handleImagePick}
                 onNavigate={(id) =>
                   navigation.navigate("ProfileScreen", { childId: id })
-                
                 }
-           
               />
             ))}
             <TouchableOpacity
