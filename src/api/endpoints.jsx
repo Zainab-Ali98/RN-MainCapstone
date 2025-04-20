@@ -9,38 +9,49 @@ const Children = `/Children`
 const Parents = `/Parents`
 const Transactions = `/Transactions`
 const Users = `/Users`
+const Rewards = `/Rewards`
 
 const AuthEndpoints = {
-login: `${Auth}/login`,
-register: `${Auth}/register`
+    login: `${Auth}/login`,
+    register: `${Auth}/register`
 }
 
 const ChildrenEndpoints = {
     tasks: `${Children}/tasks`,
-    tasksComplete: `${Children}/tasks/{id}/complete`,
-    loyaltyTransactions: `${Children}/loyalty-transactions`,
     getSavingsGoals: `${Children}/savings-goals`,
     createSavingsGoal: `${Children}/savings-goals`,
+    loyaltyTransactions: `${Children}/loyalty-transactions`,
     savingsGoalsDeposit: `${Children}/savings-goals/{id}/deposit`,
+    // break endpoint means ???
     savingsGoalsBreak: `${Children}/savings-goals/{id}/break`,
+    tasksComplete: `${Children}/tasks/{id}/complete`,
 }
 
 const ParentsEndpoints = {
     tasks: `${Parents}/tasks`,
-    tasksComplete: `${Parents}/tasks/{id}/complete`,
+    getChildTasks: `${Parents}/tasks/{id}`,
     createChild: `${Parents}/create-child`,
     depositToChild: `${Parents}/deposit-to-child/{id}`,
-    createTask: `${Parents}/create-task`,
+    createTaskForChild: `${Parents}/create-task`,
     tasksVerify: `${Parents}/tasks/{id}/verify`,
-    savingsGoals: `${Parents}/savings-goals/{id}`,
+    getChildSavingsGoals: `${Parents}/savings-goals/{id}`,
 }
 
 const TransactionsEndpoints = {
-    Transactions: `${Transactions}/Transactions`,
+    Transactions: `${Transactions}`,
 }
 
 const UsersEndpoints = {
-balance: `${Users}/balance`,
-profile: `${Users}/profile`,
+    balance: `${Users}/balance`,
+    profile: `${Users}/profile`,
 }
-export { AuthEndpoints, ChildrenEndpoints, ParentsEndpoints, TransactionsEndpoints, UsersEndpoints };
+
+const RewardsEndpoints = {
+    rewards: `${Rewards}/reward`,
+    create: `${Rewards}/create`,
+}
+
+export { AuthEndpoints, ChildrenEndpoints, 
+    ParentsEndpoints, TransactionsEndpoints, 
+    UsersEndpoints, RewardsEndpoints  }; 
+

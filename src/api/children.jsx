@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { ChildrenEndpoints } from './endpoints';
+import instance from "../api/index";
 
 const tasks = async () => {
   try {
-    const response = await axios.get(ChildrenEndpoints.tasks);
+    const response = await instance.get(ChildrenEndpoints.tasks);
     return response.data;
   } catch (error) {
     console.error('Error fetching child tasks:', error);
@@ -14,7 +15,7 @@ const tasks = async () => {
 const taskComplete = async (taskId) => {
   try {
     const endpoint = ChildrenEndpoints.tasksComplete.replace('{id}', taskId);
-    const response = await axios.put(endpoint);
+    const response = await instance.put(endpoint);
     return response.data;
   } catch (error) {
     console.error('Error marking task complete:', error);
@@ -24,7 +25,7 @@ const taskComplete = async (taskId) => {
 
 const getSavingsGoals = async () => {
   try {
-    const response = await axios.get(ChildrenEndpoints.savingsGoals);
+    const response = await instance.get(ChildrenEndpoints.getSavingsGoals);
     return response.data;
   } catch (error) {
     console.error('Error fetching savings goals:', error);
@@ -32,10 +33,16 @@ const getSavingsGoals = async () => {
   }
 };
 
+/* goalInfo is an object containing the goal information
+    GoalName - string
+    TargetAmount - double
+*/
 const CreateSavingsGoals = async (goalInfo, image) => {
   try {
     const formData = new FormData();
-    formData.append('goalInfo', JSON.stringify(goalInfo));
+    for (key in goalInfo) {
+        formData.append(key, goalInfo[key]);
+      }
     if (Image) {
       formData.append('image', {
         uri: image,
@@ -43,7 +50,7 @@ const CreateSavingsGoals = async (goalInfo, image) => {
         name: 'goal-image.jpg'
       });
     }
-    const response = await axios.post(ChildrenEndpoints.savingsGoals, formData, {
+    const response = await instance.post(ChildrenEndpoints.createSavingGoals, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -58,7 +65,7 @@ const CreateSavingsGoals = async (goalInfo, image) => {
 const savingsGoalsDeposit = async (goalId, depositData) => {
   try {
     const endpoint = ChildrenEndpoints.savingsGoalsDeposit.replace('{id}', goalId);
-    const response = await axios.post(endpoint, depositData);
+    const response = await instance.post(endpoint, depositData);
     return response.data;
   } catch (error) {
     console.error('Error depositing to savings goal:', error);
@@ -69,7 +76,7 @@ const savingsGoalsDeposit = async (goalId, depositData) => {
 const savingsGoalsBreak = async (goalId) => {
   try {
     const endpoint = ChildrenEndpoints.savingsGoalsBreak.replace('{id}', goalId);
-    const response = await axios.post(endpoint);
+    const response = await instance.post(endpoint);
     return response.data;
   } catch (error) {
     console.error('Error breaking savings goal:', error);
@@ -78,3 +85,7 @@ const savingsGoalsBreak = async (goalId) => {
 }
 
 export { tasks, taskComplete, getSavingsGoals, CreateSavingsGoals, savingsGoalsDeposit, savingsGoalsBreak };
+
+
+
+
