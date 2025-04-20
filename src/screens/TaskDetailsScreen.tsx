@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   View,
@@ -46,7 +45,7 @@ const TaskDetailsScreen = ({ route }) => {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backText}>← Back</Text>
+        {/* <Text style={styles.backText}>← Back</Text> */}
       </TouchableOpacity>
 
       <Text style={styles.title}>Task Details</Text>

@@ -60,7 +60,7 @@ export const ParentHomeNavigator = () => {
       <Tab.Screen name="CreateChildAcc" component={CreatenewAcc} />
       <Tab.Screen name="Deposit" component={DepositScreen} />
       <Tab.Screen name="CreateTask" component={CreateTaskScreen} />
-      {/* <tab.Screen name="Task" component={TaskDetailsScreen} /> */}
+     
     </Tab.Navigator>
 
 

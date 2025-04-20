@@ -61,7 +61,7 @@ const DepositScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Logout />
+      {/* <Logout /> */}
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
