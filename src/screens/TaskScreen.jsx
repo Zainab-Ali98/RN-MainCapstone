@@ -9,7 +9,6 @@ import {
   ScrollView,
   Animated,
 } from "react-native";
-import Logout from "../components/Logout";
 
 const { height } = Dimensions.get("window");
 
@@ -26,7 +25,6 @@ const TaskScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Logout />
       <View style={styles.content}>
         
         <View style={styles.headerContainer}>

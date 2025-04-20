@@ -78,7 +78,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Logout />
+      {/* <Logout /> */}
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
