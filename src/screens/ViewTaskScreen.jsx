@@ -9,7 +9,6 @@ import {
   ScrollView,
 } from "react-native";
 import Logout from "../components/Logout";
-
 const { width, height } = Dimensions.get("window");
 
 // Mock data for testing

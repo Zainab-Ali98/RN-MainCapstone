@@ -141,7 +141,9 @@ const ParentScreen = ({ navigation }) => {
                 onImagePick={handleImagePick}
                 onNavigate={(id) =>
                   navigation.navigate("ProfileScreen", { childId: id })
+                
                 }
+           
               />
             ))}
             <TouchableOpacity

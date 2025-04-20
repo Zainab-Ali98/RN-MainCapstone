@@ -11,7 +11,7 @@ import {
 
 const { width, height } = Dimensions.get("window");
 
-const CreateNewGoal = () => {
+const CreateNewGoal = ({ navigation }) => {
   const [goalName, setGoalName] = useState("");
   const [price, setPrice] = useState("");
 
@@ -64,7 +64,11 @@ const CreateNewGoal = () => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            // onPress={handleSubmit}
+            onPress={() => navigation.navigate("ProgressGoalScreen")}
+          >
             <Text style={styles.buttonText}>Create Goal</Text>
           </TouchableOpacity>
           <Image
@@ -153,10 +157,10 @@ const styles = StyleSheet.create({
     width: 100,
     height: 70,
     position: "absolute",
-    right: 0,
-    top: -50,
+    right: 10,
+    top: -67,
     zIndex: 1,
   },
 });
 
-export default CreateNewGoal; 
+export default CreateNewGoal;
