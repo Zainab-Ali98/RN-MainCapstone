@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Modal,
 } from "react-native";
 import { balance } from "../api/users";
 import { useQuery } from "@tanstack/react-query";
@@ -25,10 +26,10 @@ const ParentScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("kids");
   const [greeting, setGreeting] = useState("");
   const [children, setChildren] = useState([
-    { id: 1, name: "Zainab", balance: 120, status: "Ongoing", image: null },
-    { id: 2, name: "Noor", balance: 90, status: "Verified", image: null },
-    { id: 3, name: "Aziz", balance: 140, status: "Accepted", image: null },
-    { id: 4, name: "Bader", balance: 75, status: "Rejected", image: null },
+    { id: 1, name: "Zainab", balance: 120, image: null, emoji: null },
+    { id: 2, name: "Noor", balance: 90, image: null, emoji: null },
+    { id: 3, name: "Aziz", balance: 140, image: null, emoji: null },
+    { id: 4, name: "Bader", balance: 75, image: null, emoji: null },
   ]);
 
   const [tasks, setTasks] = useState([
@@ -61,6 +62,9 @@ const ParentScreen = ({ navigation }) => {
   });
   const parentName = data?.name || "Ali";
 
+  const [showEmojiModal, setShowEmojiModal] = useState(false);
+  const [selectedChildId, setSelectedChildId] = useState(null);
+
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting("Good morning");
@@ -81,6 +85,17 @@ const ParentScreen = ({ navigation }) => {
       );
       setChildren(updated);
     }
+  };
+
+  const handleEmojiSelect = (type) => {
+    const emoji = type === "boy" ? "👦" : "👧";
+    const updated = children.map((child) =>
+      child.id === selectedChildId
+        ? { ...child, emoji: emoji, image: null }
+        : child
+    );
+    setChildren(updated);
+    setShowEmojiModal(false);
   };
 
   const totalBalance = children.reduce((sum, c) => sum + c.balance, 0);
@@ -171,11 +186,34 @@ const ParentScreen = ({ navigation }) => {
               >
                 <View style={styles.childContent}>
                   <View style={styles.childHeader}>
-                    <Text style={styles.childName}>{child.name}</Text>
-                    <View
-                      style={[styles.statusBadge, getStatusStyle(child.status)]}
-                    >
-                      <Text style={styles.statusText}>{child.status}</Text>
+                    <View style={styles.avatarContainer}>
+                      {child.image ? (
+                        <Image
+                          source={{ uri: child.image }}
+                          style={styles.childImage}
+                        />
+                      ) : child.emoji ? (
+                        <View style={styles.emojiContainer}>
+                          <Text style={styles.emojiText}>{child.emoji}</Text>
+                        </View>
+                      ) : (
+                        <View style={styles.placeholderImage}>
+                          <MaterialIcons
+                            name="person"
+                            size={30}
+                            color="#0066FF"
+                          />
+                        </View>
+                      )}
+                    </View>
+                    <View style={styles.nameContainer}>
+                      <Text
+                        style={styles.childName}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        {child.name}
+                      </Text>
                     </View>
                   </View>
 
@@ -183,24 +221,34 @@ const ParentScreen = ({ navigation }) => {
                     <Text style={styles.balanceAmount}>
                       KWD {child.balance}
                     </Text>
-                    <MaterialIcons
-                      name="chevron-right"
-                      size={24}
-                      color="#0066FF"
-                    />
                   </View>
 
-                  <TouchableOpacity
-                    style={styles.uploadButton}
-                    onPress={() => handleImagePick(child.id)}
-                  >
-                    <MaterialIcons
-                      name="add-a-photo"
-                      size={20}
-                      color="#0066FF"
-                    />
-                    <Text style={styles.uploadText}>Upload Photo</Text>
-                  </TouchableOpacity>
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                      style={styles.uploadButton}
+                      onPress={() => handleImagePick(child.id)}
+                    >
+                      <MaterialIcons
+                        name="add-a-photo"
+                        size={24}
+                        color="#0066FF"
+                      />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.uploadButton}
+                      onPress={() => {
+                        setSelectedChildId(child.id);
+                        setShowEmojiModal(true);
+                      }}
+                    >
+                      <MaterialIcons
+                        name="emoji-emotions"
+                        size={24}
+                        color="#0066FF"
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </TouchableOpacity>
             ))}
@@ -296,6 +344,47 @@ const ParentScreen = ({ navigation }) => {
           </View>
         </>
       )}
+
+      {/* Emoji Selection Modal */}
+      <Modal
+        visible={showEmojiModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowEmojiModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Choose an Avatar</Text>
+            <View style={styles.emojiGrid}>
+              <TouchableOpacity
+                style={styles.emojiOption}
+                onPress={() => handleEmojiSelect("boy")}
+              >
+                <View style={styles.emojiCircle}>
+                  <Text style={styles.modalEmojiText}>👦</Text>
+                </View>
+                <Text style={styles.emojiLabel}>Boy</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.emojiOption}
+                onPress={() => handleEmojiSelect("girl")}
+              >
+                <View style={styles.emojiCircle}>
+                  <Text style={styles.modalEmojiText}>👧</Text>
+                </View>
+                <Text style={styles.emojiLabel}>Girl</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowEmojiModal(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -424,47 +513,74 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   childHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 12,
+  },
+  avatarContainer: {
+    width: 60,
+    height: 60,
+    marginBottom: 8,
+  },
+  childImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 30,
+  },
+  emojiContainer: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 30,
+    backgroundColor: "#E5F0FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emojiText: {
+    fontSize: 32,
+  },
+  placeholderImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 30,
+    backgroundColor: "#E5F0FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  nameContainer: {
+    backgroundColor: "#E5F0FF",
+    padding: 8,
+    borderRadius: 12,
+    width: "100%",
     alignItems: "center",
   },
   childName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
-  },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "500",
+    color: "#0066FF",
+    textAlign: "center",
   },
   childBalance: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    marginBottom: 12,
   },
   balanceAmount: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#0066FF",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 8,
   },
   uploadButton: {
-    flexDirection: "row",
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
     backgroundColor: "#E5F0FF",
-    padding: 8,
+    padding: 10,
     borderRadius: 12,
-  },
-  uploadText: {
-    fontSize: 14,
-    color: "#0066FF",
-    fontWeight: "500",
+    aspectRatio: 1,
   },
   addCard: {
     width: "47%",
@@ -564,5 +680,61 @@ const styles = StyleSheet.create({
   taskDate: {
     fontSize: 12,
     color: "#6B7280",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#1F2937",
+    marginBottom: 20,
+  },
+  emojiGrid: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 20,
+    marginBottom: 20,
+  },
+  emojiOption: {
+    alignItems: "center",
+  },
+  emojiCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#E5F0FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  modalEmojiText: {
+    fontSize: 40,
+  },
+  emojiLabel: {
+    fontSize: 16,
+    color: "#1F2937",
+    fontWeight: "500",
+  },
+  closeButton: {
+    backgroundColor: "#0066FF",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
