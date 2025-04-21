@@ -29,15 +29,15 @@ const getChildTask = async (childId) => {
     LastName - string
     ProfilePicture - string ($binary)
 */
-const createChild = async (childData, Image) => {
+const createChild = async (childData, image) => {
     try {
         const formData = new FormData();
         for (key in childData) {
             formData.append(key, childData[key]);
           }
-      if (Image) {
+      if (imagemage) {
         formData.append('image', {
-          uri: Image,
+          uri: image,
           type: 'image/jpeg',
           name: 'child-image.jpg'
         });
@@ -72,15 +72,15 @@ const depositToChild = async (childId, depositData) => {
     TaskPicture - string ($binary)
     RewardReward - double
 */
-const createTaskForChild = async (taskData, Image) => {
+const createTaskForChild = async (taskData, image) => {
     try {
         const formData = new FormData();
         for (key in taskData) {
             formData.append(key, taskData[key]);
           }
-    if (Image) {
+    if (image) {
       formData.append('image', {
-        uri: Image,
+        uri: image,
         type: 'image/jpeg',
         name: 'task-image.jpg'
       });
