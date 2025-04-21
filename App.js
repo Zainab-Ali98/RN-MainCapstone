@@ -22,6 +22,7 @@ import ProgressGoalScreen from "./src/screens/ProgressGoalScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
 import ParentScreen from "./src/screens/ParentScreen";
+import PCDetailsScreen from "./src/screens/PCDetailsScreen";
 
 const queryClient = new QueryClient();
 
@@ -52,10 +53,13 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
           
-
-          {/* <ViewTaskScreen/> */}
+{/* 
+          <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
-          {/* <ParentScreen /> */}
+          {/* <ProfileScreen/>
+        //  <ParentScreen/> */}
+        <PCDetailsScreen/>
+          
          
 
           {/* {isAuth ? (
