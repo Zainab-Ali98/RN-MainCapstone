@@ -68,6 +68,7 @@ const ParentScreen = ({ navigation }) => {
   const parentName = balanceData?.name || "Parent";
   const totalBalance = balanceData?.balance ?? 0;
 
+
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting("Good morning");
@@ -89,7 +90,6 @@ const ParentScreen = ({ navigation }) => {
       setChildren(updated);
     }
   };
-
   // Fetch Children from backend using the getChildren endpoint
   const {
     data: childrenData,

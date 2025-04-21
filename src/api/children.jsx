@@ -43,18 +43,22 @@ const CreateSavingsGoals = async (goalInfo, image) => {
     for (key in goalInfo) {
         formData.append(key, goalInfo[key]);
       }
-    if (Image) {
-      formData.append('image', {
+    if (image) {
+      formData.append("SavingsGoalPicture", {
         uri: image,
-        type: 'image/jpeg',
-        name: 'goal-image.jpg'
+        type: "image/jpeg",
+        name: "goal-image.jpg",
       });
     }
-    const response = await instance.post(ChildrenEndpoints.createSavingGoals, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await instance.post(
+      ChildrenEndpoints.createSavingsGoal,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Error creating savings goal:', error);

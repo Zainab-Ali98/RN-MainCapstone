@@ -61,17 +61,24 @@ const getChildTask = async (childId) => {
     LastName - string
     ProfilePicture - string ($binary)
 */
-const createChild = async (childData, Image) => {
-  try {
-    const formData = new FormData();
-    for (key in childData) {
-      formData.append(key, childData[key]);
-    }
-    if (Image) {
-      formData.append("image", {
-        uri: Image,
-        type: "image/jpeg",
-        name: "child-image.jpg",
+
+const createChild = async (childData, image) => {
+    try {
+        const formData = new FormData();
+        for (key in childData) {
+            formData.append(key, childData[key]);
+          }
+      if (image) {
+        formData.append('image', {
+          uri: image,
+          type: 'image/jpeg',
+          name: 'child-image.jpg'
+        });
+      }
+      const response = await instance.post(ParentsEndpoints.createChild, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
     }
     const response = await instance.post(
@@ -108,17 +115,18 @@ const depositToChild = async (childId, depositData) => {
     TaskPicture - string ($binary)
     RewardReward - double
 */
-const createTaskForChild = async (taskData, Image) => {
-  try {
-    const formData = new FormData();
-    for (key in taskData) {
-      formData.append(key, taskData[key]);
-    }
-    if (Image) {
-      formData.append("image", {
-        uri: Image,
-        type: "image/jpeg",
-        name: "task-image.jpg",
+
+const createTaskForChild = async (taskData, image) => {
+    try {
+        const formData = new FormData();
+        for (key in taskData) {
+            formData.append(key, taskData[key]);
+          }
+    if (image) {
+      formData.append('image', {
+        uri: image,
+        type: 'image/jpeg',
+        name: 'task-image.jpg'
       });
     }
     const response = await instance.post(
