@@ -59,7 +59,7 @@ const ParentScreen = ({ navigation }) => {
     queryKey: ["fetchBalance"],
     queryFn: () => balance(),
   });
-  const parentName = data?.name || "Parent";
+  const parentName = data?.name || "Ali";
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -85,13 +85,34 @@ const ParentScreen = ({ navigation }) => {
 
   const totalBalance = children.reduce((sum, c) => sum + c.balance, 0);
 
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "Verified":
+        return styles.statusVerified;
+      case "Ongoing":
+        return styles.statusOngoing;
+      case "Accepted":
+        return styles.statusAccepted;
+      case "Rejected":
+        return styles.statusRejected;
+      default:
+        return {};
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Logout />
       <View style={styles.header}>
-        <Text style={styles.greeting}>
-          {greeting}, <Text style={styles.boldName}>{parentName}</Text>
-        </Text>
+        <View style={styles.greetingSection}>
+          <View style={styles.greetingBox}>
+            <MaterialIcons name="wb-sunny" size={24} color="#FFD700" />
+            <View style={styles.greetingTextContainer}>
+              <Text style={styles.dayText}>{greeting}</Text>
+              <Text style={styles.nameText}>Ali</Text>
+            </View>
+          </View>
+        </View>
 
         {/* Animated Balance */}
         <View style={styles.balanceCard}>
@@ -141,20 +162,53 @@ const ParentScreen = ({ navigation }) => {
         <>
           <View style={styles.grid}>
             {children.map((child) => (
-              <KidBox
+              <TouchableOpacity
                 key={child.id}
-                child={child}
-                onImagePick={handleImagePick}
-                onNavigate={(id) =>
-                  navigation.navigate("ProfileScreen", { childId: id })
+                style={styles.childCard}
+                onPress={() =>
+                  navigation.navigate("ProfileScreen", { childId: child.id })
                 }
-              />
+              >
+                <View style={styles.childContent}>
+                  <View style={styles.childHeader}>
+                    <Text style={styles.childName}>{child.name}</Text>
+                    <View
+                      style={[styles.statusBadge, getStatusStyle(child.status)]}
+                    >
+                      <Text style={styles.statusText}>{child.status}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.childBalance}>
+                    <Text style={styles.balanceAmount}>
+                      KWD {child.balance}
+                    </Text>
+                    <MaterialIcons
+                      name="chevron-right"
+                      size={24}
+                      color="#0066FF"
+                    />
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.uploadButton}
+                    onPress={() => handleImagePick(child.id)}
+                  >
+                    <MaterialIcons
+                      name="add-a-photo"
+                      size={20}
+                      color="#0066FF"
+                    />
+                    <Text style={styles.uploadText}>Upload Photo</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
             ))}
             <TouchableOpacity
               style={styles.addCard}
               onPress={() => navigation.navigate("CreatenewAcc")}
             >
-              <MaterialIcons name="add" size={30} color="#7C3AED" />
+              <MaterialIcons name="add" size={30} color="#0066FF" />
               <Text style={styles.addText}>Add a child</Text>
             </TouchableOpacity>
           </View>
@@ -165,13 +219,29 @@ const ParentScreen = ({ navigation }) => {
             {tasks
               .filter((t) => t.status === "Verified")
               .map((task) => (
-                <TaskBox
+                <TouchableOpacity
                   key={task.id}
-                  task={task}
+                  style={styles.taskCard}
                   onPress={() =>
                     navigation.navigate("TaskDetailsScreen", { task })
                   }
-                />
+                >
+                  <View style={styles.taskHeader}>
+                    <View style={styles.taskIcon}>
+                      <MaterialIcons
+                        name="assignment"
+                        size={20}
+                        color="#0066FF"
+                      />
+                    </View>
+                    <Text style={styles.taskStatus}>{task.status}</Text>
+                  </View>
+                  <Text style={styles.taskName}>{task.name}</Text>
+                  <View style={styles.taskFooter}>
+                    <Text style={styles.childName}>{task.childName}</Text>
+                    <Text style={styles.taskDate}>{task.date}</Text>
+                  </View>
+                </TouchableOpacity>
               ))}
           </View>
         </>
@@ -182,13 +252,46 @@ const ParentScreen = ({ navigation }) => {
             {tasks
               .filter((t) => ["Accepted", "Rejected"].includes(t.status))
               .map((task) => (
-                <TaskBox
+                <TouchableOpacity
                   key={task.id}
-                  task={task}
+                  style={styles.taskCard}
                   onPress={() =>
                     navigation.navigate("TaskScreen", { taskId: task.id })
                   }
-                />
+                >
+                  <View style={styles.taskHeader}>
+                    <View style={styles.taskIcon}>
+                      <MaterialIcons
+                        name="assignment"
+                        size={20}
+                        color="#0066FF"
+                      />
+                    </View>
+                    <View
+                      style={[
+                        styles.taskStatus,
+                        task.status === "Accepted"
+                          ? styles.statusAccepted
+                          : styles.statusRejected,
+                      ]}
+                    >
+                      <Text style={styles.statusText}>{task.status}</Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.taskName}>{task.name}</Text>
+
+                  <View style={styles.taskFooter}>
+                    <View style={styles.childInfo}>
+                      <MaterialIcons name="person" size={16} color="#6B7280" />
+                      <Text style={styles.childName}>{task.childName}</Text>
+                    </View>
+                    <View style={styles.dateInfo}>
+                      <MaterialIcons name="event" size={16} color="#6B7280" />
+                      <Text style={styles.taskDate}>{task.date}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
               ))}
           </View>
         </>
@@ -200,17 +303,61 @@ const ParentScreen = ({ navigation }) => {
 export default ParentScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f9fafb" },
-  header: { padding: 24, paddingTop: 50, backgroundColor: "#6C63FF" },
-  greeting: { color: "#fff", fontSize: 20, marginTop: 10 },
-  boldName: { fontWeight: "bold", fontSize: 22 },
+  container: {
+    flex: 1,
+    backgroundColor: "#FDFAF6",
+  },
+  header: {
+    padding: 24,
+    paddingTop: 50,
+    backgroundColor: "#0066FF",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  greetingSection: {
+    paddingHorizontal: 4,
+    marginBottom: 20,
+  },
+  greetingBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    padding: 16,
+    borderRadius: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: "#FFD700",
+  },
+  greetingTextContainer: {
+    marginLeft: 12,
+  },
+  dayText: {
+    color: "rgba(255, 255, 255, 0.9)",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  nameText: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 4,
+  },
   balanceCard: {
-    marginTop: 12,
-    backgroundColor: "#fff",
+    backgroundColor: "#0066FF",
     borderRadius: 16,
     padding: 20,
+    marginTop: 12,
+    marginHorizontal: 16,
+    borderStyle: "dashed",
     borderWidth: 2,
-    borderColor: "#7C3AED",
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   balanceRow: {
     flexDirection: "row",
@@ -221,42 +368,201 @@ const styles = StyleSheet.create({
     height: 60,
     marginRight: 12,
   },
-  balanceLabel: { color: "#6B7280" },
+  balanceLabel: {
+    color: "rgba(255, 255, 255, 0.8)",
+    fontSize: 14,
+    fontWeight: "500",
+  },
   balanceValue: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#7C3AED",
+    color: "#fff",
     marginTop: 4,
   },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 16,
+    paddingHorizontal: 20,
   },
-  tabText: { fontSize: 16, color: "#9CA3AF" },
-  tabTextActive: { color: "#7C3AED", fontWeight: "bold" },
+  tabText: {
+    fontSize: 16,
+    color: "#6B7280",
+    fontWeight: "500",
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: "#F3F4F6",
+  },
+  tabTextActive: {
+    color: "#0066FF",
+    backgroundColor: "#E5F0FF",
+    fontWeight: "600",
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingHorizontal: 20,
+    padding: 16,
+    gap: 12,
+  },
+  childCard: {
+    width: "47%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  childContent: {
+    gap: 12,
+  },
+  childHeader: {
+    flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+  },
+  childName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1F2937",
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  childBalance: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  balanceAmount: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#0066FF",
+  },
+  uploadButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: "#E5F0FF",
+    padding: 8,
+    borderRadius: 12,
+  },
+  uploadText: {
+    fontSize: 14,
+    color: "#0066FF",
+    fontWeight: "500",
   },
   addCard: {
     width: "47%",
     height: 130,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: "#7C3AED",
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  addText: { marginTop: 6, fontWeight: "600", color: "#7C3AED" },
+  addText: {
+    marginTop: 6,
+    color: "#0066FF",
+    fontSize: 14,
+    fontWeight: "600",
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    paddingHorizontal: 20,
-    marginVertical: 10,
     color: "#1F2937",
+    paddingHorizontal: 16,
+    marginVertical: 16,
+  },
+  taskCard: {
+    width: "47%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  taskHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+  taskIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: "#E5F0FF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  taskStatus: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusAccepted: {
+    backgroundColor: "#E5FFE9",
+  },
+  statusRejected: {
+    backgroundColor: "#FFE5E5",
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#1F2937",
+  },
+  taskName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1F2937",
+    marginBottom: 12,
+  },
+  taskFooter: {
+    gap: 8,
+  },
+  childInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  dateInfo: {
+    flexDirection: "row",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  taskDate: {
+    fontSize: 12,
+    color: "#6B7280",
   },
 });
