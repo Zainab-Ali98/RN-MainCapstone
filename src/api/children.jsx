@@ -61,6 +61,7 @@ const CreateSavingsGoals = async (goalInfo, image) => {
     );
     return response.data;
   } catch (error) {
+    
     console.error('Error creating savings goal:', error);
     throw error;
   }

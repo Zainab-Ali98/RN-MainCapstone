@@ -21,6 +21,7 @@ import TaskListScreen from "./src/screens/TaskListScreen";
 import ProgressGoalScreen from "./src/screens/ProgressGoalScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
+import TaskScreen from "./src/screens/TaskScreen";
 
 const queryClient = new QueryClient();
 
@@ -50,31 +51,13 @@ export default function App() {
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
-          {/* For debugging */}
-          {/* <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen
-              name="ProgressGoalScreen"
-              component={ProgressGoalScreen}
-              headerBackButtonMenuEnabled="false"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ChildDepositScreen"
-              component={ChildDepositScreen}
-              headerBackButtonMenuEnabled="false"
-              options={{ headerShown: false }}
-            /> */}
-          {/* </Stack.Navigator> */}
-          {/* For debugging */}
+         
 
           {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
           {/* <ChildListScreen/> */}
-
+          {/* <ProgressGoalScreen/> */}
+          {/* <TaskScreen/> */}
           {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
