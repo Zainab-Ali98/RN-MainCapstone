@@ -1,23 +1,55 @@
-import axios from 'axios';
-import { ParentsEndpoints } from './endpoints';
+import axios from "axios";
+import { ParentsEndpoints } from "./endpoints";
 import instance from "../api/index";
-const tasks = async () => {
+
+const getTasks = async () => {
   try {
-    const response = await axios.get(ParentsEndpoints.tasks);
+    const response = await instance.get(ParentsEndpoints.tasks);
+    console.log("Tasks:", response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching parent tasks:', error);
+    console.error("Error fetching parent tasks:", error);
     throw error;
   }
 };
-
+const getChildren = async () => {
+  try {
+    const response = await instance.get(ParentsEndpoints.getChildren);
+    console.log("Children:", response.data);
+    return response.data; // Array of { childId, firstName, lastName, childAccountId, balance }
+  } catch (error) {
+    if (error.response) {
+      console.error("Error fetching children:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+        message: error.message,
+      });
+    } else if (error.request) {
+      console.error("Network Error fetching children:", {
+        message: error.message,
+        request: error.request,
+      });
+    } else {
+      console.error("Error setting up children request:", {
+        message: error.message,
+      });
+    }
+    throw {
+      message: error.message,
+      status: error.response?.status || null,
+      statusText: error.response?.statusText || null,
+      data: error.response?.data || null,
+    };
+  }
+};
 const getChildTask = async (childId) => {
   try {
-    const endpoint = ParentsEndpoints.getChildTasks.replace('{id}', childId);
+    const endpoint = ParentsEndpoints.getChildTasks.replace("{id}", childId);
     const response = await instance.put(endpoint);
     return response.data;
   } catch (error) {
-    console.error('Error marking task complete:', error);
+    console.error("Error marking task complete:", error);
     throw error;
   }
 };
@@ -30,42 +62,46 @@ const getChildTask = async (childId) => {
     ProfilePicture - string ($binary)
 */
 const createChild = async (childData, Image) => {
-    try {
-        const formData = new FormData();
-        for (key in childData) {
-            formData.append(key, childData[key]);
-          }
-      if (Image) {
-        formData.append('image', {
-          uri: Image,
-          type: 'image/jpeg',
-          name: 'child-image.jpg'
-        });
-      }
-      const response = await instance.post(ParentsEndpoints.createChild, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error creating child:', error);
-      throw error;
+  try {
+    const formData = new FormData();
+    for (key in childData) {
+      formData.append(key, childData[key]);
     }
-  };
+    if (Image) {
+      formData.append("image", {
+        uri: Image,
+        type: "image/jpeg",
+        name: "child-image.jpg",
+      });
+    }
+    const response = await instance.post(
+      ParentsEndpoints.createChild,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating child:", error);
+    throw error;
+  }
+};
 
 const depositToChild = async (childId, depositData) => {
-    try {
-      const endpoint = ParentsEndpoints.depositToChild.replace('{id}', childId);
-      const response = await instance.post(endpoint, depositData);
-      return response.data;
-    } catch (error) {
-      console.error('Error depositing to child:', error);
-      throw error;
-    }
-  };
+  try {
+    const endpoint = ParentsEndpoints.depositToChild.replace("{id}", childId);
+    const response = await instance.post(endpoint, depositData);
+    return response.data;
+  } catch (error) {
+    console.error("Error depositing to child:", error);
+    throw error;
+  }
+};
 
-  /*
+/*
     TaskData is
     TaskName - string
     TaskDescription - string
@@ -73,49 +109,65 @@ const depositToChild = async (childId, depositData) => {
     RewardReward - double
 */
 const createTaskForChild = async (taskData, Image) => {
-    try {
-        const formData = new FormData();
-        for (key in taskData) {
-            formData.append(key, taskData[key]);
-          }
+  try {
+    const formData = new FormData();
+    for (key in taskData) {
+      formData.append(key, taskData[key]);
+    }
     if (Image) {
-      formData.append('image', {
+      formData.append("image", {
         uri: Image,
-        type: 'image/jpeg',
-        name: 'task-image.jpg'
+        type: "image/jpeg",
+        name: "task-image.jpg",
       });
     }
-    const response = await instance.post(ParentsEndpoints.createTaskForChild, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await instance.post(
+      ParentsEndpoints.createTaskForChild,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.error('Error creating task:', error);
+    console.error("Error creating task:", error);
     throw error;
   }
 };
 
 const verifyTask = async (taskId) => {
   try {
-    const endpoint = ParentsEndpoints.tasksVerify.replace('{id}', taskId);
+    const endpoint = ParentsEndpoints.tasksVerify.replace("{id}", taskId);
     const response = await instance.put(endpoint);
     return response.data;
   } catch (error) {
-    console.error('Error verifying task:', error);
+    console.error("Error verifying task:", error);
     throw error;
   }
 };
 
 const getChildSavingsGoals = async (childId) => {
-    try {
-      const endpoint = ParentsEndpoints.getChildSavingsGoals.replace('{id}', childId);
-      const response = await instance.get(endpoint);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching child savings goals:', error);
-      throw error;
-    }
-  };
-export { tasks, getChildTask, createChild, depositToChild, createTaskForChild, verifyTask, getChildSavingsGoals };
+  try {
+    const endpoint = ParentsEndpoints.getChildSavingsGoals.replace(
+      "{id}",
+      childId
+    );
+    const response = await instance.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching child savings goals:", error);
+    throw error;
+  }
+};
+export {
+  getTasks,
+  getChildren,
+  getChildTask,
+  createChild,
+  depositToChild,
+  createTaskForChild,
+  verifyTask,
+  getChildSavingsGoals,
+};
