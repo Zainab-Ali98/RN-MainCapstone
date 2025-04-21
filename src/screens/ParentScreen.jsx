@@ -55,11 +55,15 @@ const ParentScreen = ({ navigation }) => {
     },
   ]);
   // Fetch Parent Name from backend using the balance endpoint
-  const { data, isError, error } = useQuery({
+  const {
+    data: balanceData,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["fetchBalance"],
     queryFn: () => balance(),
   });
-  const parentName = data?.name || "Parent";
+  const parentName = balanceData?.name || "Parent";
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -83,7 +87,8 @@ const ParentScreen = ({ navigation }) => {
     }
   };
 
-  const totalBalance = children.reduce((sum, c) => sum + c.balance, 0);
+  const totalBalance =
+    balanceData?.balance ?? children.reduce((sum, c) => sum + c.balance, 0);
 
   return (
     <ScrollView style={styles.container}>
