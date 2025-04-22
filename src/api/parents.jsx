@@ -61,24 +61,17 @@ const getChildTask = async (childId) => {
     LastName - string
     ProfilePicture - string ($binary)
 */
-
 const createChild = async (childData, image) => {
-    try {
-        const formData = new FormData();
-        for (key in childData) {
-            formData.append(key, childData[key]);
-          }
-      if (image) {
-        formData.append('image', {
-          uri: image,
-          type: 'image/jpeg',
-          name: 'child-image.jpg'
-        });
-      }
-      const response = await instance.post(ParentsEndpoints.createChild, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+  try {
+    const formData = new FormData();
+    for (key in childData) {
+      formData.append(key, childData[key]);
+    }
+    if (image) {
+      formData.append("image", {
+        uri: image,
+        type: "image/jpeg",
+        name: "child-image.jpg",
       });
     }
     const response = await instance.post(
