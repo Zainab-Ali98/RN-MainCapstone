@@ -61,15 +61,15 @@ const getChildTask = async (childId) => {
     LastName - string
     ProfilePicture - string ($binary)
 */
-const createChild = async (childData, Image) => {
+const createChild = async (childData, image) => {
   try {
     const formData = new FormData();
     for (key in childData) {
       formData.append(key, childData[key]);
     }
-    if (Image) {
+    if (image) {
       formData.append("image", {
-        uri: Image,
+        uri: image,
         type: "image/jpeg",
         name: "child-image.jpg",
       });
