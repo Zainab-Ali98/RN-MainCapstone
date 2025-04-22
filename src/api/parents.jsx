@@ -108,17 +108,18 @@ const depositToChild = async (childId, depositData) => {
     TaskPicture - string ($binary)
     RewardReward - double
 */
-const createTaskForChild = async (taskData, Image) => {
-  try {
-    const formData = new FormData();
-    for (key in taskData) {
-      formData.append(key, taskData[key]);
-    }
-    if (Image) {
-      formData.append("image", {
-        uri: Image,
-        type: "image/jpeg",
-        name: "task-image.jpg",
+
+const createTaskForChild = async (taskData, image) => {
+    try {
+        const formData = new FormData();
+        for (key in taskData) {
+            formData.append(key, taskData[key]);
+          }
+    if (image) {
+      formData.append('image', {
+        uri: image,
+        type: 'image/jpeg',
+        name: 'task-image.jpg'
       });
     }
     const response = await instance.post(
