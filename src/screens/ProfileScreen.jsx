@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import CircleProgress from "../components/CircleProgress";
 import Logout from "../components/Logout";
+import { getChildTask, getChildSavingsGoals } from "../api/parents";
+import { useQuery } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
 
@@ -34,7 +36,7 @@ const TaskItem = ({ item }) => {
     switch (status.toLowerCase()) {
       case "verified":
         return "#3B82F6";
-      case "approved":
+      case "completed":
         return "#10B981";
       case "rejected":
         return "#EF4444";
@@ -73,8 +75,30 @@ const SavingGoalItem = ({ item }) => {
   );
 };
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ route }) => {
   const navigation = useNavigation();
+  const child = route.params; // Get the child data from route params
+  console.log("Child data:", child); // Log the child data for debugging
+
+  // Fetch Child Tasks
+  const {
+    data: tasksData,
+    isLoading: isTasksLoading,
+    isError: isTasksError,
+    error: tasksError,
+  } = useQuery({
+    queryKey: ["childTasks", child.id],
+    queryFn: () => getChildTask(child.id),
+  });
+
+  // Map Child Tasks
+  const tasks =
+    tasksData?.map((task) => ({
+      id: task.taskId.toString(),
+      title: task.taskName,
+      amount: task.reward || 0, // Adjust based on actual field name (e.g., RewardReward)
+      status: task.status || "Pending",
+    })) || [];
 
   return (
     <View style={styles.container}>
@@ -90,7 +114,9 @@ const ProfileScreen = () => {
           {/* Balance Card */}
           <View style={styles.balanceCard}>
             <Text style={styles.balanceLabel}>Total Available Balance</Text>
-            <Text style={styles.balanceAmount}>3077.20 KWD</Text>
+            <Text style={styles.balanceAmount}>
+              ${child?.balance.toFixed(2)}
+            </Text>
           </View>
 
           {/* Saving Goals */}
@@ -109,7 +135,7 @@ const ProfileScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasks</Text>
             <FlatList
-              data={mockTasks}
+              data={tasks}
               renderItem={({ item }) => <TaskItem item={item} />}
               keyExtractor={(item) => item.id}
               scrollEnabled={false}
