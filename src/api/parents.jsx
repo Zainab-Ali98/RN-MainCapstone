@@ -46,7 +46,7 @@ const getChildren = async () => {
 const getChildTask = async (childId) => {
   try {
     const endpoint = ParentsEndpoints.getChildTasks.replace("{id}", childId);
-    const response = await instance.put(endpoint);
+    const response = await instance.get(endpoint);
     return response.data;
   } catch (error) {
     console.error("Error marking task complete:", error);

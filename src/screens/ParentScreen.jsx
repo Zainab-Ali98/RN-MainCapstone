@@ -25,12 +25,6 @@ import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 const ParentScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("kids");
   const [greeting, setGreeting] = useState("");
-  // const [children, setChildren] = useState([
-  //   { id: 1, name: "Zainab", balance: 120, status: "Ongoing", image: null },
-  //   { id: 2, name: "Noor", balance: 90, status: "Verified", image: null },
-  //   { id: 3, name: "Aziz", balance: 140, status: "Accepted", image: null },
-  //   { id: 4, name: "Bader", balance: 75, status: "Rejected", image: null },
-  // ]);
   const [childImages, setChildImages] = useState({}); // { childId: imageUri }
 
   const [tasks, setTasks] = useState([
@@ -56,6 +50,7 @@ const ParentScreen = ({ navigation }) => {
       date: "2025-04-12",
     },
   ]);
+
   // Fetch Parent Name from backend using the balance endpoint
   const {
     data: balanceData,
@@ -126,7 +121,7 @@ const ParentScreen = ({ navigation }) => {
     queryKey: ["fetchTasks"],
     queryFn: () => getTasks(),
     onSuccess: (data) => {
-      console.log("Task data:", data);
+      //console.log("Task data:", data);
     },
     onError: (error) => {
       console.error("Error fetching children:", error);
@@ -161,7 +156,7 @@ const ParentScreen = ({ navigation }) => {
     };
   });
   const tasksList = taskFilteredData ?? [];
-  console.log("Children data:", taskFilteredData);
+  //console.log("Children data:", taskFilteredData);
 
   return (
     <ScrollView style={styles.container}>
@@ -227,7 +222,7 @@ const ParentScreen = ({ navigation }) => {
                   child={child}
                   onImagePick={handleImagePick}
                   onNavigate={(id) =>
-                    navigation.navigate("ProfileScreen", { childId: id })
+                    navigation.navigate("ProfileScreen", child)
                   }
                 />
               ))
