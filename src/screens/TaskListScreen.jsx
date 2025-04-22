@@ -153,7 +153,7 @@ const TaskListScreen = () => {
                 key={task.taskId}
                 style={[
                   styles.taskItem,
-                  selectedTask === task.id && styles.selectedTask,
+                  selectedTask === task.taskId && styles.selectedTask,
                 ]}
                 onPress={() => handleTaskListPress(task)}
               >
@@ -171,7 +171,7 @@ const TaskListScreen = () => {
                   {task.status === "Pending" && (
                     <TouchableOpacity
                       style={styles.uploadButton}
-                      onPress={() => handleImagePick(task.id)}
+                      onPress={() => handleImagePick(task.taskId)}
                     >
                       <Text style={styles.uploadButtonText}>Upload Photo</Text>
                     </TouchableOpacity>
