@@ -49,6 +49,8 @@ const UsersEndpoints = {
 const RewardsEndpoints = {
     rewards: `${Rewards}/reward`,
     create: `${Rewards}/create`,
+    convertPoints: `${Rewards}/convert-points`,
+    redeem: `${Rewards}/redeem/{id}`,
 }
 
 export { AuthEndpoints, ChildrenEndpoints, 
