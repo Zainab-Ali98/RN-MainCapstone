@@ -56,6 +56,7 @@ export default function App() {
           {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
           {/* <ParentScreen /> */}
+          <TaskListScreen />
          
 
           {/* {isAuth ? (
