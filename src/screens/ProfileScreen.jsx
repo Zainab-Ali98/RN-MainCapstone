@@ -80,6 +80,27 @@ const ProfileScreen = ({ route }) => {
   const child = route.params; // Get the child data from route params
   console.log("Child data:", child); // Log the child data for debugging
 
+  // Fetch Child Savings Goals
+  const {
+    data: savingsGoalsData,
+    isLoading: isGoalsLoading,
+    isError: isGoalsError,
+    error: goalsError,
+  } = useQuery({
+    queryKey: ["childSavingsGoals", child.id],
+    queryFn: () => getChildSavingsGoals(child.id),
+    enabled: !!child.id,
+  });
+
+  // Map savings goals data to match SavingGoalItem expected format
+  const savingsGoals =
+    savingsGoalsData?.map((goal) => ({
+      id: goal.savingsGoalId.toString(),
+      title: goal.goalName,
+      amount: goal.targetAmount || 0, // Adjust based on actual field name
+      progress: goal.currentBalance || 0, // Adjust based on actual field name
+    })) || [];
+
   // Fetch Child Tasks
   const {
     data: tasksData,
@@ -96,7 +117,7 @@ const ProfileScreen = ({ route }) => {
     tasksData?.map((task) => ({
       id: task.taskId.toString(),
       title: task.taskName,
-      amount: task.reward || 0, // Adjust based on actual field name (e.g., RewardReward)
+      amount: task.rewardAmount || 0, // Adjust based on actual field name (e.g., RewardReward)
       status: task.status || "Pending",
     })) || [];
 
@@ -115,7 +136,7 @@ const ProfileScreen = ({ route }) => {
           <View style={styles.balanceCard}>
             <Text style={styles.balanceLabel}>Total Available Balance</Text>
             <Text style={styles.balanceAmount}>
-              ${child?.balance.toFixed(2)}
+              KWD {child?.balance.toFixed(2)}
             </Text>
           </View>
 
@@ -123,7 +144,7 @@ const ProfileScreen = ({ route }) => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Saving Goals</Text>
             <FlatList
-              data={mockSavingGoals}
+              data={savingsGoals}
               renderItem={({ item }) => <SavingGoalItem item={item} />}
               keyExtractor={(item) => item.id}
               horizontal
