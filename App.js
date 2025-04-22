@@ -22,6 +22,7 @@ import ProgressGoalScreen from "./src/screens/ProgressGoalScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
 import ParentScreen from "./src/screens/ParentScreen";
+import TaskScreen from "./src/screens/TaskScreen";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ export default function App() {
           {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
           {/* <ParentScreen /> */}
+          <TaskScreen />
          
 
           {/* {isAuth ? (

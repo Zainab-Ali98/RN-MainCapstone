@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,117 +7,161 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
-  Animated,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import CustomAlert from "../components/CustomAlert";
 
 const { height } = Dimensions.get("window");
 
 const TaskScreen = () => {
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
+  const [alertConfig, setAlertConfig] = useState({
+    visible: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
 
-  useEffect(() => {
-    Animated.timing(progressAnim, {
-      toValue: 0.48, 
-      duration: 1000,
-      useNativeDriver: false,
-    }).start();
-  }, []);
+  const handleAccept = () => {
+    setAlertConfig({
+      visible: true,
+      title: "Task Accepted",
+      message: "You have accepted the task completion.",
+      type: "success",
+    });
+  };
+
+  const handleReject = () => {
+    setAlertConfig({
+      visible: true,
+      title: "Task Rejected",
+      message: "You have rejected the task completion.",
+      type: "error",
+    });
+  };
+
+  const handleAlertClose = () => {
+    setAlertConfig({ ...alertConfig, visible: false });
+    navigation.navigate("ParentScreen");
+  };
+
+  // This would come from your backend
+  const taskDetails = {
+    title: "Clean Your Room",
+    points: 20,
+    status: "Verify",
+    description:
+      "Make your room neat by picking up toys, folding clothes, and organizing your desk. This task helps keep your space clean and tidy!",
+    imageUrl: null, // This would come from backend, null if no image
+    completionDate: "2024-03-20",
+    childName: "Sarah",
+  };
+
+  // Fallback images for different task types
+  const taskTypeImages = {
+    cleaning:
+      "https://cdn.pixabay.com/photo/2021/09/20/10/09/kids-room-6639469_1280.png",
+    homework:
+      "https://cdn.pixabay.com/photo/2017/08/10/02/05/tiles-shapes-2617112_1280.jpg",
+    exercise:
+      "https://cdn.pixabay.com/photo/2017/07/31/11/31/people-2557396_1280.jpg",
+    default:
+      "https://cdn.pixabay.com/photo/2017/08/10/02/05/tiles-shapes-2617112_1280.jpg",
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        
-        <View style={styles.headerContainer}>
-          <View style={styles.headerBadge}>
-            <Text style={styles.headerText}>Current Task</Text>
-          </View>
-          <Text style={styles.subHeaderText}>You're almost there!</Text>
-        </View>
-
-        
-        <View style={styles.taskDetails}>
-          <Text style={styles.taskName}>Clean Your Room</Text>
-          <Text style={styles.taskDescription}>
-            Make your room neat by picking up toys, folding clothes, and organizing your desk. This task helps keep your space clean and tidy!
-          </Text>
-          <View style={styles.badgeRow}>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>🟡 In Progress</Text>
-            </View>
-            <Text style={styles.dueText}>Due in: 3 Days</Text>
-            <Text style={styles.pointsText}>🎖 20 pts</Text>
-          </View>
-        </View>
-
-        
-        <View style={styles.imageSection}>
-          <Image
-            source={{
-              uri: "https://cdn.pixabay.com/photo/2021/09/20/10/09/kids-room-6639469_1280.png",
-            }}
-            style={styles.taskImage}
-            resizeMode="cover"
-          />
-        </View>
-
-        
-        <View style={styles.progressSection}>
-          <Text style={styles.progressTitle}>Task Progress</Text>
-
-          <View style={styles.progressContainer}>
-            <View style={styles.progressTrack}>
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: progressAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ["0%", "100%"],
-                    }),
-                  },
-                ]}
-              />
-              <View style={[styles.progressDot, { left: 0 }]} />
-              <View style={[styles.progressDot, { left: "48%" }]} />
-              <View style={[styles.progressDot, { right: 0 }]} />
-            </View>
-
-            <View style={styles.progressLabels}>
-              <Text style={styles.progressLabel}>Start</Text>
-              <Text style={styles.progressLabel}>Mid</Text>
-              <Text style={styles.progressLabel}>Finish</Text>
-            </View>
-          </View>
-        </View>
-
-       
-        <View style={styles.actionSection}>
-         
-          <View style={styles.actionButton}>
-            <Image
-              source={require("../../assets/purple.png")}
-              style={styles.buttonImage}
-              resizeMode="contain"
-            />
-            <TouchableOpacity style={[styles.finalButton, styles.accepted]}>
-              <Text style={styles.finalButtonText}>Accepted</Text>
-            </TouchableOpacity>
-          </View>
-
-        
-          <View style={styles.actionButton}>
-            <Image
-              source={require("../../assets/blue.png")}
-              style={styles.buttonImage}
-              resizeMode="contain"
-            />
-            <TouchableOpacity style={[styles.finalButton, styles.rejected]}>
-              <Text style={styles.finalButtonText}>Rejected</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.backgroundShapes}>
+        <View style={[styles.shape, styles.shape1]} />
+        <View style={[styles.shape, styles.shape2]} />
+        <View style={[styles.shape, styles.shape3]} />
       </View>
-    </ScrollView>
+
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <MaterialIcons name="arrow-back" size={24} color="#4338CA" />
+          </TouchableOpacity>
+
+          <View style={styles.headerContainer}>
+            <View style={styles.headerBadge}>
+              <Text style={styles.headerText}>Task Review</Text>
+            </View>
+            <Text style={styles.subHeaderText}>
+              Verify {taskDetails.childName}'s task completion
+            </Text>
+          </View>
+
+          <View style={styles.taskCard}>
+            <View style={styles.cardContent}>
+              <Text style={styles.taskName}>{taskDetails.title}</Text>
+              <View style={styles.badgeRow}>
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusText}>{taskDetails.status}</Text>
+                </View>
+                <View style={styles.pointsContainer}>
+                  <Text style={styles.pointsLabel}>3yali points</Text>
+                  <Text style={styles.pointsText}>{taskDetails.points}</Text>
+                </View>
+              </View>
+
+              <View style={styles.divider} />
+
+              <Text style={styles.taskDescription}>
+                {taskDetails.description}
+              </Text>
+
+              <View style={styles.divider} />
+
+              <View style={styles.imageSection}>
+                <Image
+                  source={{
+                    uri: taskDetails.imageUrl || taskTypeImages.cleaning,
+                  }}
+                  style={styles.taskImage}
+                  resizeMode="cover"
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.actionSection}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.acceptButton]}
+              onPress={handleAccept}
+            >
+              <View style={styles.buttonContent}>
+                <Text style={styles.actionButtonText}>Accept Task</Text>
+                <MaterialIcons name="check-circle" size={24} color="#fff" />
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionButton, styles.rejectButton]}
+              onPress={handleReject}
+            >
+              <View style={styles.buttonContent}>
+                <Text style={styles.actionButtonText}>Reject Task</Text>
+                <MaterialIcons name="cancel" size={24} color="#fff" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={handleAlertClose}
+      />
+    </View>
   );
 };
 
@@ -126,27 +170,61 @@ export default TaskScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "##FFFFFF",
+    backgroundColor: "#F8FAFC",
+  },
+  backgroundShapes: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
+  },
+  shape: {
+    position: "absolute",
+    borderRadius: 100,
+    opacity: 0.1,
+  },
+  shape1: {
+    width: 200,
+    height: 200,
+    backgroundColor: "#3B82F6",
+    top: -50,
+    left: -50,
+  },
+  shape2: {
+    width: 150,
+    height: 150,
+    backgroundColor: "#60A5FA",
+    top: 100,
+    right: -30,
+  },
+  shape3: {
+    width: 100,
+    height: 100,
+    backgroundColor: "#93C5FD",
+    bottom: 50,
+    left: 50,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     maxWidth: 457,
     width: "100%",
     minHeight: height,
-    borderRadius: 40,
-    paddingTop: 54,
-    paddingHorizontal: 26,
-    paddingBottom: 54,
+    paddingTop: 24,
+    paddingHorizontal: 16,
+    paddingBottom: 24,
     alignSelf: "center",
   },
-
-  
+  backButton: {
+    marginBottom: 16,
+    padding: 4,
+  },
   headerContainer: {
     marginBottom: 16,
     alignItems: "flex-start",
   },
   headerBadge: {
     backgroundColor: "#E0E7FF",
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
@@ -159,149 +237,117 @@ const styles = StyleSheet.create({
   },
   subHeaderText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "#546E7A",
     marginTop: 4,
   },
-
-  
-  taskDetails: {
-    marginBottom: 20,
-    padding: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#3B82F6",
-    backgroundColor: "#ffffff",
+  taskCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+    overflow: "hidden",
+  },
+  cardContent: {
+    padding: 20,
   },
   taskName: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 6,
-  },
-  taskDescription: {
-    fontSize: 14,
-    color: "#4B5563",
-    lineHeight: 20,
-    marginBottom: 10,
+    color: "#1E293B",
+    marginBottom: 12,
   },
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "space-between",
+    marginBottom: 12,
   },
   statusBadge: {
-    backgroundColor: "#FCD34D",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: "#E0E7FF",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   statusText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#92400E",
-  },
-  dueText: {
-    fontSize: 12,
-    color: "#6B7280",
-  },
-  pointsText: {
-    fontSize: 12,
-    color: "#10B981",
-    fontWeight: "bold",
-    marginLeft: "auto",
-  },
-
-  
-  imageSection: {
-    alignItems: "center",
-    marginBottom: -30,
-  },
-  taskImage: {
-    width: 154,
-    height: 154,
-    borderRadius: 77,
-  },
-
-  
-  progressSection: {
-    borderRadius: 24,
-    padding: 16,
-    backgroundColor: "#F4F4F4",
-    marginBottom: 22,
-  },
-  progressTitle: {
-    color: "#174C4F",
     fontSize: 14,
     fontWeight: "600",
-    marginBottom: 24,
+    color: "#4338CA",
   },
-  progressTrack: {
-    height: 14,
-    position: "relative",
-    marginBottom: 20,
-    justifyContent: "center",
-    backgroundColor: "#D9D9D9",
-    borderRadius: 3,
+  pointsContainer: {
+    alignItems: "center",
+    backgroundColor: "#F0F9FF",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
   },
-  progressFill: {
-    position: "absolute",
-    height: 6,
-    backgroundColor: "#1433FF",
-    borderRadius: 3,
-    top: "50%",
-    marginTop: -3,
-    left: 0,
+  pointsLabel: {
+    fontSize: 12,
+    color: "#0369A1",
+    marginBottom: 2,
   },
-  progressDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#1433FF",
-    position: "absolute",
-    top: "50%",
-    marginTop: -7,
+  pointsText: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#0369A1",
   },
-  progressLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  divider: {
+    height: 1,
+    backgroundColor: "#E2E8F0",
+    marginVertical: 16,
   },
-  progressLabel: {
-    fontSize: 10,
+  taskDescription: {
+    fontSize: 16,
     fontWeight: "600",
-    color: "#174C4F",
+    color: "#1E293B",
+    lineHeight: 24,
   },
-
-  
+  imageSection: {
+    alignItems: "center",
+    marginTop: 12,
+  },
+  taskImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
   actionSection: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 55,
+    gap: 12,
+    marginTop: 8,
   },
   actionButton: {
+    flex: 1,
+    borderRadius: 16,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  buttonContent: {
+    flexDirection: "row",
     alignItems: "center",
-    width: "48%",
-  },
-  buttonImage: {
-    width: 132,
-    height: 109,
-    marginBottom: 0,
-  },
-  finalButton: {
-    width: 140,
-    height: 50,
-    borderRadius: 30,
     justifyContent: "center",
-    alignItems: "center",
+    padding: 16,
+    gap: 8,
   },
-  accepted: {
-    backgroundColor: "#7C3AED",
+  acceptButton: {
+    backgroundColor: "#4CAF50",
   },
-  rejected: {
-    backgroundColor: "#2563EB",
+  rejectButton: {
+    backgroundColor: "#EF4444",
   },
-  finalButtonText: {
-    color: "#fff",
+  actionButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
     fontWeight: "600",
-    fontSize: 16,
   },
 });

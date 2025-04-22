@@ -33,27 +33,64 @@ const TaskItem = ({ item }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "verified":
-        return "#3B82F6";
+        return "#22C55E"; // Green
       case "approved":
-        return "#10B981";
+        return "#3B82F6"; // Blue
       case "rejected":
-        return "#EF4444";
+        return "#EF4444"; // Red
       default:
         return "#9CA3AF";
     }
   };
 
+  const getStatusIcon = (status) => {
+    switch (status.toLowerCase()) {
+      case "verified":
+        return "check-circle";
+      case "approved":
+        return "thumb-up";
+      case "rejected":
+        return "error-outline";
+      default:
+        return "pending";
+    }
+  };
+
   return (
     <View style={styles.taskBox}>
-      <Text style={styles.taskTitle}>{item.title}</Text>
-      <Text style={styles.taskAmount}>{item.amount.toFixed(2)} KWD</Text>
       <View
-        style={[
-          styles.statusBadge,
-          { backgroundColor: getStatusColor(item.status) },
-        ]}
-      >
-        <Text style={styles.statusText}>{item.status}</Text>
+        style={styles.taskLeftBorder}
+        backgroundColor={getStatusColor(item.status)}
+      />
+      <View style={styles.taskContent}>
+        <View style={styles.taskHeader}>
+          <Text style={styles.taskTitle}>{item.title}</Text>
+          <View
+            style={[
+              styles.statusContainer,
+              { backgroundColor: getStatusColor(item.status) + "15" },
+            ]}
+          >
+            <MaterialIcons
+              name={getStatusIcon(item.status)}
+              size={16}
+              color={getStatusColor(item.status)}
+              style={styles.statusIcon}
+            />
+            <Text
+              style={[
+                styles.statusText,
+                { color: getStatusColor(item.status) },
+              ]}
+            >
+              {item.status}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.rewardContainer}>
+          <MaterialIcons name="stars" size={16} color="#F59E0B" />
+          <Text style={styles.rewardText}>+{item.amount.toFixed(2)} KWD</Text>
+        </View>
       </View>
     </View>
   );
@@ -206,26 +243,62 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   taskBox: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    elevation: 2,
-  },
-  taskTitle: { fontSize: 16, fontWeight: "600", color: "#1F2937" },
-  taskAmount: { fontSize: 14, color: "#6B7280", marginVertical: 4 },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    alignSelf: "flex-start",
+    marginBottom: 12,
+    overflow: "hidden",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  taskLeftBorder: {
+    width: 4,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+  },
+  taskContent: {
+    flex: 1,
+    padding: 12,
+  },
+  taskHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  taskTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1F2937",
+    flex: 1,
+    marginRight: 12,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  statusIcon: {
+    marginRight: 4,
   },
   statusText: {
-    color: "#fff",
-    fontWeight: "600",
     fontSize: 12,
+    fontWeight: "500",
+  },
+  rewardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rewardText: {
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#F59E0B",
   },
   goalCard: {
     backgroundColor: "#F9FAFB",
