@@ -7,8 +7,14 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Logout from "../components/Logout";
+import { useQuery } from "@tanstack/react-query";
+import { getSavingsGoals } from "../api/children";
+import { balance } from "../api/users";
+import UserContext from "../context/UserContext";
+import { useContext } from "react";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,6 +24,28 @@ const mockTasks = [
 ];
 
 const CurrentBalanceScreen = () => {
+  const { isAuth } = useContext(UserContext);
+
+  const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
+    queryKey: ["balance"],
+    queryFn: balance,
+    enabled: !!isAuth,
+  });
+
+  const { data: savingsGoals, isLoading: isLoadingGoals } = useQuery({
+    queryKey: ["savingsGoals"],
+    queryFn: getSavingsGoals,
+    enabled: !!isAuth,
+  });
+
+  if (isLoadingBalance || isLoadingGoals) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4D5DFA" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Logout />
@@ -34,20 +62,29 @@ const CurrentBalanceScreen = () => {
         <View style={styles.content}>
           <View style={styles.balanceSection}>
             <Text style={styles.balanceLabel}>Total balance</Text>
-            <Text style={styles.balanceAmount}>3077.20 KD</Text>
+            <Text style={styles.balanceAmount}>{balanceData?.balance || "0.00"} KD</Text>
           </View>
 
           <View style={styles.mainContent}>
             <View style={styles.section}>
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>New Bike Goal</Text>
-                  <Text style={styles.cardAmount}>150.00 / 200.00 KD</Text>
+              {savingsGoals?.map((goal) => (
+                <View key={goal.savingsGoalId} style={styles.card}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardTitle}>{goal.goalName}</Text>
+                    <Text style={styles.cardAmount}>
+                      {goal.currentAmount} / {goal.targetAmount} KD
+                    </Text>
+                  </View>
+                  <View style={styles.progressBar}>
+                    <View 
+                      style={[
+                        styles.progressFill, 
+                        { width: `${(goal.currentAmount / goal.targetAmount) * 100}%` }
+                      ]} 
+                    />
+                  </View>
                 </View>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: "75%" }]} />
-                </View>
-              </View>
+              ))}
             </View>
 
             <View style={styles.section}>
@@ -330,6 +367,11 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 20,
     fontWeight: "500",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
