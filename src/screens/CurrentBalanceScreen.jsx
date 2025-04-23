@@ -64,28 +64,6 @@ const mockActivities = [
 ];
 
 const CurrentBalanceScreen = () => {
-  const { isAuth } = useContext(UserContext);
-
-  const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
-    queryKey: ["balance"],
-    queryFn: balance,
-    enabled: !!isAuth,
-  });
-
-  const { data: savingsGoals, isLoading: isLoadingGoals } = useQuery({
-    queryKey: ["savingsGoals"],
-    queryFn: getSavingsGoals,
-    enabled: !!isAuth,
-  });
-
-  if (isLoadingBalance || isLoadingGoals) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4D5DFA" />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <LinearGradient
