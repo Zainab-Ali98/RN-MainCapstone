@@ -15,13 +15,12 @@ import CircleProgress from "../components/CircleProgress";
 import Logout from "../components/Logout";
 import { getChildTask, getChildSavingsGoals } from "../api/parents";
 import { useQuery } from "@tanstack/react-query";
-
 const { width, height } = Dimensions.get("window");
 
 const TaskItem = ({ item }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case "verified":
+      case "verify":
         return "#3B82F6";
       case "completed":
         return "#10B981";

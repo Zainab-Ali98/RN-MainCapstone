@@ -7,16 +7,21 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { verifyTask } from "../api/parents";
 
 const { width } = Dimensions.get("window");
 
 const TaskDetailsScreen = ({ route }) => {
   const navigation = useNavigation();
-  const { task } = route.params;
-
+  const queryClient = useQueryClient();
+  const task = route.params;
+  const taskId = task?.taskId || task?.id; // Use taskId from route params or fallback to id
+  console.log("Task ID:", task); // Log the taskId for debugging
   const mockDate = "2025-04-16";
   const mockDescription = [
     { id: 1, text: "Make your bed" },
@@ -24,7 +29,45 @@ const TaskDetailsScreen = ({ route }) => {
     { id: 3, text: "Organize your books" },
     { id: 4, text: "Put away laundry" },
   ];
+  // if no task picture
   const mockImage = "https://cdn-icons-png.flaticon.com/512/625/625083.png";
+
+  // Mutation to update task status
+  const verifyTaskMutation = useMutation({
+    mutationKey: ["verifyTask"],
+    mutationFn: ({ taskId, verifyData }) => verifyTask(taskId, verifyData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["fetchChildTask"]);
+      navigation.navigate("ParentScreen");
+    },
+    onError: (err) => {
+      Alert.alert(
+        "Error",
+        `Failed to update task: ${err.message || "Unknown error"}`
+      );
+      console.error("Update task status error:", err);
+    },
+  });
+
+  // Split description into bullet points (assuming it's a string with newlines or commas)
+  const getDescriptionBullets = (description) => {
+    if (!description) return [];
+    return description
+      .split(/[\n,]+/)
+      .map((text, index) => ({
+        id: index + 1,
+        text: text.trim(),
+      }))
+      .filter((item) => item.text);
+  };
+  const descriptionBullets = getDescriptionBullets(task.description);
+
+  const handleVerifyTask = (status) => {
+    const verifyData = {
+      isAccepted: status,
+    };
+    verifyTaskMutation.mutate({ taskId, verifyData });
+  };
 
   const renderProgress = () => {
     return (
@@ -55,15 +98,15 @@ const TaskDetailsScreen = ({ route }) => {
       <View style={styles.card}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: task.taskPicture?.trim() || mockImage }}
+            source={{ uri: task?.taskPicture?.trim() || mockImage }}
             style={styles.image}
           />
         </View>
 
-        <Text style={styles.name}>{task.taskName}</Text>
+        <Text style={styles.name}>{task?.taskName}</Text>
 
         <Text style={styles.sectionHeader}>Description</Text>
-        {mockDescription.map((item) => (
+        {descriptionBullets.map((item) => (
           <View style={styles.bulletRow} key={item.id}>
             <View style={styles.bulletCircle} />
             <Text style={styles.bulletText}>{item.text}</Text>
@@ -72,30 +115,40 @@ const TaskDetailsScreen = ({ route }) => {
 
         <Text style={styles.info}>
           <Text style={styles.label}>Assigned to: </Text>
-          <Text style={styles.infoValue}>{task.childName || "—"}</Text>
+          <Text style={styles.infoValue}>{task?.childName || "—"}</Text>
         </Text>
 
         <Text style={styles.info}>
-          <Text style={styles.label}>3yali Points: </Text>
-          <Text style={styles.infoValue}>{task.rewardAmount} 7</Text>
+          <Text style={styles.label}>Reward Amount: </Text>
+          <Text style={styles.infoValue}>{task?.rewardAmount}</Text>
         </Text>
 
         <Text style={styles.info}>
           <Text style={styles.label}>Created At: </Text>
-          <Text style={styles.infoValue}>{task.dateCreated || mockDate}</Text>
+          <Text style={styles.infoValue}>{task?.dateCreated || mockDate}</Text>
         </Text>
 
-        {task.status === "Verify" && (
+        {task?.status.toLowerCase() === "verify" && (
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#10B981" }]}
+              onPress={() => handleVerifyTask(true)}
+              disabled={verifyTaskMutation.isLoading}
             >
-              \n <Text style={styles.buttonText}>Mark as Completed</Text>
+              <Text style={styles.buttonText}>
+                {verifyTaskMutation.isLoading
+                  ? "Processing..."
+                  : "Mark as Completed"}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#EF4444" }]}
+              onPress={() => handleVerifyTask(false)}
+              disabled={verifyTaskMutation.isLoading}
             >
-              \n <Text style={styles.buttonText}>Reject Task</Text>
+              <Text style={styles.buttonText}>
+                {verifyTaskMutation.isLoading ? "Processing..." : "Reject Task"}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
