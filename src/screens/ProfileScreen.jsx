@@ -155,8 +155,8 @@ const ProfileScreen = ({ route }) => {
                   <Text style={styles.cardName}>Available Balance</Text>
                 </View>
                 <Text style={styles.balanceAmount}>
-              KWD {child?.balance.toFixed(2)}
-            </Text>
+                  KWD {child?.balance.toFixed(2)}
+                </Text>
                 <View style={styles.cardFooter}>
                   <View
                     style={[
@@ -175,22 +175,27 @@ const ProfileScreen = ({ route }) => {
           <View style={styles.buttonSection}>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate("DepositScreen")}
+              onPress={() =>
+                navigation.navigate("DepositScreen", { childId: child.id })
+              } // This should work now
             >
               <MaterialIcons
                 name="account-balance-wallet"
                 size={24}
                 color="#6C63FF"
               />
-              <Text style={styles.buttonText}>Send Money</Text>
+              <Text style={styles.whiteButtonText}>Send Money</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => navigation.navigate("CreateTaskScreen")}
             >
-              <MaterialIcons name="add-task" size={24} color="#6C63FF" />
-              <Text style={styles.buttonText}>New Task</Text>
+              <MaterialIcons
+                name="playlist-add-check"
+                size={24}
+                color="#6C63FF"
+              />
+              <Text style={styles.whiteButtonText}>Create Task</Text>
             </TouchableOpacity>
           </View>
 
@@ -225,21 +230,7 @@ const ProfileScreen = ({ route }) => {
               resizeMode="contain"
             />
             <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() =>
-                  navigation.navigate("DepositScreen", { childId: child.id })
-                } // This should work now
-              >
-                <MaterialIcons
-                  name="account-balance-wallet"
-                  size={24}
-                  color="#6C63FF"
-                />
-                <Text style={styles.whiteButtonText}>Send Money</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() => navigation.navigate("CreateTaskScreen")}
               >
@@ -249,7 +240,7 @@ const ProfileScreen = ({ route }) => {
                   color="#6C63FF"
                 />
                 <Text style={styles.whiteButtonText}>Create Task</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </View>
