@@ -10,19 +10,24 @@ import {
   Dimensions,
   ScrollView,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Logout from "../components/Logout";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createTaskForChild } from "../api/parents";
 
 const { width, height } = Dimensions.get("window");
 
-const CreateTaskScreen = () => {
+const CreateTaskScreen = ({ route }) => {
+  const { childId } = route.params;
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
-  const [reward, setReward] = useState(12);
+  const [reward, setReward] = useState(0);
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
@@ -55,13 +60,53 @@ const CreateTaskScreen = () => {
     }
   };
 
+  // Mutation for creating a task
+  const createTaskMutation = useMutation({
+    mutationFn: ({ taskData, image }) => createTaskForChild(taskData, image),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["fetchTasks"]);
+      queryClient.invalidateQueries(["childTasks", childId]);
+      Alert.alert("Success", "Task created successfully!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("ParentScreen"),
+        },
+      ]);
+      // Reset form
+      setTaskName("");
+      setDescription("");
+      setReward(0);
+      setImage(null);
+    },
+    onError: (err) => {
+      Alert.alert(
+        "Error",
+        `Failed to create task: ${err.message || "Unknown error"}`
+      );
+      console.error("Create task error:", err);
+    },
+  });
+
   const handleSubmit = () => {
-    navigation.navigate("ViewTask", {
-      taskName,
-      description,
-      reward,
-      image,
-    });
+    // Validate inputs
+    if (!taskName.trim()) {
+      Alert.alert("Invalid Input", "Task name is required.");
+      return;
+    }
+    if (reward <= 0) {
+      Alert.alert("Invalid Input", "Reward must be greater than 0.");
+      return;
+    }
+    // Prepare task data
+    const taskData = {
+      TaskName: taskName,
+      TaskDescription: description ?? "Task Description.",
+      RewardAmount: reward,
+      ChildId: childId,
+    };
+
+    // Trigger mutation
+    createTaskMutation.mutate({ taskData, image });
   };
 
   return (
@@ -103,7 +148,7 @@ const CreateTaskScreen = () => {
             <View style={styles.rewardContainer}>
               <Text style={styles.rewardLabel}>Reward</Text>
               <View style={styles.rewardInputContainer}>
-                <Text style={styles.rewardText}>{reward} kd</Text>
+                <Text style={styles.rewardText}>{reward} KWD</Text>
                 <View style={styles.rewardButtons}>
                   <TouchableOpacity
                     style={styles.rewardButton}
@@ -144,9 +189,12 @@ const CreateTaskScreen = () => {
         />
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={() => navigation.navigate("ProfileScreen")}
+          onPress={handleSubmit}
+          disabled={createTaskMutation.isLoading}
         >
-          <Text style={styles.buttonText}>Create Task</Text>
+          <Text style={styles.buttonText}>
+            {createTaskMutation.isLoading ? "Creating..." : "Create Task"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
