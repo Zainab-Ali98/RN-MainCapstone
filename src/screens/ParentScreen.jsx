@@ -8,9 +8,9 @@ import {
   Image,
   Modal,
 } from "react-native";
-import { balance } from "../api/users";
+import { balance, profile } from "../api/users";
 import { useQuery } from "@tanstack/react-query";
-
+import { getChildren, getTasks } from "../api/parents";
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
@@ -21,16 +21,21 @@ import Logout from "../components/Logout";
 
 import KidBox from "../components/KidBox";
 import TaskBox from "../components/TaskBox";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const ParentScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("kids");
   const [greeting, setGreeting] = useState("");
+
   const [children, setChildren] = useState([
     { id: 1, name: "Zainab", balance: 120, image: null, emoji: null },
     { id: 2, name: "Noor", balance: 90, image: null, emoji: null },
     { id: 3, name: "Aziz", balance: 140, image: null, emoji: null },
     { id: 4, name: "Bader", balance: 75, image: null, emoji: null },
   ]);
+
+
+
 
   const [tasks, setTasks] = useState([
     {
@@ -55,15 +60,22 @@ const ParentScreen = ({ navigation }) => {
       date: "2025-04-12",
     },
   ]);
+
   // Fetch Parent Name from backend using the balance endpoint
-  const { data, isError, error } = useQuery({
+  const {
+    data: balanceData,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["fetchBalance"],
     queryFn: () => balance(),
   });
+
   const parentName = data?.name || "Ali";
 
   const [showEmojiModal, setShowEmojiModal] = useState(false);
   const [selectedChildId, setSelectedChildId] = useState(null);
+
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -86,6 +98,32 @@ const ParentScreen = ({ navigation }) => {
       setChildren(updated);
     }
   };
+  // Fetch Children from backend using the getChildren endpoint
+  const {
+    data: childrenData,
+    isLoading: isChildrenLoading,
+    isError: isChildrenError,
+    error: childrenError,
+  } = useQuery({
+    queryKey: ["fetchChildren"],
+    queryFn: () => getChildren(),
+    onSuccess: (data) => {
+      //console.log("Children data:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching children:", error);
+    },
+  });
+  const filteredChildren = childrenData?.map((child) => ({
+    key: child.childId,
+    id: child.childId,
+    name: child.firstName + " " + child.lastName,
+    balance: child.balance ?? 0,
+    status: "Active", // Placeholder, update later if backend provides
+    image: child.profilePicture,
+  }));
+  const children = filteredChildren ?? [];
+
 
   const handleEmojiSelect = (type) => {
     const emoji = type === "boy" ? "👦" : "👧";
@@ -99,6 +137,54 @@ const ParentScreen = ({ navigation }) => {
   };
 
   const totalBalance = children.reduce((sum, c) => sum + c.balance, 0);
+
+  // Fetch Tasks from backend
+  const {
+    data: tasksData,
+    isLoading: isTasksLoading,
+    isError: isTasksError,
+    error: tasksError,
+  } = useQuery({
+    queryKey: ["fetchTasks"],
+    queryFn: () => getTasks(),
+    onSuccess: (data) => {
+      //console.log("Task data:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching children:", error);
+    },
+  });
+
+  const taskFilteredData = tasksData?.map((task) => {
+    const child = childrenData?.find((c) => c.childId === task.childId);
+    const date = task.date ? new Date(task.date) : new Date("2025-04-14");
+    return {
+      key: task.taskId,
+      id: task.taskId,
+      name: task.taskName,
+      childName: child
+        ? `${child.firstName} ${child.lastName}`
+        : "Unknown Child",
+      status: task.status,
+      //  US style: 20 Apr 2025
+      // date: date.toLocaleDateString("en-US", {
+      //   year: "numeric",
+      //   month: "long",
+      //   day: "numeric",
+      // }),
+      date: date
+        .toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+        .split("/")
+        .join("/"),
+    };
+  });
+  const tasksList = taskFilteredData ?? [];
+  //console.log("Children data:", taskFilteredData);
+
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -176,6 +262,7 @@ const ParentScreen = ({ navigation }) => {
       {activeTab === "kids" ? (
         <>
           <View style={styles.grid}>
+
             {children.map((child) => (
               <TouchableOpacity
                 key={child.id}
@@ -252,6 +339,7 @@ const ParentScreen = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
             ))}
+
             <TouchableOpacity
               style={styles.addCard}
               onPress={() => navigation.navigate("CreatenewAcc")}
@@ -264,8 +352,8 @@ const ParentScreen = ({ navigation }) => {
           {/* Tasks to Review */}
           <Text style={styles.sectionTitle}>Tasks to Review</Text>
           <View style={styles.grid}>
-            {tasks
-              .filter((t) => t.status === "Verified")
+            {tasksList
+              .filter((t) => t.status === "Verify")
               .map((task) => (
                 <TouchableOpacity
                   key={task.id}
@@ -297,8 +385,8 @@ const ParentScreen = ({ navigation }) => {
         <>
           <Text style={styles.sectionTitle}>Task History</Text>
           <View style={styles.grid}>
-            {tasks
-              .filter((t) => ["Accepted", "Rejected"].includes(t.status))
+            {tasksList
+              .filter((t) => ["Completed", "Rejected"].includes(t.status))
               .map((task) => (
                 <TouchableOpacity
                   key={task.id}

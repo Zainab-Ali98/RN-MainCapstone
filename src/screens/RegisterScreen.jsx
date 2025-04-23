@@ -25,7 +25,6 @@ import Animated, {
 import { register } from "../api/auth";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
-
 const { width, height } = Dimensions.get("window");
 
 function RegisterScreen({ setIsAuth, setRole }) {
@@ -342,7 +341,7 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     height: 56,
-    backgroundColor: "#2563EB",
+    backgroundColor: "#4D5DFA",
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
@@ -357,8 +356,15 @@ const styles = StyleSheet.create({
     height: 100,
     position: "absolute",
     right: 0,
-    top: -20,
+    top: -19,
     zIndex: 1,
+  },
+
+  orContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 20,
   },
   dividerContainer: {
     flexDirection: "row",
@@ -387,4 +393,3 @@ const styles = StyleSheet.create({
 });
 
 export default RegisterScreen;
-
