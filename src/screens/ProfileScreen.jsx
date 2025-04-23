@@ -27,6 +27,8 @@ const TaskItem = ({ item }) => {
         return "#10B981";
       case "rejected":
         return "#EF4444";
+      case "ongoing":
+        return "#FBBF24";
       default:
         return "#9CA3AF";
     }
@@ -174,7 +176,9 @@ const ProfileScreen = ({ route }) => {
 
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => navigation.navigate("CreateTaskScreen")}
+                onPress={() =>
+                  navigation.navigate("CreateTaskScreen", { childId: child.id })
+                }
               >
                 <MaterialIcons
                   name="playlist-add-check"
