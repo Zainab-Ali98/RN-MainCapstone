@@ -24,6 +24,8 @@ import {
   Platform,
   useWindowDimensions,
 } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { profile } from "../api/users";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -42,48 +44,63 @@ const PCDetailsScreen = ({ navigation }) => {
 
   // State management
   const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
 
   // Fetch user data on component mount
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserData();
+  // }, []);
 
   /**
    * Fetches user data from the backend
    * @async
    * @returns {Promise<void>}
    */
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // const fetchUserData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
 
-      // Replace with your actual API call
-      // const response = await fetch('YOUR_API_ENDPOINT');
-      // const data = await response.json();
+  //     // Replace with your actual API call
+  //     // const response = await fetch('YOUR_API_ENDPOINT');
+  //     // const data = await response.json();
 
-      // Simulating API call
-      setTimeout(() => {
-        setUserData({
-          firstName: "John",
-          lastName: "Doe",
-          email: "john.doe@example.com",
-        });
-        setLoading(false);
-      }, 1000);
-    } catch (err) {
+  //     // Simulating API call
+  //     setTimeout(() => {
+  //       setUserData({
+  //         firstName: "John",
+  //         lastName: "Doe",
+  //         email: "john.doe@example.com",
+  //       });
+  //       setLoading(false);
+  //     }, 1000);
+  //   } catch (err) {
+  //     setError("Failed to load user data");
+  //     console.error("Error fetching user data:", err);
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Fetch user data from the backend
+
+  const {
+    data: userData,
+    isError,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["userData"],
+    queryFn: () => profile(),
+    onSuccess: (data) => {
+      console.log("User data fetched successfully:", data);
+    },
+    onError: (error) => {
       setError("Failed to load user data");
-      console.error("Error fetching user data:", err);
+      console.error("Error fetching user data:", error);
       setLoading(false);
-    }
-  };
+    },
+  });
 
   /**
    * Handles profile image selection
@@ -118,7 +135,7 @@ const PCDetailsScreen = ({ navigation }) => {
   };
 
   // Loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
@@ -130,7 +147,7 @@ const PCDetailsScreen = ({ navigation }) => {
   }
 
   // Error state
-  if (error) {
+  if (isError) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
@@ -177,7 +194,7 @@ const PCDetailsScreen = ({ navigation }) => {
             >
               {profileImage ? (
                 <Image
-                  source={{ uri: profileImage }}
+                  source={{ uri: userData.profilePicture }}
                   style={styles.profileImage}
                   accessible={true}
                   accessibilityLabel="Profile picture"

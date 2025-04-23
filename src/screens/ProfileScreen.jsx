@@ -13,28 +13,17 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import CircleProgress from "../components/CircleProgress";
 import Logout from "../components/Logout";
+import { getChildTask, getChildSavingsGoals } from "../api/parents";
+import { useQuery } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
-
-const mockTasks = [
-  { id: "1", title: "Complete homework", amount: 5.0, status: "Verified" },
-  { id: "2", title: "Clean room", amount: 3.0, status: "Rejected" },
-  { id: "3", title: "Read a book", amount: 4.0, status: "Approved" },
-  { id: "4", title: "Exercise", amount: 6.0, status: "Verified" },
-];
-
-const mockSavingGoals = [
-  { id: "1", title: "New Bike", amount: 200, progress: 150 },
-  { id: "2", title: "Video Game", amount: 60, progress: 45 },
-  { id: "3", title: "School Supplies", amount: 100, progress: 80 },
-];
 
 const TaskItem = ({ item }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "verified":
         return "#3B82F6";
-      case "approved":
+      case "completed":
         return "#10B981";
       case "rejected":
         return "#EF4444";
@@ -46,7 +35,7 @@ const TaskItem = ({ item }) => {
   return (
     <View style={styles.taskBox}>
       <Text style={styles.taskTitle}>{item.title}</Text>
-      <Text style={styles.taskAmount}>{item.amount.toFixed(2)} KWD</Text>
+      <Text style={styles.taskAmount}>{item.amount} KWD</Text>
       <View
         style={[
           styles.statusBadge,
@@ -73,8 +62,51 @@ const SavingGoalItem = ({ item }) => {
   );
 };
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ route }) => {
   const navigation = useNavigation();
+  const child = route.params; // Get the child data from route params
+  console.log("Child data:", child); // Log the child data for debugging
+
+  // Fetch Child Savings Goals
+  const {
+    data: savingsGoalsData,
+    isLoading: isGoalsLoading,
+    isError: isGoalsError,
+    error: goalsError,
+  } = useQuery({
+    queryKey: ["childSavingsGoals", child.id],
+    queryFn: () => getChildSavingsGoals(child.id),
+    enabled: !!child.id,
+  });
+
+  // Map savings goals data to match SavingGoalItem expected format
+  const savingsGoals =
+    savingsGoalsData?.map((goal) => ({
+      id: goal.savingsGoalId.toString(),
+      title: goal.goalName,
+      amount: goal.targetAmount || 0, // Adjust based on actual field name
+      progress: goal.currentBalance || 0, // Adjust based on actual field name
+    })) || [];
+
+  // Fetch Child Tasks
+  const {
+    data: tasksData,
+    isLoading: isTasksLoading,
+    isError: isTasksError,
+    error: tasksError,
+  } = useQuery({
+    queryKey: ["childTasks", child.id],
+    queryFn: () => getChildTask(child.id),
+  });
+
+  // Map Child Tasks
+  const tasks =
+    tasksData?.map((task) => ({
+      id: task.taskId.toString(),
+      title: task.taskName,
+      amount: task.rewardAmount || 0, // Adjust based on actual field name (e.g., RewardReward)
+      status: task.status || "Pending",
+    })) || [];
 
   return (
     <View style={styles.container}>
@@ -90,14 +122,16 @@ const ProfileScreen = () => {
           {/* Balance Card */}
           <View style={styles.balanceCard}>
             <Text style={styles.balanceLabel}>Total Available Balance</Text>
-            <Text style={styles.balanceAmount}>3077.20 KWD</Text>
+            <Text style={styles.balanceAmount}>
+              KWD {child?.balance.toFixed(2)}
+            </Text>
           </View>
 
           {/* Saving Goals */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Saving Goals</Text>
             <FlatList
-              data={mockSavingGoals}
+              data={savingsGoals}
               renderItem={({ item }) => <SavingGoalItem item={item} />}
               keyExtractor={(item) => item.id}
               horizontal
@@ -109,7 +143,7 @@ const ProfileScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasks</Text>
             <FlatList
-              data={mockTasks}
+              data={tasks}
               renderItem={({ item }) => <TaskItem item={item} />}
               keyExtractor={(item) => item.id}
               scrollEnabled={false}

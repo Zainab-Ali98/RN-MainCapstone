@@ -7,6 +7,8 @@ import ChildProfileNavigation from "./BottomNavigation/ChildProfileNavigation";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CurrentBalanceScreen from "../../screens/CurrentBalanceScreen";
+import ProgressGoalsNavigation from "./BottomNavigation/ProgressGoalsNavigation";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +44,16 @@ const ChildNavigation = () => {
       />
 
       <Tab.Screen
+        name="Goals"
+        component={ProgressGoalsNavigation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="savings" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Profile"
         component={ChildProfileNavigation}
         options={{
@@ -51,11 +63,6 @@ const ChildNavigation = () => {
           ),
         }}
       />
-
-
-
-
-
     </Tab.Navigator>
   );
 };
