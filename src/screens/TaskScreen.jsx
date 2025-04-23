@@ -17,7 +17,7 @@ const TaskScreen = () => {
 
   useEffect(() => {
     Animated.timing(progressAnim, {
-      toValue: 0.48, 
+      toValue: 0.48,
       duration: 1000,
       useNativeDriver: false,
     }).start();
@@ -26,7 +26,6 @@ const TaskScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        
         <View style={styles.headerContainer}>
           <View style={styles.headerBadge}>
             <Text style={styles.headerText}>Current Task</Text>
@@ -34,11 +33,12 @@ const TaskScreen = () => {
           <Text style={styles.subHeaderText}>You're almost there!</Text>
         </View>
 
-        
         <View style={styles.taskDetails}>
           <Text style={styles.taskName}>Clean Your Room</Text>
           <Text style={styles.taskDescription}>
-            Make your room neat by picking up toys, folding clothes, and organizing your desk. This task helps keep your space clean and tidy!
+            Make your room neat by picking up toys, folding clothes, and
+            organizing your desk. This task helps keep your space clean and
+            tidy!
           </Text>
           <View style={styles.badgeRow}>
             <View style={styles.statusBadge}>
@@ -49,7 +49,6 @@ const TaskScreen = () => {
           </View>
         </View>
 
-        
         <View style={styles.imageSection}>
           <Image
             source={{
@@ -60,7 +59,6 @@ const TaskScreen = () => {
           />
         </View>
 
-        
         <View style={styles.progressSection}>
           <Text style={styles.progressTitle}>Task Progress</Text>
 
@@ -90,9 +88,7 @@ const TaskScreen = () => {
           </View>
         </View>
 
-       
         <View style={styles.actionSection}>
-         
           <View style={styles.actionButton}>
             <Image
               source={require("../../assets/purple.png")}
@@ -104,7 +100,6 @@ const TaskScreen = () => {
             </TouchableOpacity>
           </View>
 
-        
           <View style={styles.actionButton}>
             <Image
               source={require("../../assets/blue.png")}
@@ -139,7 +134,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  
   headerContainer: {
     marginBottom: 16,
     alignItems: "flex-start",
@@ -163,7 +157,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-  
   taskDetails: {
     marginBottom: 20,
     padding: 14,
@@ -211,7 +204,6 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
 
-  
   imageSection: {
     alignItems: "center",
     marginBottom: -30,
@@ -222,7 +214,6 @@ const styles = StyleSheet.create({
     borderRadius: 77,
   },
 
-  
   progressSection: {
     borderRadius: 24,
     padding: 16,
@@ -271,7 +262,6 @@ const styles = StyleSheet.create({
     color: "#174C4F",
   },
 
-  
   actionSection: {
     flexDirection: "row",
     justifyContent: "space-between",
