@@ -143,10 +143,11 @@ const createTaskForChild = async (taskData, image) => {
   }
 };
 
-const verifyTask = async (taskId) => {
+const verifyTask = async (taskId, verifyData) => {
   try {
     const endpoint = ParentsEndpoints.tasksVerify.replace("{id}", taskId);
-    const response = await instance.put(endpoint);
+    console.log("Verify Data:", verifyData);
+    const response = await instance.put(endpoint, verifyData);
     return response.data;
   } catch (error) {
     console.error("Error verifying task:", error);
