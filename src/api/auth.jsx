@@ -7,11 +7,13 @@ const register = async (userInfo, image) => {
   for (key in userInfo) {
     formData.append(key, userInfo[key]);
   }
-  formData.append("image", {
-    name: "image.jpeg",
-    type: "image/jpeg",
-    uri: image,
-  });
+  if (image) {
+    formData.append("image", {
+      uri: image,
+      type: "image/jpeg",
+      name: "child-image.jpg",
+    });
+  }
   try {
     const res = await instance.post(AuthEndpoints.register, formData);
     console.log(res.data);

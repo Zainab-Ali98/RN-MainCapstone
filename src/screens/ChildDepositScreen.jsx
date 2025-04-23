@@ -5,58 +5,38 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Platform,
   ScrollView,
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { savingsGoalsDeposit } from "../api/children";
 import Logout from "../components/Logout";
-import { depositToChild } from "../api/parents";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { balance } from "../api/users";
-import { useQueryClient } from "@tanstack/react-query";
 
 const { width } = Dimensions.get("window");
 
-const DepositScreen = ({ navigation, route }) => {
-  const { childId } = route.params; // Get childId from route params
-  // Get parent balance data for validation (dont allow the parent to send more than what they have)
+const ChildDepositScreen = ({ route, navigation }) => {
+  const { savingsGoalId, goalName } = route.params || {};
   const [amount, setAmount] = useState("0");
-  const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
-  console.log("Child ID:", childId); // Log the childId for debugging
+  const queryClient = useQueryClient();
 
-  // Fetch Parent balance from backend
-  const {
-    data: balanceData,
-    isLoading: isBalanceLoading,
-    isError: isBalanceError,
-    error: balanceError,
-  } = useQuery({
-    queryKey: ["fetchBalance"],
-    queryFn: () => balance(),
-  });
-  const parentBalance = balanceData?.balance ?? 0;
-
-  // Call the API to deposit the amount
+  // Mutation for depositing to a savings goal
   const depositMutation = useMutation({
-    mutationFn: ({ childId, depositData }) =>
-      depositToChild(childId, depositData),
+    mutationFn: ({ savingsGoalId, amount }) =>
+      savingsGoalsDeposit(savingsGoalId, amount),
     onSuccess: () => {
-      queryClient.invalidateQueries(["fetchBalance"]);
-      queryClient.invalidateQueries(["fetchChildren"]);
-      Alert.alert("Success", `Deposit of ${amount} KD sent to child!`, [
+      queryClient.invalidateQueries(["savingsGoals"]);
+      Alert.alert("Success", `Deposit of ${amount} KD added to ${goalName}!`, [
         {
           text: "OK",
-          onPress: () => navigation.navigate("ParentScreen"), // Navigate to ParentScreen after success
+          onPress: () => navigation.goBack(),
         },
       ]);
-      setAmount("0"); // Reset amount after success
     },
     onError: (err) => {
-      Alert.alert("Error", "Failed to send deposit. Please try again.");
-      console.error("Deposit error:", err);
+      Alert.alert("Error", "Failed to add deposit. Please try again.");
     },
   });
 
@@ -77,28 +57,23 @@ const DepositScreen = ({ navigation, route }) => {
   const handleClear = () => {
     setAmount("0");
   };
-  const handleDeposit = async () => {
-    const depositAmount = parseFloat(amount);
-    // Validate input
-    if (isNaN(depositAmount) || depositAmount <= 0) {
-      Alert.alert(
-        "Invalid Amount",
-        "Please enter a valid amount greater than 0."
-      );
+
+  const handleEnter = () => {
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      Alert.alert("Invalid Amount", "Please enter a valid positive amount.");
       return;
     }
-    if (depositAmount > parentBalance) {
-      Alert.alert(
-        "Insufficient Balance",
-        `You only have ${parentBalance.toFixed(3)} KWD available.`
-      );
+    if (!savingsGoalId) {
+      Alert.alert("Error", "No savings goal selected.");
       return;
     }
-    // Trigger mutation
-    depositMutation.mutate({
-      childId,
-      depositData: { amount: depositAmount },
-    });
+    depositMutation.mutate({ savingsGoalId, amount: numericAmount });
+  };
+
+  const isValidAmount = () => {
+    const numericAmount = parseFloat(amount);
+    return !isNaN(numericAmount) && numericAmount > 0;
   };
 
   const renderButton = (value, isSpecial = false) => (
@@ -126,7 +101,7 @@ const DepositScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Logout /> */}
+      <Logout />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
@@ -135,26 +110,11 @@ const DepositScreen = ({ navigation, route }) => {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* <View style={styles.amountSection}>
-          <Text style={styles.label}>Enter Amount</Text>
-          <Text style={styles.amount}>{amount} KD</Text>
-          <View style={styles.divider} />
-        </View> */}
         <View style={styles.amountSection}>
-          <Text style={styles.label}>Enter Amount</Text>
-          <Text style={styles.amount}>
-            {isBalanceLoading
-              ? "Loading..."
-              : isBalanceError
-              ? "Error"
-              : `${amount} KWD`}
+          <Text style={styles.label}>
+            Deposit to {goalName || "Savings Goal"}
           </Text>
-          <Text style={styles.balanceText}>
-            Available Balance:{" "}
-            {isBalanceLoading
-              ? "Loading..."
-              : `${parentBalance.toFixed(3)} KWD`}
-          </Text>
+          <Text style={styles.amount}>{amount} KD</Text>
           <View style={styles.divider} />
         </View>
 
@@ -191,9 +151,12 @@ const DepositScreen = ({ navigation, route }) => {
         </View>
 
         <TouchableOpacity
-          style={styles.enterButton}
-          onPress={handleDeposit}
-          disabled={isBalanceLoading || depositMutation.isLoading}
+          style={[
+            styles.enterButton,
+            !isValidAmount() && styles.disabledButton,
+          ]}
+          onPress={handleEnter}
+          disabled={!isValidAmount()}
         >
           <LinearGradient
             colors={["#4D5DFA", "#4D5DFA"]}
@@ -201,9 +164,7 @@ const DepositScreen = ({ navigation, route }) => {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text style={styles.enterButtonText}>
-              {depositMutation.isLoading ? "Processing..." : "Enter"}
-            </Text>
+            <Text style={styles.enterButtonText}>Enter</Text>
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
@@ -224,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 45,
-    flex: 1,
+    flexGrow: 1,
   },
   amountSection: {
     alignItems: "center",
@@ -241,12 +202,6 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "700",
     marginTop: 24,
-    textAlign: "center",
-  },
-  balanceText: {
-    color: "#6B7280",
-    fontSize: 16,
-    marginTop: 8,
     textAlign: "center",
   },
   divider: {
@@ -282,19 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
     textAlign: "center",
-  },
-  sendButton: {
-    backgroundColor: "transparent",
-  },
-  sendButtonGradient: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  sendButtonText: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "500",
   },
   clearButtonGradient: {
     flex: 1,
@@ -333,6 +275,9 @@ const styles = StyleSheet.create({
   specialButtonText: {
     color: "#FFFFFF",
   },
+  disabledButton: {
+    opacity: 0.5,
+  },
 });
 
-export default DepositScreen;
+export default ChildDepositScreen;

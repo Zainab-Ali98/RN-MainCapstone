@@ -6,6 +6,7 @@ import CreatenewAcc from "../../../screens/CreatenewAcc";
 import ProfileScreen from "../../../screens/ProfileScreen";
 import DepositScreen from "../../../screens/DepositScreen";
 import CreateTaskScreen from "../../../screens/CreateTaskScreen";
+import TaskDetailsScreen from "../../../screens/TaskDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,34 +20,39 @@ const HomeNavigation = () => {
         options={{ headerShown: false }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="CreatenewAcc"
         component={CreatenewAcc}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
 
-        <Stack.Screen
-            name="DepositScreen"
-            component={DepositScreen}
-            headerBackButtonMenuEnabled="false"
-            options={{ headerShown: false }}
-          />
-      
       <Stack.Screen
-            name="CreateTaskScreen"
-            component={CreateTaskScreen}
-            headerBackButtonMenuEnabled="false"
-            options={{ headerShown: false }}
-          />
-      
+        name="DepositScreen"
+        component={DepositScreen}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="CreateTaskScreen"
+        component={CreateTaskScreen}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="TaskDetailsScreen"
+        component={TaskDetailsScreen}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

@@ -8,20 +8,26 @@ import {
   Image,
   Platform,
   Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import Logout from "../components/Logout";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createTaskForChild } from "../api/parents";
 
 const { width, height } = Dimensions.get("window");
 
-const CreateTaskScreen = () => {
+const CreateTaskScreen = ({ route }) => {
+  const { childId } = route.params;
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
-  const [reward, setReward] = useState(12);
+  const [reward, setReward] = useState(0);
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
@@ -54,91 +60,141 @@ const CreateTaskScreen = () => {
     }
   };
 
+  // Mutation for creating a task
+  const createTaskMutation = useMutation({
+    mutationFn: ({ taskData, image }) => createTaskForChild(taskData, image),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["fetchTasks"]);
+      queryClient.invalidateQueries(["childTasks", childId]);
+      Alert.alert("Success", "Task created successfully!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("ParentScreen"),
+        },
+      ]);
+      // Reset form
+      setTaskName("");
+      setDescription("");
+      setReward(0);
+      setImage(null);
+    },
+    onError: (err) => {
+      Alert.alert(
+        "Error",
+        `Failed to create task: ${err.message || "Unknown error"}`
+      );
+      console.error("Create task error:", err);
+    },
+  });
+
   const handleSubmit = () => {
-    navigation.navigate("ViewTask", {
-      taskName,
-      description,
-      reward,
-      image,
-    });
+    // Validate inputs
+    if (!taskName.trim()) {
+      Alert.alert("Invalid Input", "Task name is required.");
+      return;
+    }
+    if (reward <= 0) {
+      Alert.alert("Invalid Input", "Reward must be greater than 0.");
+      return;
+    }
+    // Prepare task data
+    const taskData = {
+      TaskName: taskName,
+      TaskDescription: description ?? "Task Description.",
+      RewardAmount: reward,
+      ChildId: childId,
+    };
+
+    // Trigger mutation
+    createTaskMutation.mutate({ taskData, image });
   };
 
   return (
     <View style={styles.container}>
-      <Logout />
+      {/* <Logout /> */}
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
 
-      <Text style={styles.title}>CREATE TASK</Text>
+      <Text style={styles.title}>Create Task</Text>
 
-      <View style={styles.content}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={taskName}
-            onChangeText={setTaskName}
-            placeholder="Task Name"
-            placeholderTextColor="#9E9E9E"
-          />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.mainContent}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={taskName}
+              onChangeText={setTaskName}
+              placeholder="Task Name"
+              placeholderTextColor="#9E9E9E"
+            />
 
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Description"
-            placeholderTextColor="#9E9E9E"
-            multiline={true}
-            numberOfLines={4}
-          />
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Description"
+              placeholderTextColor="#9E9E9E"
+              multiline={true}
+              numberOfLines={4}
+            />
 
-          <View style={styles.rewardContainer}>
-            <Text style={styles.rewardLabel}>Reward</Text>
-            <View style={styles.rewardInputContainer}>
-              <Text style={styles.rewardText}>{reward} kd</Text>
-              <View style={styles.rewardButtons}>
-                <TouchableOpacity
-                  style={styles.rewardButton}
-                  onPress={decreaseReward}
-                >
-                  <Text style={styles.rewardButtonText}>−</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.rewardButton}
-                  onPress={increaseReward}
-                >
-                  <Text style={styles.rewardButtonText}>+</Text>
-                </TouchableOpacity>
+            <View style={styles.rewardContainer}>
+              <Text style={styles.rewardLabel}>Reward</Text>
+              <View style={styles.rewardInputContainer}>
+                <Text style={styles.rewardText}>{reward} KWD</Text>
+                <View style={styles.rewardButtons}>
+                  <TouchableOpacity
+                    style={styles.rewardButton}
+                    onPress={decreaseReward}
+                  >
+                    <Text style={styles.rewardButtonText}>−</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.rewardButton}
+                    onPress={increaseReward}
+                  >
+                    <Text style={styles.rewardButtonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
+
+            <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+              {image ? (
+                <Image source={{ uri: image }} style={styles.image} />
+              ) : (
+                <View style={styles.placeholderImage}>
+                  <Text style={styles.placeholderText}>
+                    Tap to select an image
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            style={styles.imageContainer}
-            onPress={pickImage}
-          >
-            {image ? (
-              <Image source={{ uri: image }} style={styles.image} />
-            ) : (
-              <View style={styles.placeholderImage}>
-                <Text style={styles.placeholderText}>
-                  Tap to select an image
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
         </View>
+      </ScrollView>
 
+      <View style={styles.buttonSection}>
         <Image
           source={require("../../assets/bear.png")}
           style={styles.bearImage}
           resizeMode="contain"
         />
-
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Create Task</Text>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+          disabled={createTaskMutation.isLoading}
+        >
+          <Text style={styles.buttonText}>
+            {createTaskMutation.isLoading ? "Creating..." : "Create Task"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -157,26 +213,39 @@ const styles = StyleSheet.create({
     top: 0,
   },
   title: {
-    position: "absolute",
-    top: 140,
-    alignSelf: "center",
     color: "#ffffff",
     fontSize: 25,
     fontWeight: "800",
     letterSpacing: -0.333,
-    zIndex: 10,
+    textAlign: "center",
+    marginTop: 60,
+    marginBottom: 20,
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 39,
-    paddingTop: 180,
-    alignItems: "center",
-    justifyContent: "space-between",
+    paddingTop: 20,
+    paddingBottom: 100,
+  },
+  mainContent: {
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   inputContainer: {
     width: "100%",
     gap: 20,
-    marginTop: 20,
   },
   input: {
     width: "100%",
@@ -186,8 +255,8 @@ const styles = StyleSheet.create({
     borderColor: "#D9D9D9",
     paddingHorizontal: 16,
     fontSize: 14,
-    color: "#9E9E9E",
-    backgroundColor: "transparent",
+    color: "#000000",
+    backgroundColor: "#ffffff",
   },
   textArea: {
     height: 100,
@@ -201,6 +270,7 @@ const styles = StyleSheet.create({
   rewardLabel: {
     color: "#000000",
     fontSize: 14,
+    fontWeight: "600",
   },
   rewardInputContainer: {
     flexDirection: "row",
@@ -211,6 +281,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    backgroundColor: "#ffffff",
   },
   rewardText: {
     color: "#000000",
@@ -225,7 +296,7 @@ const styles = StyleSheet.create({
     height: 30,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "#f5f5f5",
     borderRadius: 4,
   },
   rewardButtonText: {
@@ -239,6 +310,7 @@ const styles = StyleSheet.create({
     borderColor: "#D9D9D9",
     borderRadius: 8,
     overflow: "hidden",
+    backgroundColor: "#ffffff",
   },
   image: {
     width: "100%",
@@ -248,16 +320,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "#f5f5f5",
   },
   placeholderText: {
     color: "#000000",
     fontSize: 14,
   },
+  buttonSection: {
+    width: "100%",
+    position: "absolute",
+    bottom: 20,
+    paddingHorizontal: 39,
+  },
   bearImage: {
-    width: 100,
-    height: 70,
-    marginTop: 20,
+    width: 118,
+    height: 78,
+    position: "absolute",
+    right: 50,
+    top: -77,
+    zIndex: 1,
   },
   submitButton: {
     width: "100%",
@@ -266,8 +347,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
   },
   buttonText: {
     color: "#ffffff",

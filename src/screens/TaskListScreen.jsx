@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
+  Animated,
 } from "react-native";
 import * as ImagePicker from "react-native-image-picker";
 import Logout from "../components/Logout";
@@ -16,48 +16,41 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { tasks, taskComplete } from "../api/children";
 import UserContext from "../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("window");
 
-// const mockTasks = [
-//   {
-//     id: "1",
-//     title: "Complete homework",
-//     reward: "5.00",
-//     dueDate: "Today",
-//     statusStep: 2, 
-//     requiresPhoto: true,
-//     verified: false,
-//     points: 100,
-//   },
-//   {
-//     id: "2",
-//     title: "Clean your room",
-//     reward: "3.00",
-//     dueDate: "Tomorrow",
-//     statusStep: 1,
-//     requiresPhoto: true,
-//     verified: false,
-//     points: 75,
-//   },
-//   {
-//     id: "3",
-//     title: "Help with dishes",
-//     reward: "4.00",
-//     dueDate: "Today",
-//     statusStep: 0,
-//     requiresPhoto: false,
-//     verified: false,
-//     points: 50,
-//   },
-// ];
+// Import animations statically
+const taskAnimations = {
+  exercise: require("../../assets/Exercise Character.json"),
+};
+
 
 const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
-const TaskListScreen = () => {
-  const navigation = useNavigation();
-  const { isAuth } = useContext(UserContext);
+const TaskListScreen = ({ navigation }) => {
   const [selectedTask, setSelectedTask] = useState(null);
+  const fadeAnim = new Animated.Value(0);
+  const scaleAnim = new Animated.Value(0.9);
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const { isAuth } = useContext(UserContext);
   const [error, setError] = useState(null);
 
   const { data: tasksData, isLoading, refetch } = useQuery({
@@ -106,249 +99,361 @@ const TaskListScreen = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4D5DFA" />
-      </View>
-    );
-  }
+  const handleCreateGoal = () => {
+    navigation.navigate("CreateNewGoal");
+  };
 
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity onPress={() => refetch()}>
-          <Text style={styles.retryText}>Retry</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  const handleTaskPress = (task) => {
+    navigation.navigate("ViewTaskScreen", { task });
+  };
+
+  const handleBalancePress = () => {
+    navigation.navigate("CurrentBalanceScreen");
+  };
 
   return (
-    <View style={styles.container}>
-      <Logout />
-      <Image
-        source={require("../../assets/background.png")}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
-
+    <LinearGradient
+      colors={["#F5E6D3", "#E2E8F0", "#E9D8FD"]}
+      style={styles.container}
+    >
+      {/* <Logout /> */}
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          <View style={styles.headerSection}>
-            <Text style={styles.title}>My Missions</Text>
-            <View style={styles.pointsContainer}>
-              <Text style={styles.pointsLabel}>Total Points:</Text>
-              <Text style={styles.pointsValue}>225</Text>
+          {/* Balance Card */}
+          <TouchableOpacity
+            style={styles.balanceCardContainer}
+            onPress={() => navigation.navigate("CurrentBalanceScreen")}
+          >
+            <View style={styles.balanceCard}>
+              <View style={styles.balanceLeft}>
+                <Text style={styles.balanceLabel}>Total Balance</Text>
+                <View style={styles.amountContainer}>
+                  <Text style={styles.currencySymbol}>KWD</Text>
+                  <Text style={styles.balanceAmount}>225.00</Text>
+                </View>
+              </View>
             </View>
+          </TouchableOpacity>
+
+          {/* Mission Title */}
+          <View style={styles.missionTitleContainer}>
+            <Text style={styles.missionTitle}>Your Amazing Missions</Text>
           </View>
 
-          <View style={styles.mainContent}>
-            {tasksData?.map((task) => (
-              <TouchableOpacity
-                key={task.taskId}
-                style={[
-                  styles.taskItem,
-                  selectedTask === task.taskId && styles.selectedTask,
-                ]}
-                onPress={() => handleTaskListPress(task)}
-              >
-                <View style={styles.taskHeader}>
-                  <Text style={styles.taskName}>{task.taskName}</Text>
-                  <Text style={styles.taskReward}>{task.rewardAmount} kd</Text>
-                </View>
-                <Text style={styles.taskDescription} numberOfLines={2}>
-                  {task.taskDescription}
-                </Text>
-                <View style={styles.taskFooter}>
-                  <Text style={styles.taskStatus}>
-                    Status: {task.status || "Pending"}
-                  </Text>
-                  {task.status === "Pending" && (
-                    <TouchableOpacity
-                      style={styles.uploadButton}
-                      onPress={() => handleImagePick(task.taskId)}
-                    >
-                      <Text style={styles.uploadButtonText}>Upload Photo</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={styles.buttonSection}>
-            <Image
-              source={require("../../assets/purple.png")}
-              style={styles.bearImage}
-              resizeMode="contain"
-            />
-            <TouchableOpacity
-              style={[styles.button, !selectedTask && styles.buttonDisabled]}
-              disabled={!selectedTask}
-              onPress={handleRewardsPress}
+          {/* Task Cards */}
+          <View style={styles.taskCardsContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalScrollContent}
             >
-              <Text style={styles.buttonText}>Complete Mission</Text>
-            </TouchableOpacity>
+              {tasksData?.map((task, index) => (
+                <Animated.View
+                  key={task.taskId}
+                  style={[
+                    styles.taskCardWrapper,
+                    {
+                      opacity: fadeAnim,
+                      transform: [{ scale: scaleAnim }],
+                    },
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.taskCard,
+                      { backgroundColor: getRandomColor() },
+                      selectedTask === task.taskId && styles.selectedTask,
+                    ]}
+                    onPress={() =>
+                      navigation.navigate("ViewTaskScreen", { task })
+                    }
+                  >
+                    <View style={styles.bubbleTop} />
+                    <View style={styles.taskCardContent}>
+                      <View style={styles.taskHeader}>
+                        <LottieView
+                          source={require("../../assets/Exercise Character.json")}
+                          autoPlay
+                          loop
+                          style={styles.taskAnimation}
+                        />
+                        <Text style={styles.taskTitle}>{task.taskName}</Text>
+                      </View>
+                      <View style={styles.taskFooter}>
+                        <View style={styles.pointsBadge}>
+                          <Text style={styles.pointsText}>
+                            +{task.points} 3yali Points
+                          </Text>
+                        </View>
+                        <View style={styles.rewardContainer}>
+                          <Text style={styles.rewardAmount}>
+                            {task.taskReward} KD
+                          </Text>
+                          <Text style={styles.rewardLabel}>Reward</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </ScrollView>
-    </View>
+
+      {/* Start New Adventure Button - Fixed at bottom */}
+      <View style={styles.bottomButtonContainer}>
+        <LottieView
+          source={require("../../assets/Walking.json")}
+          autoPlay
+          loop
+          style={styles.walkingAnimation}
+        />
+        <TouchableOpacity
+          style={styles.createGoalButton}
+          onPress={() => navigation.navigate("CreateNewGoal")}
+        >
+          <LottieView
+            source={require("../../assets/star.json")}
+            autoPlay
+            loop
+            style={styles.starAnimation}
+          />
+          <Text style={styles.createGoalText}>Start New Goal</Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 };
 
+const getRandomColor = () => {
+  const colors = [
+    "#FF9B9B", // Soft Red
+    "#94D8F6", // Sky Blue
+    "#B5E6B5", // Mint Green
+    "#FFB347", // Orange
+    "#C1A7E2", // Purple
+    "#FFD93D", // Yellow
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#ffffff" },
-  backgroundImage: {
-    position: "absolute",
-    width: width,
-    height: height * 0.5,
-    top: 0,
+  container: {
+    flex: 1,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingTop: 70,
+    paddingBottom: 100,
   },
-  headerSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  balanceCardContainer: {
     marginBottom: 30,
-    paddingHorizontal: 10,
   },
-  title: {
-    color: "#ffffff",
-    fontSize: 28,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  pointsContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    padding: 10,
-    borderRadius: 12,
+  balanceCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 25,
+    padding: 30,
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-  },
-  pointsLabel: {
-    color: "#ffffff",
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  pointsValue: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  mainContent: {
-    gap: 15,
-  },
-  taskItem: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    padding: 15,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
-  selectedTask: {
-    borderColor: "#4D5DFA",
-    borderWidth: 2,
-  },
-  taskHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  balanceLeft: {
     alignItems: "center",
-    marginBottom: 10,
   },
-  taskName: {
+  balanceLabel: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#333333",
-  },
-  taskReward: {
-    fontSize: 16,
-    color: "#4D5DFA",
-    fontWeight: "600",
-  },
-  taskDescription: {
-    fontSize: 14,
     color: "#666666",
-    marginBottom: 10,
-  },
-  taskFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  taskStatus: {
-    fontSize: 14,
-    color: "#666666",
-  },
-  uploadButton: {
-    backgroundColor: "#4D5DFA",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  uploadButtonText: {
-    color: "#ffffff",
-    fontSize: 14,
+    marginBottom: 8,
     fontWeight: "500",
   },
-  buttonSection: {
-    marginTop: 30,
-    alignItems: "center",
+  amountContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
   },
-  bearImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: "#4D5DFA",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    width: "100%",
-    alignItems: "center",
-  },
-  buttonDisabled: {
-    backgroundColor: "#cccccc",
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 18,
+  currencySymbol: {
+    fontSize: 24,
+    color: "#666666",
+    marginRight: 4,
     fontWeight: "600",
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  balanceAmount: {
+    fontSize: 42,
+    fontWeight: "700",
+    color: "#333333",
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+  missionTitleContainer: {
+    marginBottom: 10,
   },
-  errorText: {
-    color: "red",
-    fontSize: 16,
+  missionTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 10,
     textAlign: "center",
+  },
+  missionSubtitle: {
+    fontSize: 18,
+    color: "#666666",
+    textAlign: "center",
+  },
+  taskCardsContainer: {
     marginBottom: 20,
   },
-  retryText: {
-    color: "#4D5DFA",
-    fontSize: 16,
-    fontWeight: "600",
+  horizontalScrollContent: {
+    paddingRight: 20,
+  },
+  taskCardWrapper: {
+    marginRight: 15,
+  },
+  taskCard: {
+    borderRadius: 30,
+    padding: 30,
+    width: width * 0.9,
+    height: 380,
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 3,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    overflow: "hidden",
+  },
+  selectedTask: {
+    borderWidth: 3,
+    borderColor: "#FFD93D",
+  },
+  bubbleTop: {
+    position: "absolute",
+    top: -20,
+    left: "50%",
+    marginLeft: -20,
+    width: 40,
+    height: 40,
+    backgroundColor: "inherit",
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+  },
+  taskCardContent: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  taskHeader: {
+    alignItems: "center",
+    marginTop: 10,
+  },
+  taskFooter: {
+    alignItems: "center",
+    gap: 15,
+  },
+  taskAnimation: {
+    width: 160,
+    height: 99,
+    alignSelf: "center",
+  },
+  taskTitle: {
+    color: "#FFFFFF",
+    fontSize: 26,
+    fontWeight: "700",
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    marginTop: 15,
+  },
+  pointsBadge: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    padding: 20,
+    borderRadius: 25,
+    alignSelf: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    width: "85%",
+  },
+  pointsText: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  rewardContainer: {
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    padding: 20,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    width: "85%",
+  },
+  rewardAmount: {
+    color: "#FFFFFF",
+    fontSize: 40,
+    fontWeight: "700",
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  rewardLabel: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "700",
+    opacity: 0.9,
+  },
+  bottomButtonContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: "transparent",
+  },
+  createGoalButton: {
+    backgroundColor: "#6C63FF",
+    borderRadius: 50,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#4A44C9",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  starAnimation: {
+    width: 40,
+    height: 40,
+    marginRight: -10,
+  },
+  createGoalText: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  walkingAnimation: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: -40,
   },
 });
 
 export default TaskListScreen;
+
+
+//test
