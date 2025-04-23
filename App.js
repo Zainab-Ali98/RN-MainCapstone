@@ -18,7 +18,7 @@ import CreateNewGoal from "./src/screens/CreateNewGoal";
 import ChildListScreen from "./src/screens/ChildListScreen";
 import RewardsScreen from "./src/screens/RewardsScreen";
 import TaskListScreen from "./src/screens/TaskListScreen";
-import ProgressGoalScreen from "./src/screens/ProgressGoalScreen";
+import ProgressGoalsScreen from "./src/screens/ProgressGoalsScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
 
@@ -50,27 +50,7 @@ export default function App() {
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
-          {/* For debugging */}
-          {/* <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen
-              name="ProgressGoalScreen"
-              component={ProgressGoalScreen}
-              headerBackButtonMenuEnabled="false"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ChildDepositScreen"
-              component={ChildDepositScreen}
-              headerBackButtonMenuEnabled="false"
-              options={{ headerShown: false }}
-            /> */}
-          {/* </Stack.Navigator> */}
-          {/* For debugging */}
-
+          {/* <ProgressGoalsScreen/> */}
           {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
           {/* <ChildListScreen/> */}
@@ -78,7 +58,6 @@ export default function App() {
           {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
-          
             ) : (
               <ChildNavigation />
             )

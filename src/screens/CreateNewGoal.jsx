@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
-import { CreateSavingsGoals } from "../api/children";
+import { createSavingsGoals } from "../api/children";
 import { useMutation } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
@@ -26,10 +26,10 @@ const CreateNewGoal = () => {
 
   const { mutate } = useMutation({
     mutationKey: ["CreateSavingsGoals"],
-    mutationFn: () => CreateSavingsGoals(goalInfo, image),
+    mutationFn: () => createSavingsGoals(goalInfo, image),
     onSuccess: () => {
       alert("Goal created successfully!");
-      navigation.navigate("ProgressGoalScreen");
+      navigation.navigate("ProgressGoalsScreen");
     },
     onError: () => {
       alert("Error creating goal. Please try again.");
