@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import Logout from "../components/Logout";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,61 +23,68 @@ const mockTask = {
     "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
 };
 
-const ViewTaskScreen = (task) => {
+const ViewTaskScreen = ({ task = mockTask }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <Logout />
+      {/* <Logout /> */}
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
 
-      {/* <Text style={styles.title}>TASK DETAILS</Text> */}
+      <Text style={styles.title}>Task Details</Text>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.taskContainer}>
-          <Image
-            source={{ uri: mockTask.image }}
-            style={styles.taskImage}
-            resizeMode="cover"
-          />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.mainContent}>
+          <View style={styles.inputContainer}>
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: task.image }} style={styles.image} />
+            </View>
 
-          <View style={styles.detailsContainer}>
-            <View style={styles.detailGroup}>
+            <View style={styles.detailContainer}>
               <Text style={styles.label}>Task Name</Text>
-              <View style={styles.detailBox}>
-                <Text style={styles.value}>{mockTask.taskName}</Text>
+              <View style={styles.input}>
+                <Text style={styles.value}>{task.taskName}</Text>
               </View>
             </View>
 
-            <View style={styles.detailGroup}>
+            <View style={styles.detailContainer}>
               <Text style={styles.label}>Description</Text>
-              <View style={styles.detailBox}>
-                <Text style={styles.value}>{mockTask.description}</Text>
+              <View style={[styles.input, styles.textArea]}>
+                <Text style={styles.value}>{task.description}</Text>
               </View>
             </View>
 
-            <View style={styles.detailGroup}>
-              <Text style={styles.label}>Reward</Text>
-              <View style={styles.detailBox}>
-                <Text style={styles.rewardValue}>{mockTask.reward} kd</Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Reward</Text>
+              <View style={styles.priceInputContainer}>
+                <Text style={styles.priceText}>{task.reward} kd</Text>
               </View>
             </View>
           </View>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.completeButton}>
-            <Text style={styles.buttonText}>Mark as Complete</Text>
-          </TouchableOpacity>
-          <Image
-            source={require("../../assets/bear.png")}
-            style={styles.bearImage}
-            resizeMode="contain"
-          />
-        </View>
       </ScrollView>
+
+      <View style={styles.buttonSection}>
+        <Image
+          source={require("../../assets/bear.png")}
+          style={styles.bearImage}
+          resizeMode="contain"
+        />
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() => navigation.navigate("RewardsScreen")}
+        >
+          <Text style={styles.buttonText}>Mark as Complete</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -93,68 +101,122 @@ const styles = StyleSheet.create({
     top: 0,
   },
   title: {
-    position: "absolute",
-    top: 140,
-    alignSelf: "center",
     color: "#ffffff",
     fontSize: 25,
     fontWeight: "800",
     letterSpacing: -0.333,
-    zIndex: 10,
+    textAlign: "center",
+    marginTop: 60,
+    marginBottom: 20,
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 39,
-    paddingTop: 180,
-    paddingBottom: 40,
-    alignItems: "center",
+    paddingTop: 20,
+    paddingBottom: 100,
   },
-  taskContainer: {
+  mainContent: {
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 20,
+    marginTop: 30,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  inputContainer: {
     width: "100%",
     gap: 20,
-    marginTop: 20,
+    marginBottom: 20,
   },
-  taskImage: {
+  detailContainer: {
     width: "100%",
-    height: 200,
+    gap: 8,
+  },
+  input: {
+    width: "100%",
+    height: 50,
     borderRadius: 8,
-    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    paddingHorizontal: 16,
+    fontSize: 14,
+    color: "#000000",
+    backgroundColor: "#ffffff",
+    justifyContent: "center",
   },
-  detailsContainer: {
-    width: "100%",
-    gap: 20,
-  },
-  detailGroup: {
-    marginBottom: 20,
+  textArea: {
+    height: 100,
+    paddingTop: 16,
   },
   label: {
     color: "#000000",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: 8,
-  },
-  detailBox: {
-    borderWidth: 1,
-    borderColor: "#4D5DFA",
-    borderRadius: 8,
-    padding: 16,
-    backgroundColor: "transparent",
   },
   value: {
     color: "#000000",
     fontSize: 14,
   },
-  rewardValue: {
-    color: "#000000",
-    fontSize: 15,
-    // fontWeight: "bold",
-  },
-  buttonContainer: {
+  priceContainer: {
     width: "100%",
-    position: "relative",
-    marginTop: 20,
-    marginBottom: 20,
+    gap: 8,
   },
-  completeButton: {
+  priceLabel: {
+    color: "#000000",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  priceInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#ffffff",
+  },
+  priceText: {
+    color: "#000000",
+    fontSize: 14,
+  },
+  imageContainer: {
+    width: "100%",
+    height: 200,
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: "#ffffff",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  buttonSection: {
+    width: "100%",
+    position: "absolute",
+    bottom: 20,
+    paddingHorizontal: 39,
+  },
+  bearImage: {
+    width: 118,
+    height: 78,
+    position: "absolute",
+    right: 50,
+    top: -77,
+    zIndex: 1,
+  },
+  submitButton: {
     width: "100%",
     height: 60,
     borderRadius: 28,
@@ -162,18 +224,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   buttonText: {
     color: "#ffffff",
     fontSize: 20,
-  },
-  bearImage: {
-    width: 100,
-    height: 70,
-    position: "absolute",
-    right: 0,
-    top: -67,
-    zIndex: 1,
   },
 });
 

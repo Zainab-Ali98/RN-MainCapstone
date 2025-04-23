@@ -11,12 +11,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { deleteToken } from "../api/storage";
 import UserContext from "../context/UserContext";
-
-
-
+// import TaskDetailsScreen from "../screens/TaskDetailsScreen";
 
 const Tab = createBottomTabNavigator();
-
 
 export const ParentHomeNavigator = () => {
   const { isAuth, setIsAuth } = useContext(UserContext);
@@ -38,9 +35,8 @@ export const ParentHomeNavigator = () => {
               <MaterialIcons name="logout" size={30} color="red" />
             </TouchableOpacity>
           );
-        }
+        },
       }}
-      
     >
       <Tab.Screen
         name="Parent"
@@ -52,7 +48,6 @@ export const ParentHomeNavigator = () => {
           tabBarLabel: "Home",
         }}
       />
-    
 
       <Tab.Screen name="Profile" component={ProfileScreen} />
 
@@ -60,9 +55,5 @@ export const ParentHomeNavigator = () => {
       <Tab.Screen name="Deposit" component={DepositScreen} />
       <Tab.Screen name="CreateTask" component={CreateTaskScreen} />
     </Tab.Navigator>
-
-
   );
 };
-
-

@@ -1,3 +1,5 @@
+
+
 import React, { useState } from "react";
 import {
   View,
@@ -6,21 +8,48 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Platform,
   Dimensions,
+  ScrollView,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
+import { createSavingsGoals } from "../api/children";
+import { useMutation } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
 
 const CreateNewGoal = () => {
-  const [goalName, setGoalName] = useState("");
-  const [price, setPrice] = useState("");
+  const navigation = useNavigation();
+  const [goalInfo, setGoalInfo] = useState({});
+  const [image, setImage] = useState("");
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log({
-      goalName,
-      price,
+  const { mutate } = useMutation({
+    mutationKey: ["CreateSavingsGoals"],
+    mutationFn: () => createSavingsGoals(goalInfo, image),
+    onSuccess: () => {
+      alert("Goal created successfully!");
+      navigation.navigate("ProgressGoalsScreen");
+    },
+    onError: () => {
+      alert("Error creating goal. Please try again.");
+    },
+  });
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
+
+    // console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   return (
@@ -31,48 +60,73 @@ const CreateNewGoal = () => {
         resizeMode="cover"
       />
 
-      <Text style={styles.title}>CREATE NEW GOAL</Text>
+      <Text style={styles.title}>Create New Goal</Text>
 
-      <View style={styles.content}>
-        <View style={styles.formContainer}>
-          <View style={styles.detailGroup}>
-            <Text style={styles.label}>Goal Name</Text>
-            <View style={styles.detailBox}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.mainContent}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Goal Name"
+              placeholderTextColor="#9E9E9E"
+              onChangeText={(value) => {
+                setGoalInfo({ ...goalInfo, GoalName: value });
+              }}
+            />
+
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Price</Text>
               <TextInput
                 style={styles.input}
-                value={goalName}
-                onChangeText={setGoalName}
-                placeholder="Enter goal name"
-                placeholderTextColor="#000000"
-              />
-            </View>
-          </View>
-
-          <View style={styles.detailGroup}>
-            <Text style={styles.label}>Price</Text>
-            <View style={styles.detailBox}>
-              <TextInput
-                style={styles.input}
-                value={price}
-                onChangeText={setPrice}
-                placeholder="Enter price"
-                placeholderTextColor="#000000"
+                placeholder="Enter amount (kd)"
+                placeholderTextColor="#9E9E9E"
                 keyboardType="numeric"
+                onChangeText={(value) => {
+                  setGoalInfo({ ...goalInfo, TargetAmount: parseFloat(value) });
+                }}
               />
             </View>
+
+            <TouchableOpacity
+              style={styles.imageContainer}
+              onPress={() => {
+                pickImage();
+              }}
+            >
+              {image ? (
+                <Image source={{ uri: image }} style={styles.image} />
+              ) : (
+                <View style={styles.placeholderImage}>
+                  <Text style={styles.placeholderText}>
+                    Tap to select an image
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            {/* {error && <Text style={styles.errorText}>{error}</Text>} */}
           </View>
         </View>
+      </ScrollView>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Create Goal</Text>
-          </TouchableOpacity>
-          <Image
-            source={require("../../assets/bear.png")}
-            style={styles.bearImage}
-            resizeMode="contain"
-          />
-        </View>
+      <View style={styles.buttonSection}>
+        <Image
+          source={require("../../assets/bear.png")}
+          style={styles.bearImage}
+          resizeMode="contain"
+        />
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() => {
+            mutate();
+          }}
+        >
+          <Text style={styles.buttonText}>Create Goal</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -90,52 +144,97 @@ const styles = StyleSheet.create({
     top: 0,
   },
   title: {
-    position: "absolute",
-    top: 140,
-    alignSelf: "center",
     color: "#ffffff",
     fontSize: 25,
     fontWeight: "800",
     letterSpacing: -0.333,
-    zIndex: 10,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 39,
-    paddingTop: 220,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  formContainer: {
-    width: "100%",
-    gap: 20,
-    marginTop: 40,
-  },
-  detailGroup: {
+    textAlign: "center",
+    marginTop: 60,
     marginBottom: 20,
   },
-  label: {
-    color: "#000000",
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
+  scrollView: {
+    flex: 1,
   },
-  detailBox: {
-    borderWidth: 1,
-    borderColor: "#4D5DFA",
-    borderRadius: 8,
-    padding: 16,
-    backgroundColor: "transparent",
+  scrollContent: {
+    paddingHorizontal: 39,
+    paddingTop: 20,
+    paddingBottom: 100,
+  },
+  mainContent: {
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 20,
+    marginTop: 30,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  inputContainer: {
+    width: "100%",
+    gap: 20,
+    marginBottom: 20,
   },
   input: {
+    width: "100%",
+    height: 50,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    paddingHorizontal: 16,
+    fontSize: 14,
+    color: "#000000",
+    backgroundColor: "#ffffff",
+  },
+  priceContainer: {
+    width: "100%",
+    gap: 8,
+  },
+  priceLabel: {
+    color: "#000000",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  imageContainer: {
+    width: "100%",
+    height: 200,
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: "#ffffff",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  placeholderImage: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+  },
+  placeholderText: {
     color: "#000000",
     fontSize: 14,
   },
-  buttonContainer: {
+  buttonSection: {
     width: "100%",
-    position: "relative",
-    marginTop: 20,
-    marginBottom: 20,
+    position: "absolute",
+    bottom: 20,
+    paddingHorizontal: 39,
+  },
+  bearImage: {
+    width: 118,
+    height: 78,
+    position: "absolute",
+    right: 50,
+    top: -77,
+    zIndex: 1,
   },
   submitButton: {
     width: "100%",
@@ -149,14 +248,11 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 20,
   },
-  bearImage: {
-    width: 100,
-    height: 70,
-    position: "absolute",
-    right: 0,
-    top: -50,
-    zIndex: 1,
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    textAlign: "center",
   },
 });
 
-export default CreateNewGoal; 
+export default CreateNewGoal;

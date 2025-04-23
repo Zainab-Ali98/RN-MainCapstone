@@ -9,6 +9,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserContext from "./src/context/UserContext";
 import ParentNavigation from "./src/navigation/ParentNavigation/ParentNavigation";
 import ChildNavigation from "./src/navigation/ChildNavigation/ChildNavigation";
+import ViewTaskScreen from "./src/screens/ViewTaskScreen";
+import CreateNewGoal from "./src/screens/CreateNewGoal";
+import ChildListScreen from "./src/screens/ChildListScreen";
+import RewardsScreen from "./src/screens/RewardsScreen";
+import TaskListScreen from "./src/screens/TaskListScreen";
+import ProgressGoalsScreen from "./src/screens/ProgressGoalsScreen";
+import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
+import ChildDepositScreen from "./src/screens/ChildDepositScreen";
+import ParentScreen from "./src/screens/ParentScreen";
+
 
 const queryClient = new QueryClient();
 
@@ -39,7 +49,12 @@ export default function App() {
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
-       
+          {/* <ViewTaskScreen/> */}
+          {/* <CreateNewGoal/> */}
+          {/* <ParentScreen /> */}
+          {/* <ProfileScreen /> */}
+         
+
           {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
