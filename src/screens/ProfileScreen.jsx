@@ -200,7 +200,9 @@ const ProfileScreen = ({ route }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate("CreateTaskScreen")}
+              onPress={() =>
+                navigation.navigate("CreateTaskScreen", { childId: child.id })
+              }
             >
               <MaterialIcons
                 name="playlist-add-check"
