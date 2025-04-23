@@ -285,11 +285,14 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Logout from "../components/Logout";
 import { KeyboardAvoidingView, Platform } from "react-native";
+import { createChild } from "../api/parents";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
 
 function CreateNewAcc() {
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
   const [userInfo, setUserInfo] = useState({
     email: "",
     password: "",
@@ -298,6 +301,19 @@ function CreateNewAcc() {
   });
 
   const [image, setImage] = useState(null);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => createChild(userInfo, image),
+    onSuccess: (data) => {
+      console.log("Child account created successfully:", data);
+      queryClient.invalidateQueries(["fetchChildren"]);
+      navigation.navigate("ParentScreen");
+    },
+    onError: (error) => {
+      console.error("Error creating child account:", error);
+      alert("Error creating child account. Please try again.");
+    },
+  });
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -313,7 +329,16 @@ function CreateNewAcc() {
   };
 
   const handleRegister = () => {
-    navigation.navigate("Profile");
+    if (
+      !userInfo.FirstName ||
+      !userInfo.LastName ||
+      !userInfo.email ||
+      !userInfo.password
+    ) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    mutate();
   };
 
   return (

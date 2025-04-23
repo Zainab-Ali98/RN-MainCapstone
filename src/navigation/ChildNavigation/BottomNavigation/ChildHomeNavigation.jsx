@@ -6,7 +6,7 @@ import CurrentBalanceScreen from "../../../screens/CurrentBalanceScreen";
 import ViewTaskScreen from "../../../screens/ViewTaskScreen";
 import CreateNewGoal from "../../../screens/CreateNewGoal";
 import RewardsScreen from "../../../screens/RewardsScreen";
-import ProgressGoalScreen from "../../../screens/ProgressGoalScreen";
+import ProgressGoalsScreen from "../../../screens/ProgressGoalsScreen";
 import ChildDepositScreen from "../../../screens/ChildDepositScreen";
 
 const Stack = createNativeStackNavigator();
@@ -50,8 +50,8 @@ const ChildHomeNavigation = () => {
       />
 
       <Stack.Screen
-        name="ProgressGoalScreen"
-        component={ProgressGoalScreen}
+        name="ProgressGoalsScreen"
+        component={ProgressGoalsScreen}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />

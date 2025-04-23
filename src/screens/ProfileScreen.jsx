@@ -13,68 +13,25 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import CircleProgress from "../components/CircleProgress";
 import { LinearGradient } from "expo-linear-gradient";
+import { getChildTask, getChildSavingsGoals } from "../api/parents";
+import { useQuery } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
 
-const mockTasks = [
-  {
-    id: "1",
-    title: "Complete homework",
-    amount: 5.0,
-    status: "Verified",
-    color: "#6C63FF",
-  },
-  {
-    id: "2",
-    title: "Clean room",
-    amount: 3.0,
-    status: "Rejected",
-    color: "#FF6B6B",
-  },
-  {
-    id: "3",
-    title: "Read a book",
-    amount: 4.0,
-    status: "Approved",
-    color: "#4ECDC4",
-  },
-  {
-    id: "4",
-    title: "Exercise",
-    amount: 6.0,
-    status: "Verified",
-    color: "#FFD93D",
-  },
-];
-
-const mockSavingGoals = [
-  {
-    id: "1",
-    title: "New Bike",
-    amount: 200,
-    progress: 150,
-    emoji: "🚲",
-    color: "#FF9F43",
-  },
-  {
-    id: "2",
-    title: "Video Game",
-    amount: 60,
-    progress: 45,
-    emoji: "🎮",
-    color: "#54A0FF",
-  },
-  {
-    id: "3",
-    title: "School Supplies",
-    amount: 100,
-    progress: 80,
-    emoji: "✏️",
-    color: "#2ED573",
-  },
-];
-
 const TaskItem = ({ item }) => {
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case "verified":
+        return "#3B82F6";
+      case "completed":
+        return "#10B981";
+      case "rejected":
+        return "#EF4444";
+      default:
+        return "#9CA3AF";
+    }
+  };
+
   return (
     <View style={styles.taskBox}>
       <LinearGradient
@@ -134,8 +91,51 @@ const SavingGoalItem = ({ item }) => {
   );
 };
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ route }) => {
   const navigation = useNavigation();
+  const child = route.params; // Get the child data from route params
+  console.log("Child data:", child); // Log the child data for debugging
+
+  // Fetch Child Savings Goals
+  const {
+    data: savingsGoalsData,
+    isLoading: isGoalsLoading,
+    isError: isGoalsError,
+    error: goalsError,
+  } = useQuery({
+    queryKey: ["childSavingsGoals", child.id],
+    queryFn: () => getChildSavingsGoals(child.id),
+    enabled: !!child.id,
+  });
+
+  // Map savings goals data to match SavingGoalItem expected format
+  const savingsGoals =
+    savingsGoalsData?.map((goal) => ({
+      id: goal.savingsGoalId.toString(),
+      title: goal.goalName,
+      amount: goal.targetAmount || 0, // Adjust based on actual field name
+      progress: goal.currentBalance || 0, // Adjust based on actual field name
+    })) || [];
+
+  // Fetch Child Tasks
+  const {
+    data: tasksData,
+    isLoading: isTasksLoading,
+    isError: isTasksError,
+    error: tasksError,
+  } = useQuery({
+    queryKey: ["childTasks", child.id],
+    queryFn: () => getChildTask(child.id),
+  });
+
+  // Map Child Tasks
+  const tasks =
+    tasksData?.map((task) => ({
+      id: task.taskId.toString(),
+      title: task.taskName,
+      amount: task.rewardAmount || 0, // Adjust based on actual field name (e.g., RewardReward)
+      status: task.status || "Pending",
+    })) || [];
 
   return (
     <View style={styles.container}>
@@ -154,7 +154,9 @@ const ProfileScreen = () => {
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardName}>Available Balance</Text>
                 </View>
-                <Text style={styles.balanceAmount}>3077.20 KWD</Text>
+                <Text style={styles.balanceAmount}>
+              KWD {child?.balance.toFixed(2)}
+            </Text>
                 <View style={styles.cardFooter}>
                   <View
                     style={[
@@ -196,7 +198,7 @@ const ProfileScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Saving Goals</Text>
             <FlatList
-              data={mockSavingGoals}
+              data={savingsGoals}
               renderItem={({ item }) => <SavingGoalItem item={item} />}
               keyExtractor={(item) => item.id}
               horizontal
@@ -208,11 +210,47 @@ const ProfileScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasks</Text>
             <FlatList
-              data={mockTasks}
+              data={tasks}
               renderItem={({ item }) => <TaskItem item={item} />}
               keyExtractor={(item) => item.id}
               scrollEnabled={false}
             />
+          </View>
+
+          {/* Buttons */}
+          <View style={styles.buttonSection}>
+            <Image
+              // source={require("../../assets/bear.png")}
+              style={styles.bearImage}
+              resizeMode="contain"
+            />
+            <View style={styles.actionButtonsContainer}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() =>
+                  navigation.navigate("DepositScreen", { childId: child.id })
+                } // This should work now
+              >
+                <MaterialIcons
+                  name="account-balance-wallet"
+                  size={24}
+                  color="#6C63FF"
+                />
+                <Text style={styles.whiteButtonText}>Send Money</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate("CreateTaskScreen")}
+              >
+                <MaterialIcons
+                  name="playlist-add-check"
+                  size={24}
+                  color="#6C63FF"
+                />
+                <Text style={styles.whiteButtonText}>Create Task</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
