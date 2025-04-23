@@ -174,7 +174,7 @@ const TaskBox = ({ task, onPress }) => {
         return "#FBBF24";
       case "verified":
         return "#3B82F6";
-      case "accepted":
+      case "completed":
         return "#10B981";
       case "rejected":
         return "#EF4444";
