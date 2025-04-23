@@ -8,6 +8,7 @@ const ProgressGoalsScreen = () => {
       <StatusBar barStyle="dark-content" />
       <SavingsGoalList />
     </SafeAreaView>
+    
   );
 };
 
