@@ -21,6 +21,7 @@ import TaskListScreen from "./src/screens/TaskListScreen";
 import ProgressGoalsScreen from "./src/screens/ProgressGoalsScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
+import ParentScreen from "./src/screens/ParentScreen";
 
 const queryClient = new QueryClient();
 
@@ -50,12 +51,12 @@ export default function App() {
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
-          {/* <ProgressGoalsScreen/> */}
-          {/* <ViewTaskScreen/> */}
+         {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
-          {/* <ChildListScreen/> */}
+          <ParentScreen />
+         
 
-          {isAuth ? (
+          {/* {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
             ) : (
@@ -63,7 +64,7 @@ export default function App() {
             )
           ) : (
             <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
-          )}
+          )} */}
 
           <StatusBar style="light" />
         </UserContext.Provider>
