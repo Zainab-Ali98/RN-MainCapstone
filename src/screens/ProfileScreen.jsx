@@ -15,7 +15,6 @@ import CircleProgress from "../components/CircleProgress";
 import Logout from "../components/Logout";
 import { getChildTask, getChildSavingsGoals } from "../api/parents";
 import { useQuery } from "@tanstack/react-query";
-
 const { width, height } = Dimensions.get("window");
 
 const TaskItem = ({ item }) => {
