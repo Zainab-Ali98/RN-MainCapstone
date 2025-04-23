@@ -2,12 +2,10 @@ import axios from "axios";
 import { getToken } from "./storage";
 
 const instance = axios.create({
-
-  baseURL: "http://192.168.0.166:5209/api",
+  baseURL: "http://192.168.2.30:5209/api",
   headers: {
     "Content-Type": "application/json",
   },
-
 });
 
 instance.interceptors.request.use(

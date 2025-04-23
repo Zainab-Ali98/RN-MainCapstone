@@ -173,7 +173,9 @@ const ProfileScreen = ({ route }) => {
             <View style={styles.actionButtonsContainer}>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => navigation.navigate("DepositScreen")} // This should work now
+                onPress={() =>
+                  navigation.navigate("DepositScreen", { childId: child.id })
+                } // This should work now
               >
                 <MaterialIcons
                   name="account-balance-wallet"
