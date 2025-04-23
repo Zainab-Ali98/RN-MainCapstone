@@ -22,6 +22,7 @@ import ProgressGoalsScreen from "./src/screens/ProgressGoalsScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
 import ParentScreen from "./src/screens/ParentScreen";
+import PCDetailsScreen from "./src/screens/PCDetailsScreen";
 
 const queryClient = new QueryClient();
 
