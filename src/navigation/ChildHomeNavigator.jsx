@@ -5,6 +5,7 @@ import TaskListScreen from "../screens/TaskListScreen";
 import ViewTaskScreen from "../screens/ViewTaskScreen";
 import RewardsScreen from "../screens/RewardsScreen";
 import CreateNewGoal from "../screens/CreateNewGoal";
+import ChildDepositScreen from "../screens/ChildDepositScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +21,7 @@ export const ChildHomeNavigator = () => {
       <Stack.Screen name="TaskProfile" component={ViewTaskScreen} />
       <Stack.Screen name="Reward" component={RewardsScreen} />
       <Stack.Screen name="CreateNewGoal" component={CreateNewGoal} />
-
+      <Stack.Screen name="ChildDepositScreen" component={ChildDepositScreen} />
     </Stack.Navigator>
   );
 };

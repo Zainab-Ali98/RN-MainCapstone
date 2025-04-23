@@ -5,19 +5,40 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Platform,
   ScrollView,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { savingsGoalsDeposit } from "../api/children";
 import Logout from "../components/Logout";
-
 
 const { width } = Dimensions.get("window");
 
-const ChildDepositScreen = ({ navigation }) => {
+const ChildDepositScreen = ({ route, navigation }) => {
+  const { savingsGoalId, goalName } = route.params || {};
   const [amount, setAmount] = useState("0");
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
+
+  // Mutation for depositing to a savings goal
+  const depositMutation = useMutation({
+    mutationFn: ({ savingsGoalId, amount }) =>
+      savingsGoalsDeposit(savingsGoalId, amount),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["savingsGoals"]);
+      Alert.alert("Success", `Deposit of ${amount} KD added to ${goalName}!`, [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    },
+    onError: (err) => {
+      Alert.alert("Error", "Failed to add deposit. Please try again.");
+    },
+  });
 
   const handleNumberPress = (num) => {
     if (amount === "0") {
@@ -35,6 +56,24 @@ const ChildDepositScreen = ({ navigation }) => {
 
   const handleClear = () => {
     setAmount("0");
+  };
+
+  const handleEnter = () => {
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      Alert.alert("Invalid Amount", "Please enter a valid positive amount.");
+      return;
+    }
+    if (!savingsGoalId) {
+      Alert.alert("Error", "No savings goal selected.");
+      return;
+    }
+    depositMutation.mutate({ savingsGoalId, amount: numericAmount });
+  };
+
+  const isValidAmount = () => {
+    const numericAmount = parseFloat(amount);
+    return !isNaN(numericAmount) && numericAmount > 0;
   };
 
   const renderButton = (value, isSpecial = false) => (
@@ -72,7 +111,9 @@ const ChildDepositScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.amountSection}>
-          <Text style={styles.label}>Enter Amount</Text>
+          <Text style={styles.label}>
+            Deposit to {goalName || "Savings Goal"}
+          </Text>
           <Text style={styles.amount}>{amount} KD</Text>
           <View style={styles.divider} />
         </View>
@@ -110,8 +151,12 @@ const ChildDepositScreen = ({ navigation }) => {
         </View>
 
         <TouchableOpacity
-          style={styles.enterButton}
-          onPress={() => navigation.navigate("ProgressGoalScreen")}
+          style={[
+            styles.enterButton,
+            !isValidAmount() && styles.disabledButton,
+          ]}
+          onPress={handleEnter}
+          disabled={!isValidAmount()}
         >
           <LinearGradient
             colors={["#4D5DFA", "#4D5DFA"]}
@@ -119,7 +164,7 @@ const ChildDepositScreen = ({ navigation }) => {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text style={styles.enterButtonText}> Enter </Text>
+            <Text style={styles.enterButtonText}>Enter</Text>
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
@@ -140,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 45,
-    flex: 1,
+    flexGrow: 1,
   },
   amountSection: {
     alignItems: "center",
@@ -193,19 +238,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
   },
-  sendButton: {
-    backgroundColor: "transparent",
-  },
-  sendButtonGradient: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  sendButtonText: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "500",
-  },
   clearButtonGradient: {
     flex: 1,
     justifyContent: "center",
@@ -242,6 +274,9 @@ const styles = StyleSheet.create({
   },
   specialButtonText: {
     color: "#FFFFFF",
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
 });
 

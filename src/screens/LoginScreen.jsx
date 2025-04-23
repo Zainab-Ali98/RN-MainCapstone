@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,15 +8,60 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/auth";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  useDerivedValue,
+  interpolateColor,
+} from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
 function LoginScreen({ navigation, setIsAuth, setRole }) {
   const [userInfo, setUserInfo] = useState({});
   const [error, setError] = useState(null);
+
+  // Animation scale
+  const scale = useSharedValue(1);
+  scale.value = withRepeat(
+    withSequence(
+      withTiming(1.08, { duration: 600 }),
+      withTiming(1, { duration: 600 })
+    ),
+    -1,
+    true
+  );
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  // Rainbow animated color
+  const colorProgress = useSharedValue(0);
+  useEffect(() => {
+    colorProgress.value = withRepeat(
+      withTiming(1, { duration: 2000 }),
+      -1,
+      true
+    );
+  }, []);
+
+  const rainbowColor = useDerivedValue(() =>
+    interpolateColor(
+      colorProgress.value,
+      [0, 0.2, 0.4, 0.6, 0.8, 1],
+      ["#FF0000", "#FF9900", "#33FF33", "#00FFFF", "#3333FF", "#FF00FF"]
+    )
+  );
+
+  const rainbowTextStyle = useAnimatedStyle(() => ({
+    color: rainbowColor.value,
+  }));
 
   const { mutate, isError } = useMutation({
     mutationKey: ["login"],
@@ -53,6 +98,16 @@ function LoginScreen({ navigation, setIsAuth, setRole }) {
       />
 
       <View style={styles.contentWrapper}>
+        {/* Welcome Title */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.welcomeStatic}>Welcome to </Text>
+          <Animated.Text
+            style={[styles.abkidsText, animatedStyle, rainbowTextStyle]}
+          >
+            ABKIDS
+          </Animated.Text>
+        </View>
+
         <View style={styles.content}>
           <View style={styles.inputCard}>
             <View style={styles.inputContainer}>
@@ -130,7 +185,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 39,
-    marginTop: height * 0.15, // Added margin from top
+    marginTop: height * 0.1,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 100,
+    gap: 6,
+    width: "100%",
+  },
+  welcomeStatic: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#1E3A8A",
+    textAlign: "center",
+  },
+  abkidsText: {
+    fontSize: 37,
+    fontWeight: "900",
+    textAlign: "center",
   },
   content: {
     width: "100%",
