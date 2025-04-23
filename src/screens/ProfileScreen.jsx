@@ -18,19 +18,6 @@ import { useQuery } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
 
-const mockTasks = [
-  { id: "1", title: "Complete homework", amount: 5.0, status: "Verified" },
-  { id: "2", title: "Clean room", amount: 3.0, status: "Rejected" },
-  { id: "3", title: "Read a book", amount: 4.0, status: "Approved" },
-  { id: "4", title: "Exercise", amount: 6.0, status: "Verified" },
-];
-
-const mockSavingGoals = [
-  { id: "1", title: "New Bike", amount: 200, progress: 150 },
-  { id: "2", title: "Video Game", amount: 60, progress: 45 },
-  { id: "3", title: "School Supplies", amount: 100, progress: 80 },
-];
-
 const TaskItem = ({ item }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -48,7 +35,7 @@ const TaskItem = ({ item }) => {
   return (
     <View style={styles.taskBox}>
       <Text style={styles.taskTitle}>{item.title}</Text>
-      <Text style={styles.taskAmount}>{item.amount.toFixed(2)} KWD</Text>
+      <Text style={styles.taskAmount}>{item.amount} KWD</Text>
       <View
         style={[
           styles.statusBadge,
