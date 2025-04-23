@@ -51,12 +51,11 @@ export default function App() {
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
-         {/* <ViewTaskScreen/> */}
+          {/* <ViewTaskScreen/> */}
           {/* <CreateNewGoal/> */}
-          <ParentScreen />
-         
+          {/* <ParentScreen /> */}
 
-          {/* {isAuth ? (
+          {isAuth ? (
             role === "Parent" ? (
               <ParentNavigation />
             ) : (
@@ -64,7 +63,7 @@ export default function App() {
             )
           ) : (
             <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
-          )} */}
+          )}
 
           <StatusBar style="light" />
         </UserContext.Provider>

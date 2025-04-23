@@ -27,39 +27,15 @@ const ParentScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("kids");
   const [greeting, setGreeting] = useState("");
 
-  const [children, setChildren] = useState([
-    { id: 1, name: "Zainab", balance: 120, image: null, emoji: null },
-    { id: 2, name: "Noor", balance: 90, image: null, emoji: null },
-    { id: 3, name: "Aziz", balance: 140, image: null, emoji: null },
-    { id: 4, name: "Bader", balance: 75, image: null, emoji: null },
-  ]);
+  const [showEmojiModal, setShowEmojiModal] = useState(false);
+  const [selectedChildId, setSelectedChildId] = useState(null);
 
-
-
-
-  const [tasks, setTasks] = useState([
-    {
-      id: 101,
-      name: "Clean Room",
-      childName: "Zainab",
-      status: "Verified",
-      date: "2025-04-14",
-    },
-    {
-      id: 102,
-      name: "Homework",
-      childName: "Aziz",
-      status: "Accepted",
-      date: "2025-04-13",
-    },
-    {
-      id: 103,
-      name: "Wash Dishes",
-      childName: "Bader",
-      status: "Rejected",
-      date: "2025-04-12",
-    },
-  ]);
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting("Good morning");
+    else if (hour < 18) setGreeting("Good afternoon");
+    else setGreeting("Good evening");
+  }, []);
 
   // Fetch Parent Name from backend using the balance endpoint
   const {
@@ -71,33 +47,9 @@ const ParentScreen = ({ navigation }) => {
     queryFn: () => balance(),
   });
 
-  const parentName = data?.name || "Ali";
+  const parentName = balanceData?.name ?? "Parent";
+  const totalBalance = balanceData?.balance ?? 0;
 
-  const [showEmojiModal, setShowEmojiModal] = useState(false);
-  const [selectedChildId, setSelectedChildId] = useState(null);
-
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good morning");
-    else if (hour < 18) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
-  }, []);
-
-  const handleImagePick = async (childId) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-      aspect: [1, 1],
-    });
-
-    if (!result.canceled) {
-      const updated = children.map((child) =>
-        child.id === childId ? { ...child, image: result.assets[0].uri } : child
-      );
-      setChildren(updated);
-    }
-  };
   // Fetch Children from backend using the getChildren endpoint
   const {
     data: childrenData,
@@ -108,12 +60,13 @@ const ParentScreen = ({ navigation }) => {
     queryKey: ["fetchChildren"],
     queryFn: () => getChildren(),
     onSuccess: (data) => {
-      //console.log("Children data:", data);
+      console.log("Children data:", data);
     },
     onError: (error) => {
       console.error("Error fetching children:", error);
     },
   });
+
   const filteredChildren = childrenData?.map((child) => ({
     key: child.childId,
     id: child.childId,
@@ -122,21 +75,6 @@ const ParentScreen = ({ navigation }) => {
     status: "Active", // Placeholder, update later if backend provides
     image: child.profilePicture,
   }));
-  const children = filteredChildren ?? [];
-
-
-  const handleEmojiSelect = (type) => {
-    const emoji = type === "boy" ? "👦" : "👧";
-    const updated = children.map((child) =>
-      child.id === selectedChildId
-        ? { ...child, emoji: emoji, image: null }
-        : child
-    );
-    setChildren(updated);
-    setShowEmojiModal(false);
-  };
-
-  const totalBalance = children.reduce((sum, c) => sum + c.balance, 0);
 
   // Fetch Tasks from backend
   const {
@@ -182,9 +120,32 @@ const ParentScreen = ({ navigation }) => {
         .join("/"),
     };
   });
-  const tasksList = taskFilteredData ?? [];
-  //console.log("Children data:", taskFilteredData);
 
+  const handleImagePick = async (childId) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+      aspect: [1, 1],
+    });
+
+    if (!result.canceled) {
+      const updated = filteredChildren?.map((child) =>
+        child.id === childId ? { ...child, image: result.assets[0].uri } : child
+      );
+      // setChildren(updated);
+    }
+  };
+  const handleEmojiSelect = (type) => {
+    const emoji = type === "boy" ? "👦" : "👧";
+    const updated = filteredChildren?.map((child) =>
+      child.id === selectedChildId
+        ? { ...child, emoji: emoji, image: null }
+        : child
+    );
+
+    // setChildren(updated);
+    setShowEmojiModal(false);
+  };
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -210,7 +171,7 @@ const ParentScreen = ({ navigation }) => {
             <MaterialIcons name="wb-sunny" size={24} color="#FFD700" />
             <View style={styles.greetingTextContainer}>
               <Text style={styles.dayText}>{greeting}</Text>
-              <Text style={styles.nameText}>Ali</Text>
+              <Text style={styles.nameText}>{parentName}</Text>
             </View>
           </View>
         </View>
@@ -262,14 +223,11 @@ const ParentScreen = ({ navigation }) => {
       {activeTab === "kids" ? (
         <>
           <View style={styles.grid}>
-
-            {children.map((child) => (
+            {filteredChildren?.map((child) => (
               <TouchableOpacity
                 key={child.id}
                 style={styles.childCard}
-                onPress={() =>
-                  navigation.navigate("ProfileScreen", { childId: child.id })
-                }
+                onPress={() => navigation.navigate("ProfileScreen", child)}
               >
                 <View style={styles.childContent}>
                   <View style={styles.childHeader}>
@@ -352,8 +310,8 @@ const ParentScreen = ({ navigation }) => {
           {/* Tasks to Review */}
           <Text style={styles.sectionTitle}>Tasks to Review</Text>
           <View style={styles.grid}>
-            {tasksList
-              .filter((t) => t.status === "Verify")
+            {taskFilteredData
+              ?.filter((t) => t.status === "Verify")
               .map((task) => (
                 <TouchableOpacity
                   key={task.id}
@@ -385,8 +343,8 @@ const ParentScreen = ({ navigation }) => {
         <>
           <Text style={styles.sectionTitle}>Task History</Text>
           <View style={styles.grid}>
-            {tasksList
-              .filter((t) => ["Completed", "Rejected"].includes(t.status))
+            {taskFilteredData
+              ?.filter((t) => ["Completed", "Rejected"].includes(t.status))
               .map((task) => (
                 <TouchableOpacity
                   key={task.id}
