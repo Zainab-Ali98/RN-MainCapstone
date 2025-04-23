@@ -96,6 +96,9 @@ const ParentScreen = ({ navigation }) => {
   const taskFilteredData = tasksData?.map((task) => {
     const child = childrenData?.find((c) => c.childId === task.childId);
     const date = task.date ? new Date(task.date) : new Date("2025-04-14");
+    const dateCompleted = task.dateCompleted
+      ? new Date(task.dateCompleted)
+      : null;
     return {
       key: task.taskId,
       id: task.taskId,
@@ -104,13 +107,23 @@ const ParentScreen = ({ navigation }) => {
         ? `${child.firstName} ${child.lastName}`
         : "Unknown Child",
       status: task.status,
+      description: task.taskDescription,
+      rewardAmount: task.rewardAmount,
+      dateCompleted: dateCompleted
+        ? dateCompleted.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : null,
+      taskPicture: task.taskPicture,
       //  US style: 20 Apr 2025
       // date: date.toLocaleDateString("en-US", {
       //   year: "numeric",
       //   month: "long",
       //   day: "numeric",
       // }),
-      date: date
+      dateCreated: date
         .toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "2-digit",
@@ -316,9 +329,7 @@ const ParentScreen = ({ navigation }) => {
                 <TouchableOpacity
                   key={task.id}
                   style={styles.taskCard}
-                  onPress={() =>
-                    navigation.navigate("TaskDetailsScreen", { task })
-                  }
+                  onPress={() => navigation.navigate("TaskDetailsScreen", task)}
                 >
                   <View style={styles.taskHeader}>
                     <View style={styles.taskIcon}>
@@ -364,7 +375,7 @@ const ParentScreen = ({ navigation }) => {
                     <View
                       style={[
                         styles.taskStatus,
-                        task.status === "Accepted"
+                        task.status === "Completed"
                           ? styles.statusAccepted
                           : styles.statusRejected,
                       ]}
