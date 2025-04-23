@@ -50,8 +50,6 @@ const TaskListScreen = ({ navigation }) => {
     ]).start();
   }, []);
 
-
-  const navigation = useNavigation();
   const { isAuth } = useContext(UserContext);
   const [error, setError] = useState(null);
 
