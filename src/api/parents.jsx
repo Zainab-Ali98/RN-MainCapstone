@@ -93,6 +93,11 @@ const createChild = async (childData, image) => {
 const depositToChild = async (childId, depositData) => {
   try {
     const endpoint = ParentsEndpoints.depositToChild.replace("{id}", childId);
+    // const depositData = {
+    //   amount: amount,
+    // };
+    console.log("Deposit Data:", depositData);
+    console.log("Endpoint:", endpoint);
     const response = await instance.post(endpoint, depositData);
     return response.data;
   } catch (error) {
@@ -110,16 +115,16 @@ const depositToChild = async (childId, depositData) => {
 */
 
 const createTaskForChild = async (taskData, image) => {
-    try {
-        const formData = new FormData();
-        for (key in taskData) {
-            formData.append(key, taskData[key]);
-          }
+  try {
+    const formData = new FormData();
+    for (key in taskData) {
+      formData.append(key, taskData[key]);
+    }
     if (image) {
-      formData.append('image', {
+      formData.append("image", {
         uri: image,
-        type: 'image/jpeg',
-        name: 'task-image.jpg'
+        type: "image/jpeg",
+        name: "task-image.jpg",
       });
     }
     const response = await instance.post(
