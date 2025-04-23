@@ -20,16 +20,27 @@ const { width, height } = Dimensions.get("window");
 const TaskItem = ({ item }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case "verify":
-        return "#3B82F6";
+      case "verified":
+        return "#22C55E"; // Green
       case "completed":
-        return "#10B981";
+        return "#3B82F6"; // Blue
       case "rejected":
-        return "#EF4444";
-      case "ongoing":
-        return "#FBBF24";
+        return "#EF4444"; // Red
       default:
         return "#9CA3AF";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status.toLowerCase()) {
+      case "verified":
+        return "check-circle";
+      case "approved":
+        return "thumb-up";
+      case "rejected":
+        return "error-outline";
+      default:
+        return "pending";
     }
   };
 
@@ -189,7 +200,9 @@ const ProfileScreen = ({ route }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate("CreateTaskScreen")}
+              onPress={() =>
+                navigation.navigate("CreateTaskScreen", { childId: child.id })
+              }
             >
               <MaterialIcons
                 name="playlist-add-check"
@@ -327,44 +340,62 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   taskBox: {
-    borderRadius: 16,
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
     marginBottom: 12,
     overflow: "hidden",
+    elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
   },
-  taskGradient: {
-    width: "100%",
+  taskLeftBorder: {
+    width: 4,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
   },
   taskContent: {
-    padding: 16,
+    flex: 1,
+    padding: 12,
   },
-  taskTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#2D3748",
-    marginBottom: 8,
-  },
-  taskDetails: {
+  taskHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 8,
   },
-  rewardText: {
+  taskTitle: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#1F2937",
+    flex: 1,
+    marginRight: 12,
   },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 20,
   },
+  statusIcon: {
+    marginRight: 4,
+  },
   statusText: {
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  rewardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rewardText: {
+    marginLeft: 4,
     fontSize: 14,
     fontWeight: "600",
+    color: "#F59E0B",
   },
   goalCard: {
     borderRadius: 20,
