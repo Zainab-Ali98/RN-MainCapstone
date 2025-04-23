@@ -1,5 +1,4 @@
-import axios from "axios";
-import { ChildrenEndpoints } from "./endpoints";
+import { ChildrenEndpoints } from './endpoints';
 import instance from "../api/index";
 
 const tasks = async () => {

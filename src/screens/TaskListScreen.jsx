@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,10 @@ import {
 } from "react-native";
 import * as ImagePicker from "react-native-image-picker";
 import Logout from "../components/Logout";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { tasks, taskComplete } from "../api/children";
+import UserContext from "../context/UserContext";
+import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -22,29 +26,8 @@ const taskAnimations = {
   exercise: require("../../assets/Exercise Character.json"),
 };
 
-const mockTasks = [
-  {
-    id: "1",
-    title: "Complete homework",
-    reward: "5.00",
-    points: 100,
-    animation: "exercise",
-  },
-  {
-    id: "2",
-    title: "Clean your room",
-    reward: "3.00",
-    points: 75,
-    animation: "boy",
-  },
-  {
-    id: "3",
-    title: "Help with dishes",
-    reward: "4.00",
-    points: 50,
-    animation: "girl",
-  },
-];
+
+const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
 const TaskListScreen = ({ navigation }) => {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -67,6 +50,36 @@ const TaskListScreen = ({ navigation }) => {
     ]).start();
   }, []);
 
+  const { isAuth } = useContext(UserContext);
+  const [error, setError] = useState(null);
+
+  const { data: tasksData, isLoading, refetch } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: tasks,
+    enabled: !!isAuth,
+  });
+
+  const { mutate: updateTaskStatus } = useMutation({
+    mutationKey: ["updateTaskStatus"],
+    mutationFn: taskComplete,
+    onSuccess: () => {
+      refetch();
+      Alert.alert("Success", "Task status updated successfully");
+    },
+    onError: (error) => {
+      setError(error.message || "Failed to update task status");
+      console.error("Error updating task status:", error);
+    },
+  });
+
+  const handleTaskListPress = (task) => {
+    navigation.navigate("ViewTaskScreen", { task });
+  };
+
+  const handleRewardsPress = () => {
+    navigation.navigate("Reward");
+  };
+
   const handleImagePick = async (taskId) => {
     try {
       const response = await ImagePicker.launchImageLibrary({
@@ -77,8 +90,11 @@ const TaskListScreen = ({ navigation }) => {
       });
 
       if (response.didCancel) return;
+      
+      updateTaskStatus(taskId);
       Alert.alert("Great job", "Photo uploaded! Waiting for parent to check.");
     } catch (error) {
+      console.error("Image picker error:", error);
       Alert.alert("Oops!", "Something went wrong. Try again?");
     }
   };
@@ -134,9 +150,9 @@ const TaskListScreen = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.horizontalScrollContent}
             >
-              {mockTasks.map((task, index) => (
+              {tasksData?.map((task, index) => (
                 <Animated.View
-                  key={task.id}
+                  key={task.taskId}
                   style={[
                     styles.taskCardWrapper,
                     {
@@ -149,7 +165,7 @@ const TaskListScreen = ({ navigation }) => {
                     style={[
                       styles.taskCard,
                       { backgroundColor: getRandomColor() },
-                      selectedTask === task.id && styles.selectedTask,
+                      selectedTask === task.taskId && styles.selectedTask,
                     ]}
                     onPress={() =>
                       navigation.navigate("ViewTaskScreen", { task })
@@ -164,7 +180,7 @@ const TaskListScreen = ({ navigation }) => {
                           loop
                           style={styles.taskAnimation}
                         />
-                        <Text style={styles.taskTitle}>{task.title}</Text>
+                        <Text style={styles.taskTitle}>{task.taskName}</Text>
                       </View>
                       <View style={styles.taskFooter}>
                         <View style={styles.pointsBadge}>
@@ -174,7 +190,7 @@ const TaskListScreen = ({ navigation }) => {
                         </View>
                         <View style={styles.rewardContainer}>
                           <Text style={styles.rewardAmount}>
-                            {task.reward} KD
+                            {task.taskReward} KD
                           </Text>
                           <Text style={styles.rewardLabel}>Reward</Text>
                         </View>
