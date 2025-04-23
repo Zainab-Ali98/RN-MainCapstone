@@ -3,7 +3,6 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { deleteToken } from "../api/storage";
 import UserContext from "../context/UserContext";
-
 const Logout = () => {
   const { isAuth, setIsAuth } = useContext(UserContext);
   return (
@@ -14,7 +13,8 @@ const Logout = () => {
         setIsAuth(false);
       }}
     >
-      <MaterialIcons name="logout" size={22} color="#FFFFFF" />
+      {/* Delete the token, setIsAuth to false */}
+      <MaterialIcons name="logout" size={30} color="red" />
     </TouchableOpacity>
   );
 };
@@ -24,14 +24,16 @@ export default Logout;
 const styles = StyleSheet.create({
   logoutButton: {
     position: "absolute",
-    top: 50,
-    right: 16,
+    top: 30,
+    right: 1,
     zIndex: 10,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#0066FF",
-    alignItems: "center",
-    justifyContent: "center",
+    // backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
 });
