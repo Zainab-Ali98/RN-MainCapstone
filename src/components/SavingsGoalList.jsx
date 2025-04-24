@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getSavingsGoals, savingsGoalsBreak } from "../api/children";
@@ -22,15 +23,13 @@ const SavingsGoalList = () => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedTab, setSelectedTab] = useState("All");
 
-  // Fetch savings goals
   const { data, isLoading, isError } = useQuery({
     queryKey: ["savingsGoals"],
     queryFn: getSavingsGoals,
-
   });
 
-  // Mutation for breaking a goal
   const breakMutation = useMutation({
     mutationFn: (savingsGoalId) => savingsGoalsBreak(savingsGoalId),
     onSuccess: () => {
@@ -43,19 +42,16 @@ const SavingsGoalList = () => {
     },
   });
 
-  if (isLoading) {
-    return <Text style={styles.loading}>Loading...</Text>;
-  }
+  const inProgressGoals =
+    data?.filter((goal) => goal.status === "InProgress") || [];
 
-  if (isError) {
-    return <Text style={styles.error}>Error fetching data</Text>;
-  }
+  const filteredGoals =
+    data?.filter((goal) => {
+      if (selectedTab === "Completed") return goal.status === "Completed";
+      if (selectedTab === "Broken") return goal.status === "Broken";
+      return true; // "All"
+    }) || [];
 
-  const inProgressGoals = data
-    ? data?.filter((goal) => goal.status === "InProgress")
-    : [];
-
-  // Handle swipe to update current index
   const onViewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index);
@@ -66,7 +62,6 @@ const SavingsGoalList = () => {
     itemVisiblePercentThreshold: 50,
   };
 
-  // Navigation to deposit screen
   const handleDeposit = (goal) => {
     navigation.navigate("ChildDepositScreen", {
       savingsGoalId: goal.savingsGoalId,
@@ -74,7 +69,6 @@ const SavingsGoalList = () => {
     });
   };
 
-  // Break goal confirmation
   const handleBreak = (goal) => {
     Alert.alert(
       "Break Goal",
@@ -95,12 +89,46 @@ const SavingsGoalList = () => {
     ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
 
+  if (isLoading) {
+    return <Text style={styles.loading}>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text style={styles.error}>Error fetching data</Text>;
+  }
+
   return (
     <View style={styles.container}>
-      {inProgressGoals.length > 0 ? (
-        <View style={styles.content}>
-          {/* Static Donut Progress */}
-          <View style={styles.middleContainer}>
+      {/* Tabs */}
+      <View style={styles.tabsContainer}>
+        {["All", "Completed", "Broken"].map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[
+              styles.tabButton,
+              selectedTab === tab && styles.tabButtonActive,
+            ]}
+            onPress={() => setSelectedTab(tab)}
+          >
+            <Text
+              style={[
+                styles.tabButtonText,
+                selectedTab === tab && styles.tabButtonTextActive,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Donut Carousel — Always InProgress only */}
+        {inProgressGoals.length > 0 && (
+          <View style={styles.donutContainer}>
             <View style={styles.priceContainer}>
               <Text style={styles.savedAmount}>
                 {currentGoal?.currentBalance.toFixed(3)} KWD
@@ -120,7 +148,6 @@ const SavingsGoalList = () => {
                 borderWidth={0}
                 showsText={false}
               />
-              {/* Scrollable Images Inside the Donut */}
               <View style={styles.circularMask}>
                 <FlatList
                   data={inProgressGoals}
@@ -143,12 +170,7 @@ const SavingsGoalList = () => {
               </View>
             </View>
 
-            {/* Pagination Dots & Status*/}
-            <View
-              style={{
-                gap: 10,
-              }}
-            >
+            <View style={styles.statusContainer}>
               <View style={styles.pagination}>
                 {inProgressGoals.map((_, index) => (
                   <View
@@ -171,7 +193,6 @@ const SavingsGoalList = () => {
 
             <View style={styles.textContainer}>
               <Text style={styles.productName}>{currentGoal?.goalName}</Text>
-
               {currentGoal?.message && (
                 <Text style={styles.messageText}>{currentGoal?.message}</Text>
               )}
@@ -204,15 +225,28 @@ const SavingsGoalList = () => {
               </TouchableOpacity>
             </View>
           </View>
+        )}
 
-          {/* Details of Current Goal */}
-          {currentGoal && <View style={styles.detailsContainer}></View>}
+        {/* Filtered Goals List */}
+        <View style={styles.filteredGoalsContainer}>
+          {filteredGoals.length === 0 ? (
+            <Text style={styles.noGoals}>
+              No goals available for this filter.
+            </Text>
+          ) : (
+            filteredGoals.map((goal) => (
+              <View key={goal.savingsGoalId} style={styles.goalCard}>
+                <Text style={styles.goalName}>{goal.goalName}</Text>
+                <Text style={styles.goalStatus}>{goal.status}</Text>
+                <Text style={styles.goalProgress}>
+                  {goal.currentBalance.toFixed(3)} /{" "}
+                  {goal.targetAmount.toFixed(3)} KWD
+                </Text>
+              </View>
+            ))
+          )}
         </View>
-      ) : (
-        <Text style={styles.noGoals}>
-          No in-progress savings goals available.
-        </Text>
-      )}
+      </ScrollView>
     </View>
   );
 };
@@ -222,34 +256,81 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
-  content: {
+  tabsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingVertical: 16,
+    gap: 12,
+    backgroundColor: "#F3F4F6",
+    marginBottom: 16,
+  },
+  tabButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  tabButtonActive: {
+    backgroundColor: "#6C63FF",
+    borderColor: "#6C63FF",
+  },
+  tabButtonText: {
+    color: "#6B7280",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  tabButtonTextActive: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  scrollView: {
     flex: 1,
+  },
+  donutContainer: {
     alignItems: "center",
+    paddingVertical: 20,
   },
-  circleWrapper: {
-    width: CIRCLE_SIZE + 30,
-    height: CIRCLE_SIZE + 30,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
+  filteredGoalsContainer: {
+    padding: 20,
   },
-  circularMask: {
-    position: "absolute",
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
-    borderRadius: CIRCLE_SIZE / 2,
-    overflow: "hidden",
-    backgroundColor: "#fff",
+  goalCard: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
   },
-  imageContainer: {
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
-    justifyContent: "center",
-    alignItems: "center",
+  goalName: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
   },
-  productImage: {
-    width: "100%",
-    height: "100%",
+  goalStatus: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 4,
+  },
+  goalProgress: {
+    fontSize: 16,
+    color: "#4CAF50",
+    fontWeight: "500",
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  savedAmount: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#4CAF50",
+  },
+  targetAmount: {
+    fontSize: 18,
+    color: "#6B7280",
+  },
+  statusContainer: {
+    gap: 10,
   },
   pagination: {
     flexDirection: "row",
@@ -265,33 +346,6 @@ const styles = StyleSheet.create({
   },
   paginationDotActive: {
     backgroundColor: "#4CAF50",
-  },
-  detailsContainer: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  priceContainer: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-  savedAmount: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#4CAF50",
-  },
-  targetAmount: {
-    fontSize: 18,
-    color: "#6B7280",
-  },
-  textContainer: {
-    alignItems: "center",
-  },
-  productName: {
-    fontSize: 32,
-    fontWeight: "500",
-    color: "#000000",
-    fontFamily: "Inter",
-    marginBottom: 15,
   },
   statusSection: {
     flexDirection: "row",
@@ -309,6 +363,16 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#000000",
     fontFamily: "Inter",
+  },
+  textContainer: {
+    alignItems: "center",
+  },
+  productName: {
+    fontSize: 32,
+    fontWeight: "500",
+    color: "#000000",
+    fontFamily: "Inter",
+    marginBottom: 15,
   },
   messageText: {
     fontSize: 14,
@@ -362,18 +426,30 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
-  middleContainer: {
-    position: "absolute",
-    top: "40%",
-    left: "40%",
-    transform: [
-      { translateX: -(CIRCLE_SIZE + 30) / 2 },
-      { translateY: -(CIRCLE_SIZE + 30) / 2 },
-    ],
-    position: "absolute",
-    alignItems: "center",
+  circleWrapper: {
+    width: CIRCLE_SIZE + 30,
+    height: CIRCLE_SIZE + 30,
     justifyContent: "center",
-    gap: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  circularMask: {
+    position: "absolute",
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    borderRadius: CIRCLE_SIZE / 2,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+  },
+  imageContainer: {
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  productImage: {
+    width: "100%",
+    height: "100%",
   },
 });
 
