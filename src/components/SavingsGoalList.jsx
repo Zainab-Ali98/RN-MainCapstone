@@ -27,6 +27,7 @@ const SavingsGoalList = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["savingsGoals"],
     queryFn: getSavingsGoals,
+
   });
 
   // Mutation for breaking a goal
@@ -51,7 +52,7 @@ const SavingsGoalList = () => {
   }
 
   const inProgressGoals = data
-    ? data.filter((goal) => goal.status === "InProgress")
+    ? data?.filter((goal) => goal.status === "InProgress")
     : [];
 
   // Handle swipe to update current index
@@ -91,7 +92,7 @@ const SavingsGoalList = () => {
 
   const currentGoal = inProgressGoals[currentIndex];
   const progress = currentGoal
-    ? Math.min(currentGoal.currentBalance / currentGoal.targetAmount, 1)
+    ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
 
   return (
@@ -102,10 +103,10 @@ const SavingsGoalList = () => {
           <View style={styles.middleContainer}>
             <View style={styles.priceContainer}>
               <Text style={styles.savedAmount}>
-                {currentGoal.currentBalance.toFixed(3)} KWD
+                {currentGoal?.currentBalance.toFixed(3)} KWD
               </Text>
               <Text style={styles.targetAmount}>
-                / {currentGoal.targetAmount.toFixed(3)} KWD
+                / {currentGoal?.targetAmount.toFixed(3)} KWD
               </Text>
             </View>
 
@@ -163,16 +164,16 @@ const SavingsGoalList = () => {
               <View style={styles.statusSection}>
                 <View style={styles.statusDot} />
                 <Text style={styles.statusText}>
-                  {progress >= 1 ? "Ready to Purchase!" : currentGoal.status}
+                  {progress >= 1 ? "Ready to Purchase!" : currentGoal?.status}
                 </Text>
               </View>
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.productName}>{currentGoal.goalName}</Text>
+              <Text style={styles.productName}>{currentGoal?.goalName}</Text>
 
-              {currentGoal.message && (
-                <Text style={styles.messageText}>{currentGoal.message}</Text>
+              {currentGoal?.message && (
+                <Text style={styles.messageText}>{currentGoal?.message}</Text>
               )}
             </View>
 
@@ -373,7 +374,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-
   },
 });
 
