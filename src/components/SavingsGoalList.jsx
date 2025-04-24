@@ -90,8 +90,8 @@ const SavingsGoalList = () => {
     ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
   
-  {console.log(currentGoal.ProfilePicture);
-  }
+  // {console.log(currentGoal.ProfilePicture);
+  // }
 
   if (isLoading) {
     return <Text style={styles.loading}>Loading...</Text>;
