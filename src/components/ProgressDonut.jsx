@@ -20,6 +20,7 @@ const ProgressDonut = ({ goal }) => {
         />
       </View>
       <View style={styles.circularMask}>
+        
         <Image
           source={{ uri: "https://reactjs.org/logo-og.png" }} // Replace with goal.imageUri if available
           style={styles.productImage}
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   productImage: {
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
+    width: 50,
+    height: 50,
   },
 });

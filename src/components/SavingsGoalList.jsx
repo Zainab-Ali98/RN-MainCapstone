@@ -14,6 +14,7 @@ import { getSavingsGoals, savingsGoalsBreak } from "../api/children";
 import * as Progress from "react-native-progress";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
 
 const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = 200;
@@ -94,6 +95,9 @@ const SavingsGoalList = () => {
   const progress = currentGoal
     ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
+  
+  {console.log(currentGoal.ProfilePicture);
+  }
 
   return (
     <View style={styles.container}>
@@ -126,11 +130,42 @@ const SavingsGoalList = () => {
                   data={inProgressGoals}
                   renderItem={({ item }) => (
                     <View style={styles.imageContainer}>
-                      <Image
+                      {item.ProfilePicture ? (
+                        
+                        
+                        // <Image
+                        //   source={{ uri: item.SavingsGoalPicture }}
+                        //   style={styles.productImage}
+                        //   resizeMode="contain"
+                        // />
+
+                        <LottieView
+                          source={require("../../assets/animations/wallet.json")}
+                          autoPlay
+                          loop
+                          style={{
+                            width: 200,
+                            height: 200,
+                            paddingBottom: 50
+                          }}
+                        />
+                      ) : (
+                        <LottieView
+                          source={require("../../assets/animations/wallet.json")}
+                          autoPlay
+                          loop
+                          style={{
+                            width: 200,
+                            height: 200,
+                            paddingBottom: 50
+                          }}
+                        />
+                      )}
+                      {/* <Image
                         source={{ uri: item.imageUri }}
                         style={styles.productImage}
                         resizeMode="contain"
-                      />
+                      /> */}
                     </View>
                   )}
                   horizontal
