@@ -89,9 +89,9 @@ const SavingsGoalList = () => {
   const progress = currentGoal
     ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
-  
-  {console.log(currentGoal.ProfilePicture);
-  }
+
+  // {console.log(currentGoal.ProfilePicture);
+  // }
 
   if (isLoading) {
     return <Text style={styles.loading}>Loading...</Text>;
@@ -108,16 +108,27 @@ const SavingsGoalList = () => {
         {["All", "Completed", "Broken"].map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[
-              styles.tabButton,
-              selectedTab === tab && styles.tabButtonActive,
-            ]}
+            style={[styles.tab, selectedTab === tab && styles.activeTab]}
             onPress={() => setSelectedTab(tab)}
           >
+            {tab === "Completed" && (
+              <MaterialIcons
+                name="check-circle"
+                size={20}
+                color={selectedTab === tab ? "#6C63FF" : "#666666"}
+              />
+            )}
+            {tab === "Broken" && (
+              <MaterialIcons
+                name="error"
+                size={20}
+                color={selectedTab === tab ? "#6C63FF" : "#666666"}
+              />
+            )}
             <Text
               style={[
-                styles.tabButtonText,
-                selectedTab === tab && styles.tabButtonTextActive,
+                styles.tabText,
+                selectedTab === tab && styles.activeTabText,
               ]}
             >
               {tab}
@@ -158,8 +169,6 @@ const SavingsGoalList = () => {
                   renderItem={({ item }) => (
                     <View style={styles.imageContainer}>
                       {item.ProfilePicture ? (
-                        
-                        
                         // <Image
                         //   source={{ uri: item.SavingsGoalPicture }}
                         //   style={styles.productImage}
@@ -173,7 +182,7 @@ const SavingsGoalList = () => {
                           style={{
                             width: 200,
                             height: 200,
-                            paddingBottom: 50
+                            paddingBottom: 50,
                           }}
                         />
                       ) : (
@@ -184,7 +193,7 @@ const SavingsGoalList = () => {
                           style={{
                             width: 200,
                             height: 200,
-                            paddingBottom: 50
+                            paddingBottom: 50,
                           }}
                         />
                       )}
@@ -293,30 +302,32 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    paddingVertical: 16,
-    gap: 12,
-    backgroundColor: "#F3F4F6",
-    marginBottom: 16,
+    justifyContent: "space-around",
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderRadius: 15,
+    marginHorizontal: 20,
+    paddingVertical: 10,
   },
-  tabButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+  tab: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    gap: 8,
   },
-  tabButtonActive: {
-    backgroundColor: "#6C63FF",
-    borderColor: "#6C63FF",
+  activeTab: {
+    backgroundColor: "rgba(108, 99, 255, 0.1)",
   },
-  tabButtonText: {
-    color: "#6B7280",
-    fontSize: 14,
+  tabText: {
+    fontSize: 16,
+    color: "#666666",
     fontWeight: "500",
   },
-  tabButtonTextActive: {
-    color: "#FFFFFF",
+  activeTabText: {
+    color: "#6C63FF",
     fontWeight: "600",
   },
   scrollView: {
