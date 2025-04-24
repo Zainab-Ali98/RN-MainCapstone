@@ -65,7 +65,7 @@ const RewardsScreen = () => {
   }, []);
 
   const handleRedeem = (reward) => {
-    if (profileData?.loyaltyPoints < reward.points) {
+    if (profileData?.loyaltyPoints < reward.rewardPrice) {
       alert("Not enough points for this reward!");
       return;
     }
