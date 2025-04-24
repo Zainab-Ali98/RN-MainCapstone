@@ -11,6 +11,16 @@ const rewards = async () => {
   }
 };
 
+const createReward = async (rewardData) => {
+  try {
+    const response = await instance.post(RewardsEndpoints.create, rewardData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating reward:', error);
+    throw error;
+  }
+};
+
 const redeemReward = async (rewardId) => {
   try {
     const endpoint = RewardsEndpoints.redeem.replace('{id}', rewardId);
@@ -32,4 +42,4 @@ const convertPoints = async (points) => {
   }
 };
 
-export { rewards, redeemReward, convertPoints }; 
+export { rewards, createReward, redeemReward, convertPoints }; 

@@ -48,7 +48,7 @@ const UsersEndpoints = {
 };
 
 const RewardsEndpoints = {
-    rewards: `${Rewards}/reward`,
+    rewards: `${Rewards}`,
     create: `${Rewards}/create`,
     convertPoints: `${Rewards}/convert-points`,
     redeem: `${Rewards}/redeem/{id}`,
