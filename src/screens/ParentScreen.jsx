@@ -162,7 +162,7 @@ const ParentScreen = ({ navigation }) => {
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case "Verified":
+      case "Verify":
         return styles.statusVerified;
       case "Ongoing":
         return styles.statusOngoing;
@@ -208,7 +208,7 @@ const ParentScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Tabs */}
+      {/* Tabs - Added Tasks tab and renamed History */}
       <View style={styles.tabs}>
         <TouchableOpacity onPress={() => setActiveTab("kids")}>
           <Text
@@ -220,6 +220,16 @@ const ParentScreen = ({ navigation }) => {
             All Kids
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab("tasks")}>
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "tasks" && styles.tabTextActive,
+            ]}
+          >
+            Tasks
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => setActiveTab("history")}>
           <Text
             style={[
@@ -227,7 +237,7 @@ const ParentScreen = ({ navigation }) => {
               activeTab === "history" && styles.tabTextActive,
             ]}
           >
-            History
+            Task History
           </Text>
         </TouchableOpacity>
       </View>
@@ -319,7 +329,9 @@ const ParentScreen = ({ navigation }) => {
               <Text style={styles.addText}>Add a child</Text>
             </TouchableOpacity>
           </View>
-
+        </>
+      ) : activeTab === "tasks" ? (
+        <>
           {/* Tasks to Review */}
           <Text style={styles.sectionTitle}>Tasks to Review</Text>
           <View style={styles.grid}>
@@ -339,15 +351,68 @@ const ParentScreen = ({ navigation }) => {
                         color="#0066FF"
                       />
                     </View>
-                    <Text style={styles.taskStatus}>{task.status}</Text>
+                    <View
+                      style={[styles.taskStatus, getStatusStyle(task.status)]}
+                    >
+                      <Text style={styles.statusText}>{task.status}</Text>
+                    </View>
                   </View>
                   <Text style={styles.taskName}>{task.name}</Text>
                   <View style={styles.taskFooter}>
-                    <Text style={styles.childName}>{task.childName}</Text>
-                    <Text style={styles.taskDate}>{task.date}</Text>
+                    <View style={styles.childInfo}>
+                      <MaterialIcons name="person" size={16} color="#6B7280" />
+                      <Text style={styles.childName}>{task.childName}</Text>
+                    </View>
+                    <View style={styles.dateInfo}>
+                      <MaterialIcons name="event" size={16} color="#6B7280" />
+                      <Text style={styles.taskDate}>{task.dateCreated}</Text>
+                    </View>
                   </View>
                 </TouchableOpacity>
               ))}
+            {taskFilteredData?.filter((t) => t.status === "Verify").length ===
+              0 && <Text style={styles.emptyText}>No tasks to review</Text>}
+          </View>
+          {/* Ongoing Tasks */}
+          <Text style={styles.sectionTitle}>Ongoing Tasks</Text>
+          <View style={styles.grid}>
+            {taskFilteredData
+              ?.filter((t) => t.status === "Ongoing")
+              .map((task) => (
+                <TouchableOpacity
+                  key={task.id}
+                  style={styles.taskCard}
+                  onPress={() => navigation.navigate("TaskDetailsScreen", task)}
+                >
+                  <View style={styles.taskHeader}>
+                    <View style={styles.taskIcon}>
+                      <MaterialIcons
+                        name="assignment"
+                        size={20}
+                        color="#0066FF"
+                      />
+                    </View>
+                    <View
+                      style={[styles.taskStatus, getStatusStyle(task.status)]}
+                    >
+                      <Text style={styles.statusText}>{task.status}</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.taskName}>{task.name}</Text>
+                  <View style={styles.taskFooter}>
+                    <View style={styles.childInfo}>
+                      <MaterialIcons name="person" size={16} color="#6B7280" />
+                      <Text style={styles.childName}>{task.childName}</Text>
+                    </View>
+                    <View style={styles.dateInfo}>
+                      <MaterialIcons name="event" size={16} color="#6B7280" />
+                      <Text style={styles.taskDate}>{task.dateCreated}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            {taskFilteredData?.filter((t) => t.status === "Ongoing").length ===
+              0 && <Text style={styles.emptyText}>No ongoing tasks</Text>}
           </View>
         </>
       ) : (
@@ -360,9 +425,7 @@ const ParentScreen = ({ navigation }) => {
                 <TouchableOpacity
                   key={task.id}
                   style={styles.taskCard}
-                  onPress={() =>
-                    navigation.navigate("TaskScreen", { taskId: task.id })
-                  }
+                  onPress={() => navigation.navigate("TaskDetailsScreen", task)}
                 >
                   <View style={styles.taskHeader}>
                     <View style={styles.taskIcon}>
@@ -383,9 +446,7 @@ const ParentScreen = ({ navigation }) => {
                       <Text style={styles.statusText}>{task.status}</Text>
                     </View>
                   </View>
-
                   <Text style={styles.taskName}>{task.name}</Text>
-
                   <View style={styles.taskFooter}>
                     <View style={styles.childInfo}>
                       <MaterialIcons name="person" size={16} color="#6B7280" />
@@ -393,11 +454,16 @@ const ParentScreen = ({ navigation }) => {
                     </View>
                     <View style={styles.dateInfo}>
                       <MaterialIcons name="event" size={16} color="#6B7280" />
-                      <Text style={styles.taskDate}>{task.date}</Text>
+                      <Text style={styles.taskDate}>{task.dateCreated}</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
               ))}
+            {taskFilteredData?.filter((t) =>
+              ["Completed", "Rejected"].includes(t.status)
+            ).length === 0 && (
+              <Text style={styles.emptyText}>No task history</Text>
+            )}
           </View>
         </>
       )}
@@ -708,6 +774,12 @@ const styles = StyleSheet.create({
   },
   statusRejected: {
     backgroundColor: "#FFE5E5",
+  },
+  statusOngoing: {
+    backgroundColor: "#FFF7ED",
+  },
+  statusVerified: {
+    backgroundColor: "#E5F0FF",
   },
   statusText: {
     fontSize: 12,
