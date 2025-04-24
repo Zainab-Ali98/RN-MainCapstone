@@ -21,7 +21,7 @@ import Animated, {
 import Logout from "../components/Logout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { rewards, redeemReward } from "../api/rewards";
-import { balance } from "../api/users";
+import { profile } from "../api/users";
 import UserContext from "../context/UserContext";
 
 const { width, height } = Dimensions.get("window");
@@ -35,9 +35,9 @@ const RewardsScreen = () => {
   const [selectedReward, setSelectedReward] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { data: balanceData } = useQuery({
-    queryKey: ["balance"],
-    queryFn: balance,
+  const { data: profileData } = useQuery({
+    queryKey: ["profile"],
+    queryFn: profile,
     enabled: !!isAuth,
   });
 
@@ -65,7 +65,7 @@ const RewardsScreen = () => {
   }, []);
 
   const handleRedeem = (reward) => {
-    if (balanceData?.balance < reward.points) {
+    if (profileData?.loyaltyPoints < reward.rewardPrice) {
       alert("Not enough points for this reward!");
       return;
     }
@@ -108,8 +108,9 @@ const RewardsScreen = () => {
           <View style={styles.cardContent}>
             <Image source={reward.image} style={styles.rewardImage} />
             <View>
-              <Text style={styles.rewardText}>{reward.title}</Text>
-              <Text style={styles.rewardPoints}>Cost: {reward.points} pts</Text>
+              <Text style={styles.rewardText}>{reward.rewardName}</Text>
+              <Text style={styles.rewardDescription}>Description: {reward.rewardDescription}</Text>
+              <Text style={styles.rewardPoints}>Cost: {reward.rewardPrice} pts</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -144,7 +145,7 @@ const RewardsScreen = () => {
         <View style={styles.pointsCard}>
           <Text style={styles.balanceLabel}>Current Balance</Text>
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceValue}>{balanceData?.balance || 0}</Text>
+            <Text style={styles.balanceValue}>{profileData?.loyaltyPoints || 0}</Text>
             <Text style={styles.currency}>Points</Text>
           </View>
         </View>
@@ -183,9 +184,9 @@ const RewardsScreen = () => {
             {selectedReward && (
               <>
                 <Text style={styles.modalText}>Do you want to redeem:</Text>
-                <Text style={styles.modalReward}>{selectedReward.title}</Text>
+                <Text style={styles.modalReward}>{selectedReward.rewardName}</Text>
                 <Text style={styles.modalCost}>
-                  for {selectedReward.points} points?
+                  for {selectedReward.rewardPrice } points?
                 </Text>
               </>
             )}
