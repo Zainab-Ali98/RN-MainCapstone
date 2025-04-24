@@ -83,7 +83,7 @@ const SavingsGoalList = () => {
         },
       ]
     );
-  };
+  }; 
 
   const currentGoal = inProgressGoals[currentIndex];
   const progress = currentGoal

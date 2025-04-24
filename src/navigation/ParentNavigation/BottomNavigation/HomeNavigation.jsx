@@ -8,6 +8,7 @@ import DepositScreen from "../../../screens/DepositScreen";
 import CreateTaskScreen from "../../../screens/CreateTaskScreen";
 import TaskDetailsScreen from "../../../screens/TaskDetailsScreen";
 import TaskScreen from "../../../screens/TaskScreen";
+import CurrentBalanceScreen from "../../../screens/CurrentBalanceScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +58,12 @@ const HomeNavigation = () => {
       <Stack.Screen
         name="TaskScreen"
         component={TaskScreen}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BalanceScreen"
+        component={CurrentBalanceScreen}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />

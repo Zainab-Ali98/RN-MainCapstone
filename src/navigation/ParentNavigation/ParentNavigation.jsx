@@ -37,6 +37,7 @@ const ParentNavigation = () => {
           ),
         }}
       />
+      
     </Tab.Navigator>
   );
 };
