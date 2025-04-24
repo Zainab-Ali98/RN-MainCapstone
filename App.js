@@ -53,6 +53,7 @@ export default function App() {
           {/* <CreateNewGoal/> */}
           {/* <ParentScreen /> */}
           {/* <ProfileScreen /> */}
+          {/* <ProgressGoalsScreen /> */}
          
 
           {isAuth ? (
