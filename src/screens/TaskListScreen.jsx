@@ -14,6 +14,7 @@ import * as ImagePicker from "react-native-image-picker";
 import Logout from "../components/Logout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { tasks, taskComplete } from "../api/children";
+import { balance } from "../api/users";
 import UserContext from "../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
@@ -52,6 +53,12 @@ const TaskListScreen = ({ navigation }) => {
 
   const { isAuth } = useContext(UserContext);
   const [error, setError] = useState(null);
+
+  const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
+    queryKey: ["balance"],
+    queryFn: balance,
+    enabled: !!isAuth,
+  });
 
   const { data: tasksData, isLoading, refetch } = useQuery({
     queryKey: ["tasks"],
@@ -132,7 +139,7 @@ const TaskListScreen = ({ navigation }) => {
                 <Text style={styles.balanceLabel}>Total Balance</Text>
                 <View style={styles.amountContainer}>
                   <Text style={styles.currencySymbol}>KWD</Text>
-                  <Text style={styles.balanceAmount}>225.00</Text>
+                  <Text style={styles.balanceAmount}>{balanceData?.balance || "0.00"}</Text>
                 </View>
               </View>
             </View>
