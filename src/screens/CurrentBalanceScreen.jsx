@@ -7,63 +7,40 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useQuery } from "@tanstack/react-query";
+import { transactions } from "../api/transactions";
+import { balance, profile } from "../api/users";
+import UserContext from "../context/UserContext";
+import { useContext } from "react";
 
 const { width, height } = Dimensions.get("window");
 
-const mockActivities = [
-  {
-    id: "1",
-    type: "Deposit",
-    amount: "+500.00 KD",
-    color: "#4D5DFA",
-    icon: "↑",
-    date: "Today, 11:30 AM",
-  },
-  {
-    id: "2",
-    type: "Withdrawal",
-    amount: "-200.00 KD",
-    color: "#FF4D4D",
-    icon: "↓",
-    date: "Yesterday, 3:20 PM",
-  },
-  {
-    id: "3",
-    type: "Deposit",
-    amount: "+100.00 KD",
-    color: "#4D5DFA",
-    icon: "↑",
-    date: "Yesterday, 9:00 AM",
-  },
-  {
-    id: "4",
-    type: "Withdrawal",
-    amount: "-50.00 KD",
-    color: "#FF4D4D",
-    icon: "↓",
-    date: "2 days ago",
-  },
-  {
-    id: "5",
-    type: "Deposit",
-    amount: "+20.00 KD",
-    color: "#4D5DFA",
-    icon: "↑",
-    date: "2 days ago",
-  },
-  {
-    id: "6",
-    type: "Withdrawal",
-    amount: "-10.00 KD",
-    color: "#FF4D4D",
-    icon: "↓",
-    date: "3 days ago",
-  },
-];
-
 const CurrentBalanceScreen = () => {
+  const { isAuth } = useContext(UserContext);
+
+  const { data: balanceData, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ["balance"],
+    queryFn: balance,
+    enabled: !!isAuth,
+  });
+
+  const { data: transactionsData, isLoading: isLoadingTransactions } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: transactions,
+    enabled: !!isAuth,
+  });
+
+  if (isLoadingProfile || isLoadingTransactions) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4D5DFA" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -81,7 +58,7 @@ const CurrentBalanceScreen = () => {
           <View style={styles.balanceSection}>
             <View style={styles.balanceCard}>
               <Text style={styles.balanceLabel}>Total Balance</Text>
-              <Text style={styles.balanceAmount}>3077.20 KD</Text>
+              <Text style={styles.balanceAmount}>{balanceData?.balance || "0.00"} KD</Text>
               <View style={styles.balanceDecoration} />
             </View>
           </View>
@@ -98,35 +75,25 @@ const CurrentBalanceScreen = () => {
                   showsVerticalScrollIndicator={true}
                   nestedScrollEnabled={true}
                 >
-                  {mockActivities.map((activity) => (
-                    <View key={activity.id} style={styles.transaction}>
-                      <View style={styles.transactionLeft}>
-                        <View
-                          style={[
-                            styles.transactionIcon,
-                            { backgroundColor: activity.color },
-                          ]}
-                        >
-                          <Text style={styles.iconText}>{activity.icon}</Text>
-                        </View>
-                        <View>
-                          <Text style={styles.transactionTitle}>
-                            {activity.type}
-                          </Text>
-                          <Text style={styles.transactionDate}>
-                            {activity.date}
-                          </Text>
-                        </View>
+                  {transactionsData?.map((activity) => (
+                    <View key={activity.id} style={styles.activityItem}>
+                      <View style={styles.activityIconContainer}>
+                        <Text style={styles.activityIcon}>
+                          {activity.type === "Deposit" ? "↑" : "↓"}
+                        </Text>
+                      </View>
+                      <View style={styles.activityDetails}>
+                        <Text style={styles.activityType}>{activity.type}</Text>
+                        <Text style={styles.activityDate}>{activity.date}</Text>
                       </View>
                       <Text
                         style={[
-                          styles.transactionAmount,
-                          activity.type === "Deposit"
-                            ? styles.depositAmount
-                            : styles.withdrawalAmount,
+                          styles.activityAmount,
+                          { color: activity.type === "Deposit" ? "#4D5DFA" : "#FF4D4D" },
                         ]}
                       >
-                        {activity.amount}
+                        {activity.type === "Deposit" ? "+" : "-"}
+                        {activity.amount} KD
                       </Text>
                     </View>
                   ))}
@@ -144,6 +111,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   gradient: {
     position: "absolute",
@@ -250,7 +222,7 @@ const styles = StyleSheet.create({
   activitiesContent: {
     paddingBottom: 10,
   },
-  transaction: {
+  activityItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -267,42 +239,36 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  transactionLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    flex: 1,
-  },
-  transactionIcon: {
+  activityIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
   },
-  iconText: {
+  activityIcon: {
     color: "#FFFFFF",
     fontSize: 20,
   },
-  transactionTitle: {
+  activityDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  activityType: {
     fontSize: 16,
     fontWeight: "500",
     color: "#1E40AF",
     marginBottom: 4,
   },
-  transactionDate: {
+  activityDate: {
     fontSize: 12,
     color: "#6B7280",
   },
-  transactionAmount: {
+  activityAmount: {
     fontSize: 16,
     fontWeight: "600",
-  },
-  depositAmount: {
-    color: "#4D5DFA",
-  },
-  withdrawalAmount: {
-    color: "#FF4D4D",
   },
 });
 
