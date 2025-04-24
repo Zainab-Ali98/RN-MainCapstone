@@ -89,9 +89,9 @@ const SavingsGoalList = () => {
   const progress = currentGoal
     ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
-  
-  {console.log(currentGoal.ProfilePicture);
-  }
+
+  // {console.log(currentGoal.ProfilePicture);
+  // }
 
   if (isLoading) {
     return <Text style={styles.loading}>Loading...</Text>;
@@ -158,8 +158,6 @@ const SavingsGoalList = () => {
                   renderItem={({ item }) => (
                     <View style={styles.imageContainer}>
                       {item.ProfilePicture ? (
-                        
-                        
                         // <Image
                         //   source={{ uri: item.SavingsGoalPicture }}
                         //   style={styles.productImage}
@@ -173,7 +171,7 @@ const SavingsGoalList = () => {
                           style={{
                             width: 200,
                             height: 200,
-                            paddingBottom: 50
+                            paddingBottom: 50,
                           }}
                         />
                       ) : (
@@ -184,7 +182,7 @@ const SavingsGoalList = () => {
                           style={{
                             width: 200,
                             height: 200,
-                            paddingBottom: 50
+                            paddingBottom: 50,
                           }}
                         />
                       )}
