@@ -22,13 +22,7 @@ const TaskDetailsScreen = ({ route }) => {
   const task = route.params;
   const taskId = task?.taskId || task?.id; // Use taskId from route params or fallback to id
   console.log("Task ID:", task); // Log the taskId for debugging
-  const mockDate = "2025-04-16";
-  const mockDescription = [
-    { id: 1, text: "Make your bed" },
-    { id: 2, text: "Tidy your desk" },
-    { id: 3, text: "Organize your books" },
-    { id: 4, text: "Put away laundry" },
-  ];
+
   // if no task picture
   const mockImage = "https://cdn-icons-png.flaticon.com/512/625/625083.png";
 
@@ -49,6 +43,21 @@ const TaskDetailsScreen = ({ route }) => {
     },
   });
 
+  // Status color mapping
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "verify":
+        return "#3B82F6";
+      case "completed":
+        return "#10B981";
+      case "rejected":
+        return "#EF4444";
+      case "ongoing":
+        return "#FBBF24";
+      default:
+        return "#9CA3AF";
+    }
+  };
   // Split description into bullet points (assuming it's a string with newlines or commas)
   const getDescriptionBullets = (description) => {
     if (!description) return [];
@@ -98,7 +107,8 @@ const TaskDetailsScreen = ({ route }) => {
       <View style={styles.card}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: task?.taskPicture?.trim() || mockImage }}
+            source={{ uri: mockImage }}
+            //source={{ uri: task?.taskPicture?.trim() ?? mockImage }}
             style={styles.image}
           />
         </View>
@@ -125,10 +135,10 @@ const TaskDetailsScreen = ({ route }) => {
 
         <Text style={styles.info}>
           <Text style={styles.label}>Created At: </Text>
-          <Text style={styles.infoValue}>{task?.dateCreated || mockDate}</Text>
+          <Text style={styles.infoValue}>{task?.dateCreated}</Text>
         </Text>
 
-        {task?.status.toLowerCase() === "verify" && (
+        {task?.status.toLowerCase() === "verify" ? (
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#10B981" }]}
@@ -150,6 +160,17 @@ const TaskDetailsScreen = ({ route }) => {
                 {verifyTaskMutation.isLoading ? "Processing..." : "Reject Task"}
               </Text>
             </TouchableOpacity>
+          </View>
+        ) : (
+          <View
+            style={[
+              styles.statusBubble,
+              { backgroundColor: getStatusColor(task?.status) },
+            ]}
+          >
+            <Text style={styles.statusBubbleText}>
+              {task?.status.charAt(0).toUpperCase() + task?.status.slice(1)}
+            </Text>
           </View>
         )}
       </View>
@@ -272,5 +293,20 @@ const styles = StyleSheet.create({
     height: 160,
 
     alignSelf: "center",
+  },
+  statusBubble: {
+    alignSelf: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#7C3AED",
+    marginTop: 20,
+  },
+  statusBubbleText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

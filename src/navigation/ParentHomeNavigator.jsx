@@ -12,6 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { deleteToken } from "../api/storage";
 import UserContext from "../context/UserContext";
 // import TaskDetailsScreen from "../screens/TaskDetailsScreen";
+import TaskScreen from "../screens/TaskScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +51,7 @@ export const ParentHomeNavigator = () => {
       />
 
       <Tab.Screen name="Profile" component={ProfileScreen} />
-
+      
       <Tab.Screen name="CreateChildAcc" component={CreatenewAcc} />
       <Tab.Screen name="Deposit" component={DepositScreen} />
       <Tab.Screen name="CreateTask" component={CreateTaskScreen} />

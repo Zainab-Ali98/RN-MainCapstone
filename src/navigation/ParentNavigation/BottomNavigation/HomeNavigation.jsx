@@ -7,6 +7,7 @@ import ProfileScreen from "../../../screens/ProfileScreen";
 import DepositScreen from "../../../screens/DepositScreen";
 import CreateTaskScreen from "../../../screens/CreateTaskScreen";
 import TaskDetailsScreen from "../../../screens/TaskDetailsScreen";
+import TaskScreen from "../../../screens/TaskScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,12 @@ const HomeNavigation = () => {
       <Stack.Screen
         name="TaskDetailsScreen"
         component={TaskDetailsScreen}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="TaskScreen"
+        component={TaskScreen}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
