@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { verifyTask } from "../api/parents";
+import { baseURL } from "../api";
 
 const { width } = Dimensions.get("window");
 
@@ -91,6 +92,7 @@ const TaskDetailsScreen = ({ route }) => {
     );
   };
 
+  console.log("picture", task?.taskPicture.split(`\\`).pop());
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity
@@ -107,8 +109,8 @@ const TaskDetailsScreen = ({ route }) => {
       <View style={styles.card}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: mockImage }}
-            //source={{ uri: task?.taskPicture?.trim() ?? mockImage }}
+            //source={{ uri: mockImage }
+            source={{ uri: `${baseURL}uploads/taskpictures/${task?.taskPicture.split(`\\`).pop()}` ?? mockImage }}
             style={styles.image}
           />
         </View>
