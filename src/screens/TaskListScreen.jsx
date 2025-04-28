@@ -3,22 +3,19 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   ScrollView,
   Dimensions,
   TouchableOpacity,
   Alert,
-  Animated,
 } from "react-native";
 import * as ImagePicker from "react-native-image-picker";
-import Logout from "../components/Logout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { tasks, taskComplete } from "../api/children";
 import { balance } from "../api/users";
 import UserContext from "../context/UserContext";
-import { useNavigation } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import LottieView from "lottie-react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
@@ -31,23 +28,19 @@ const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
 const TaskListScreen = ({ navigation }) => {
   const [selectedTask, setSelectedTask] = useState(null);
-  const fadeAnim = new Animated.Value(0);
-  const scaleAnim = new Animated.Value(0.9);
+  const fadeAnim = useSharedValue(0.2);
+  const scaleAnim = useSharedValue(0.9);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: fadeAnim.value,
+      transform: [{ scale: scaleAnim.value }],
+    };
+  });
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    fadeAnim.value = withTiming(1, { duration: 800 });
+    scaleAnim.value = withTiming(1, { duration: 800 });
   }, []);
 
   const { isAuth } = useContext(UserContext);
@@ -67,6 +60,13 @@ const TaskListScreen = ({ navigation }) => {
     queryKey: ["tasks"],
     queryFn: tasks,
     enabled: !!isAuth,
+    onSuccess: (data) => {
+      console.log("Tasks fetched successfully:", data);
+    },
+    onError: (error) => {
+      setError(error.message || "Failed to fetch tasks");
+      console.error("Error fetching tasks:", error);
+    },
   });
 
   const { mutate: updateTaskStatus } = useMutation({
@@ -82,14 +82,6 @@ const TaskListScreen = ({ navigation }) => {
     },
   });
 
-  const handleTaskListPress = (task) => {
-    navigation.navigate("ViewTaskScreen", { task });
-  };
-
-  const handleRewardsPress = () => {
-    navigation.navigate("Reward");
-  };
-
   const handleImagePick = async (taskId) => {
     try {
       const response = await ImagePicker.launchImageLibrary({
@@ -101,6 +93,7 @@ const TaskListScreen = ({ navigation }) => {
 
       if (response.didCancel) return;
 
+
       updateTaskStatus(taskId);
       Alert.alert("Great job", "Photo uploaded! Waiting for parent to check.");
     } catch (error) {
@@ -109,69 +102,57 @@ const TaskListScreen = ({ navigation }) => {
     }
   };
 
-  const handleCreateGoal = () => {
-    navigation.navigate("CreateNewGoal");
-  };
+  console.log("tasks", tasksData);
 
-  const handleTaskPress = (task) => {
-    navigation.navigate("ViewTaskScreen", { task });
-  };
-
-  const handleBalancePress = () => {
-    navigation.navigate("CurrentBalanceScreen");
-  };
+  const sortedTasks = tasksData
+    ?.filter((task) => task.status.toLowerCase() === "ongoing") // Filter tasks with status "Ongoing"
+    .sort((a, b) => b.taskId - a.taskId); // Sort by taskId in descending order
 
   return (
     <LinearGradient
       colors={["#F5E6D3", "#E2E8F0", "#E9D8FD"]}
       style={styles.container}
     >
-      {/* <Logout /> */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          {/* Balance Card */}
-          <TouchableOpacity
-            style={styles.balanceCardContainer}
-            onPress={() => navigation.navigate("CurrentBalanceScreen")}
-          >
-            <View style={styles.balanceCard}>
-              <View style={styles.balanceLeft}>
-                <Text style={styles.balanceLabel}>Total Balance</Text>
-                <View style={styles.amountContainer}>
-                  <Text style={styles.currencySymbol}>KWD</Text>
-                  <Text style={styles.balanceAmount}>
-                    {balanceData?.balance || "0.00"}
-                  </Text>
-                </View>
+      <View style={styles.content}>
+        {/* Balance Card */}
+        <TouchableOpacity
+          style={styles.balanceCardContainer}
+          onPress={() => navigation.navigate("CurrentBalanceScreen")}
+        >
+          <View style={styles.balanceCard}>
+            <View style={styles.balanceLeft}>
+              <Text style={styles.balanceLabel}>Total Balance</Text>
+              <View style={styles.amountContainer}>
+                <Text style={styles.currencySymbol}>KWD</Text>
+                <Text style={styles.balanceAmount}>
+                  {isLoadingBalance ? "Loading..." : balanceData?.balance || "0.00"}
+                </Text>
               </View>
             </View>
-          </TouchableOpacity>
-
-          {/* Mission Title */}
-          <View style={styles.missionTitleContainer}>
-            <Text style={styles.missionTitle}>Your Amazing Missions</Text>
           </View>
+        </TouchableOpacity>
 
-          {/* Task Cards */}
-          <View style={styles.taskCardsContainer}>
+        {/* Mission Title */}
+        <View style={styles.missionTitleContainer}>
+          <Text style={styles.missionTitle}>Your Amazing Missions</Text>
+        </View>
+
+        {/* Task Cards */}
+        <View style={styles.taskCardsContainer}>
+          {isLoading ? (
+            <Text>Loading tasks...</Text>
+          ) : error ? (
+            <Text style={styles.errorText}>Error: {error}</Text>
+          ) : sortedTasks && sortedTasks.length > 0 ? (
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.horizontalScrollContent}
             >
-              {tasksData?.map((task, index) => (
+              {sortedTasks.map((task, index) => (
                 <Animated.View
-                  key={task.taskId}
-                  style={[
-                    styles.taskCardWrapper,
-                    {
-                      opacity: fadeAnim,
-                      transform: [{ scale: scaleAnim }],
-                    },
-                  ]}
+                  key={index}
+                  style={[styles.taskCardWrapper, animatedStyle]}
                 >
                   <TouchableOpacity
                     style={[
@@ -180,7 +161,7 @@ const TaskListScreen = ({ navigation }) => {
                       selectedTask === task.taskId && styles.selectedTask,
                     ]}
                     onPress={() =>
-                      navigation.navigate("ViewTaskScreen", { task })
+                      navigation.navigate("ViewTaskScreen", { taskId: task.taskId })
                     }
                   >
                     <View style={styles.bubbleTop} />
@@ -197,12 +178,12 @@ const TaskListScreen = ({ navigation }) => {
                       <View style={styles.taskFooter}>
                         <View style={styles.pointsBadge}>
                           <Text style={styles.pointsText}>
-                            +{task.points} 3yali Points
+                            +{task.taskPoints} 3yali Points
                           </Text>
                         </View>
                         <View style={styles.rewardContainer}>
                           <Text style={styles.rewardAmount}>
-                            {task.taskReward} KD
+                            {task.rewardAmount} KD
                           </Text>
                           <Text style={styles.rewardLabel}>Reward</Text>
                         </View>
@@ -212,30 +193,32 @@ const TaskListScreen = ({ navigation }) => {
                 </Animated.View>
               ))}
             </ScrollView>
-          </View>
+          ) : (
+            <Text>No tasks available</Text>
+          )}
         </View>
-      </ScrollView>
 
-      {/* Start New Adventure Button - Fixed at bottom */}
-      <View style={styles.bottomButtonContainer}>
-        <LottieView
-          source={require("../../assets/Walking.json")}
-          autoPlay
-          loop
-          style={styles.walkingAnimation}
-        />
-        <TouchableOpacity
-          style={styles.createGoalButton}
-          onPress={() => navigation.navigate("CreateNewGoal")}
-        >
+        {/* Start New Adventure Button */}
+        <View style={styles.bottomButtonContainer}>
           <LottieView
-            source={require("../../assets/star.json")}
+            source={require("../../assets/Walking.json")}
             autoPlay
             loop
-            style={styles.starAnimation}
+            style={styles.walkingAnimation}
           />
-          <Text style={styles.createGoalText}>Start New Goal</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.createGoalButton}
+            onPress={() => navigation.navigate("CreateNewGoal")}
+          >
+            <LottieView
+              source={require("../../assets/star.json")}
+              autoPlay
+              loop
+              style={styles.starAnimation}
+            />
+            <Text style={styles.createGoalText}>Start New Goal</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </LinearGradient>
   );
@@ -254,18 +237,14 @@ const getRandomColor = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   content: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 70,
     paddingBottom: 100,
   },
-  balanceCardContainer: {
-    marginBottom: 30,
-  },
+  balanceCardContainer: { marginBottom: 30 },
   balanceCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 25,
@@ -281,9 +260,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.1)",
   },
-  balanceLeft: {
-    alignItems: "center",
-  },
+  balanceLeft: { alignItems: "center" },
   balanceLabel: {
     fontSize: 18,
     color: "#666666",
@@ -305,9 +282,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#333333",
   },
-  missionTitleContainer: {
-    marginBottom: 10,
-  },
+  missionTitleContainer: { marginBottom: 10 },
   missionTitle: {
     fontSize: 28,
     fontWeight: "700",
@@ -315,20 +290,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
-  missionSubtitle: {
-    fontSize: 18,
-    color: "#666666",
-    textAlign: "center",
-  },
-  taskCardsContainer: {
-    marginBottom: 20,
-  },
-  horizontalScrollContent: {
-    paddingRight: 20,
-  },
-  taskCardWrapper: {
-    marginRight: 15,
-  },
+  taskCardsContainer: { marginBottom: 20 },
+  horizontalScrollContent: { paddingRight: 20 },
+  taskCardWrapper: { marginRight: 15 },
   taskCard: {
     borderRadius: 30,
     padding: 30,
@@ -344,10 +308,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.5)",
     overflow: "hidden",
   },
-  selectedTask: {
-    borderWidth: 3,
-    borderColor: "#FFD93D",
-  },
+  selectedTask: { borderWidth: 3, borderColor: "#FFD93D" },
   bubbleTop: {
     position: "absolute",
     top: -20,
@@ -360,38 +321,24 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "rgba(255, 255, 255, 0.5)",
   },
-  taskCardContent: {
-    flex: 1,
-    justifyContent: "space-between",
-  },
-  taskHeader: {
-    alignItems: "center",
-    marginTop: 10,
-  },
-  taskFooter: {
-    alignItems: "center",
-    gap: 15,
-  },
-  taskAnimation: {
-    width: 160,
-    height: 99,
-    alignSelf: "center",
-  },
+  taskCardContent: { flex: 1, justifyContent: "space-between" },
+  taskHeader: { alignItems: "center", marginTop: 10 },
+  taskFooter: { alignItems: "center", gap: 15 },
+  taskAnimation: { width: 160, height: 99, alignSelf: "center" },
   taskTitle: {
     color: "#FFFFFF",
     fontSize: 26,
     fontWeight: "700",
     textAlign: "center",
+    marginTop: 15,
     textShadowColor: "rgba(0, 0, 0, 0.2)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-    marginTop: 15,
   },
   pointsBadge: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     padding: 20,
     borderRadius: 25,
-    alignSelf: "center",
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.5)",
     width: "85%",
@@ -446,25 +393,20 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
-  starAnimation: {
-    width: 40,
-    height: 40,
-    marginRight: -10,
-  },
+  starAnimation: { width: 40, height: 40, marginRight: -10 },
   createGoalText: {
     color: "#FFFFFF",
     fontSize: 20,
     fontWeight: "700",
     textAlign: "center",
   },
-  walkingAnimation: {
-    width: 120,
-    height: 120,
-    alignSelf: "center",
-    marginBottom: -40,
+  walkingAnimation: { width: 120, height: 120, alignSelf: "center", marginBottom: -40 },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 10,
   },
 });
 
 export default TaskListScreen;
-
-//test

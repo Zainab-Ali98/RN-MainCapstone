@@ -8,27 +8,53 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import Logout from "../components/Logout";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { tasks, taskComplete } from "../api/children";
 
 const { width, height } = Dimensions.get("window");
 
-// Mock data for testing
-const mockTask = {
-  taskName: "Clean Your Room",
-  description:
-    "Make sure to organize your toys and put away your clothes. Don't forget to vacuum the floor!",
-  reward: 15,
-  image:
-    "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-};
-
-const ViewTaskScreen = ({ task = mockTask }) => {
+const ViewTaskScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { taskId } = route.params;
+  console.log("taskId from route params:", taskId);
+
+  const { data: taskList, isLoading, isError } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: tasks,
+  });
+
+  const { mutate: markComplete, isLoading: isCompleting } = useMutation({
+    mutationFn: (taskId) => taskComplete(taskId),
+    onSuccess: () => {
+      navigation.navigate("RewardsScreen", { taskId });
+    },
+    onError: () => {
+      alert("Failed to mark task as complete");
+    },
+  });
+
+  const task = taskList?.find((t) => String(t.taskId) === String(taskId));
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.loadingText}>Loading task...</Text>
+      </View>
+    );
+  }
+
+  if (isError || !task) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.loadingText}>Task not found.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* <Logout /> */}
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
@@ -45,7 +71,7 @@ const ViewTaskScreen = ({ task = mockTask }) => {
         <View style={styles.mainContent}>
           <View style={styles.inputContainer}>
             <View style={styles.imageContainer}>
-              <Image source={{ uri: task.image }} style={styles.image} />
+              <Image source={{ uri: task.taskPicture }} style={styles.image} />
             </View>
 
             <View style={styles.detailContainer}>
@@ -58,14 +84,14 @@ const ViewTaskScreen = ({ task = mockTask }) => {
             <View style={styles.detailContainer}>
               <Text style={styles.label}>Description</Text>
               <View style={[styles.input, styles.textArea]}>
-                <Text style={styles.value}>{task.description}</Text>
+                <Text style={styles.value}>{task.taskDescription}</Text>
               </View>
             </View>
 
             <View style={styles.priceContainer}>
               <Text style={styles.priceLabel}>Reward</Text>
               <View style={styles.priceInputContainer}>
-                <Text style={styles.priceText}>{task.reward} kd</Text>
+                <Text style={styles.value}>{task.rewardAmount} KD</Text>
               </View>
             </View>
           </View>
@@ -80,9 +106,15 @@ const ViewTaskScreen = ({ task = mockTask }) => {
         />
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={() => navigation.navigate("RewardsScreen")}
+          onPress={() => {
+            console.log("Marking task as complete with taskId:", taskId);
+            markComplete(taskId);
+          }}
+          disabled={isCompleting}
         >
-          <Text style={styles.buttonText}>Mark as Complete</Text>
+          <Text style={styles.buttonText}>
+            {isCompleting ? "Submitting..." : "Mark as Complete"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -94,6 +126,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#444",
+  },
   backgroundImage: {
     position: "absolute",
     width: width,
@@ -104,7 +145,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 25,
     fontWeight: "800",
-    letterSpacing: -0.333,
     textAlign: "center",
     marginTop: 60,
     marginBottom: 20,
@@ -124,10 +164,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     elevation: 4,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
@@ -147,10 +184,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D9D9D9",
     paddingHorizontal: 16,
-    fontSize: 14,
-    color: "#000000",
-    backgroundColor: "#ffffff",
     justifyContent: "center",
+    backgroundColor: "#ffffff",
   },
   textArea: {
     height: 100,
@@ -177,7 +212,6 @@ const styles = StyleSheet.create({
   priceInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: "#D9D9D9",
     borderRadius: 8,
