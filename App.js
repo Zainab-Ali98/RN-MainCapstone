@@ -49,17 +49,19 @@ export default function App() {
   return (
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
-      <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
-  {isAuth ? (
-    role === "Parent" ? (
-      <ParentNavigation />
-    ) : (
-      <ChildNavigation />
-    )
-  ) : (
-    <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
-  )}
-</UserContext.Provider>
+        <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
+          {isAuth ? (
+            role === "Parent" ? (
+              <ParentNavigation />
+            ) : (
+              <ChildNavigation />
+            )
+          ) : (
+            <AuthNavigator setIsAuth={setIsAuth} setRole={setRole} />
+          )}
+
+          <StatusBar style="light" />
+        </UserContext.Provider>
       </QueryClientProvider>
     </NavigationContainer>
   );

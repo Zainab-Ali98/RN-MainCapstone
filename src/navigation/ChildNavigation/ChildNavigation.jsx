@@ -8,8 +8,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CurrentBalanceScreen from "../../screens/CurrentBalanceScreen";
 import ProgressGoalsNavigation from "./BottomNavigation/ProgressGoalsNavigation";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 const Tab = createBottomTabNavigator();
 
 const ChildNavigation = () => {
@@ -49,7 +49,7 @@ const ChildNavigation = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="savings" size={24} color={color} />
+            <FontAwesome5 name="money-bill-alt" size={24} color={color} />
           ),
         }}
       />
