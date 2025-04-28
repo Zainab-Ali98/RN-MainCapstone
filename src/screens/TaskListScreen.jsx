@@ -27,7 +27,6 @@ const taskAnimations = {
   exercise: require("../../assets/Exercise Character.json"),
 };
 
-
 const statusSteps = ["Start", "Doing", "Verified", "Done"];
 
 const TaskListScreen = ({ navigation }) => {
@@ -60,7 +59,11 @@ const TaskListScreen = ({ navigation }) => {
     enabled: !!isAuth,
   });
 
-  const { data: tasksData, isLoading, refetch } = useQuery({
+  const {
+    data: tasksData,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["tasks"],
     queryFn: tasks,
     enabled: !!isAuth,
@@ -97,7 +100,7 @@ const TaskListScreen = ({ navigation }) => {
       });
 
       if (response.didCancel) return;
-      
+
       updateTaskStatus(taskId);
       Alert.alert("Great job", "Photo uploaded! Waiting for parent to check.");
     } catch (error) {
@@ -139,7 +142,9 @@ const TaskListScreen = ({ navigation }) => {
                 <Text style={styles.balanceLabel}>Total Balance</Text>
                 <View style={styles.amountContainer}>
                   <Text style={styles.currencySymbol}>KWD</Text>
-                  <Text style={styles.balanceAmount}>{balanceData?.balance || "0.00"}</Text>
+                  <Text style={styles.balanceAmount}>
+                    {balanceData?.balance || "0.00"}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -461,6 +466,5 @@ const styles = StyleSheet.create({
 });
 
 export default TaskListScreen;
-
 
 //test

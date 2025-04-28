@@ -109,8 +109,12 @@ const RewardsScreen = () => {
             <Image source={reward.image} style={styles.rewardImage} />
             <View>
               <Text style={styles.rewardText}>{reward.rewardName}</Text>
-              <Text style={styles.rewardDescription}>Description: {reward.rewardDescription}</Text>
-              <Text style={styles.rewardPoints}>Cost: {reward.rewardPrice} pts</Text>
+              <Text style={styles.rewardDescription}>
+                Description: {reward.rewardDescription}
+              </Text>
+              <Text style={styles.rewardPoints}>
+                Cost: {reward.rewardPrice} pts
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -137,7 +141,7 @@ const RewardsScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.backButton}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>3ayli Rewards</Text>
+          <Text style={styles.headerTitle}>3yali Rewards</Text>
         </View>
       </LinearGradient>
 
@@ -145,7 +149,9 @@ const RewardsScreen = () => {
         <View style={styles.pointsCard}>
           <Text style={styles.balanceLabel}>Current Balance</Text>
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceValue}>{profileData?.loyaltyPoints || 0}</Text>
+            <Text style={styles.balanceValue}>
+              {profileData?.loyaltyPoints || 0}
+            </Text>
             <Text style={styles.currency}>Points</Text>
           </View>
         </View>
@@ -184,9 +190,11 @@ const RewardsScreen = () => {
             {selectedReward && (
               <>
                 <Text style={styles.modalText}>Do you want to redeem:</Text>
-                <Text style={styles.modalReward}>{selectedReward.rewardName}</Text>
+                <Text style={styles.modalReward}>
+                  {selectedReward.rewardName}
+                </Text>
                 <Text style={styles.modalCost}>
-                  for {selectedReward.rewardPrice } points?
+                  for {selectedReward.rewardPrice} points?
                 </Text>
               </>
             )}
