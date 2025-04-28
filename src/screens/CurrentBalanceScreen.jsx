@@ -33,12 +33,18 @@ const CurrentBalanceScreen = () => {
     enabled: !!isAuth,
   });
 
+  
+
   if (isLoadingProfile || isLoadingTransactions) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4D5DFA" />
       </View>
     );
+  }
+
+  {
+    console.log("\n\nTransactions Data:\n", transactionsData, "\n\n=====================\n");
   }
 
   return (
@@ -83,8 +89,8 @@ const CurrentBalanceScreen = () => {
                         </Text>
                       </View>
                       <View style={styles.activityDetails}>
-                        <Text style={styles.activityType}>{activity.type}</Text>
-                        <Text style={styles.activityDate}>{activity.date}</Text>
+
+                        <Text style={styles.activityDate}>{activity.dateCreated}</Text>
                       </View>
                       <Text
                         style={[
