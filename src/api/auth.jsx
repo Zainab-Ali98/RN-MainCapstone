@@ -15,7 +15,11 @@ const register = async (userInfo, image) => {
     });
   }
   try {
-    const res = await instance.post(AuthEndpoints.register, formData);
+    const res = await instance.post(AuthEndpoints.register, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     console.log(res.data);
     setToken(res.data.token);
     setRole(res.data.role);

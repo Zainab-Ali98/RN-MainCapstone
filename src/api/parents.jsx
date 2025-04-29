@@ -116,12 +116,13 @@ const depositToChild = async (childId, depositData) => {
 
 const createTaskForChild = async (taskData, image) => {
   try {
+    console.log("Image", image);
     const formData = new FormData();
     for (key in taskData) {
       formData.append(key, taskData[key]);
     }
     if (image) {
-      formData.append("image", {
+      formData.append("taskPicture", {
         uri: image,
         type: "image/jpeg",
         name: "task-image.jpg",
