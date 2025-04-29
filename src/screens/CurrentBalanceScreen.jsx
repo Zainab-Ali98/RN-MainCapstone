@@ -27,13 +27,13 @@ const CurrentBalanceScreen = () => {
     enabled: !!isAuth,
   });
 
-  const { data: transactionsData, isLoading: isLoadingTransactions } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: transactions,
-    enabled: !!isAuth,
-  });
-
-  
+  const { data: transactionsData, isLoading: isLoadingTransactions } = useQuery(
+    {
+      queryKey: ["transactions"],
+      queryFn: transactions,
+      enabled: !!isAuth,
+    }
+  );
 
   if (isLoadingProfile || isLoadingTransactions) {
     return (
@@ -44,7 +44,11 @@ const CurrentBalanceScreen = () => {
   }
 
   {
-    console.log("\n\nTransactions Data:\n", transactionsData, "\n\n=====================\n");
+    console.log(
+      "\n\nTransactions Data:\n",
+      transactionsData,
+      "\n\n=====================\n"
+    );
   }
 
   return (
@@ -64,7 +68,9 @@ const CurrentBalanceScreen = () => {
           <View style={styles.balanceSection}>
             <View style={styles.balanceCard}>
               <Text style={styles.balanceLabel}>Total Balance</Text>
-              <Text style={styles.balanceAmount}>{balanceData?.balance || "0.00"} KD</Text>
+              <Text style={styles.balanceAmount}>
+                {balanceData?.balance || "0.00"} KD
+              </Text>
               <View style={styles.balanceDecoration} />
             </View>
           </View>
@@ -82,20 +88,29 @@ const CurrentBalanceScreen = () => {
                   nestedScrollEnabled={true}
                 >
                   {transactionsData?.map((activity) => (
-                    <View key={activity.id} style={styles.activityItem}>
+                    <View
+                      key={activity.transactionId}
+                      style={styles.activityItem}
+                    >
                       <View style={styles.activityIconContainer}>
                         <Text style={styles.activityIcon}>
                           {activity.type === "Deposit" ? "↑" : "↓"}
                         </Text>
                       </View>
                       <View style={styles.activityDetails}>
-
-                        <Text style={styles.activityDate}>{activity.dateCreated}</Text>
+                        <Text style={styles.activityDate}>
+                          {activity.dateCreated}
+                        </Text>
                       </View>
                       <Text
                         style={[
                           styles.activityAmount,
-                          { color: activity.type === "Deposit" ? "#4D5DFA" : "#FF4D4D" },
+                          {
+                            color:
+                              activity.type === "Deposit"
+                                ? "#4D5DFA"
+                                : "#FF4D4D",
+                          },
                         ]}
                       >
                         {activity.type === "Deposit" ? "+" : "-"}

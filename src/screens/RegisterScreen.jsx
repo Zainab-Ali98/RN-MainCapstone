@@ -111,6 +111,7 @@ function RegisterScreen({ setIsAuth, setRole }) {
       setImage(result.assets[0].uri);
     }
   };
+  
 
   return (
     <KeyboardAvoidingView

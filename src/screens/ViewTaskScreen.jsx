@@ -20,7 +20,11 @@ const ViewTaskScreen = () => {
   const { taskId } = route.params;
   console.log("taskId from route params:", taskId);
 
-  const { data: taskList, isLoading, isError } = useQuery({
+  const {
+    data: taskList,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["tasks"],
     queryFn: tasks,
   });
@@ -28,7 +32,7 @@ const ViewTaskScreen = () => {
   const { mutate: markComplete, isLoading: isCompleting } = useMutation({
     mutationFn: (taskId) => taskComplete(taskId),
     onSuccess: () => {
-      navigation.navigate("RewardsScreen", { taskId });
+      navigation.navigate("TaskListScreen");
     },
     onError: () => {
       alert("Failed to mark task as complete");

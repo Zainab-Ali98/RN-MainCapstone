@@ -78,6 +78,7 @@ const TaskDetailsScreen = ({ route }) => {
     };
     verifyTaskMutation.mutate({ taskId, verifyData });
   };
+  console.log("task", task?.taskPicture);
 
   const renderProgress = () => {
     return (
@@ -92,7 +93,6 @@ const TaskDetailsScreen = ({ route }) => {
     );
   };
 
-  console.log("picture", task?.taskPicture.split(`\\`).pop());
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity
@@ -110,7 +110,13 @@ const TaskDetailsScreen = ({ route }) => {
         <View style={styles.imageContainer}>
           <Image
             //source={{ uri: mockImage }
-            source={{ uri: `${baseURL}uploads/taskpictures/${task?.taskPicture.split(`\\`).pop()}` ?? mockImage }}
+            source={{
+              uri: task?.taskPicture
+                ? `${baseURL}uploads/taskpictures/${task.taskPicture
+                    .split(`\\`)
+                    .pop()}`
+                : mockImage,
+            }}
             style={styles.image}
           />
         </View>

@@ -85,7 +85,7 @@ const createChild = async (childData, image) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error creating child:", error);
+    console.error("Error creating child:", error.message, error.response.data);
     throw error;
   }
 };
