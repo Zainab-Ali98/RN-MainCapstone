@@ -1,83 +1,59 @@
-
 import React from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  Image,
+  ActivityIndicator,
 } from "react-native";
-import Logout from "../components/Logout";
+import { LinearGradient } from "expo-linear-gradient";
+import { useQuery } from "@tanstack/react-query";
+import { transactions } from "../api/transactions";
+import { balance, profile } from "../api/users";
+import UserContext from "../context/UserContext";
+import { useContext } from "react";
 
 const { width, height } = Dimensions.get("window");
 
-const mockTasks = [
-  { id: "1", title: "Complete homework", reward: "5.00" },
-  { id: "2", title: "Clean your room", reward: "3.00" },
-];
-
-const mockActivities = [
-  {
-    id: "1",
-    type: "Deposit",
-    amount: "+500.00 KD",
-    color: "#4D5DFA",
-    icon: "↑",
-    date: "Today, 11:30 AM",
-  },
-  {
-    id: "2",
-    type: "Withdrawal",
-    amount: "-200.00 KD",
-    color: "#FF4D4D",
-    icon: "↓",
-    date: "Yesterday, 3:20 PM",
-  },
-  // Add more mock transactions to demonstrate scrolling
-  {
-    id: "3",
-    type: "Deposit",
-    amount: "+100.00 KD",
-    color: "#4D5DFA",
-    icon: "↑",
-    date: "Yesterday, 9:00 AM",
-  },
-  {
-    id: "4",
-    type: "Withdrawal",
-    amount: "-50.00 KD",
-    color: "#FF4D4D",
-    icon: "↓",
-    date: "2 days ago",
-  },
-  {
-    id: "5",
-    type: "Deposit",
-    amount: "+20.00 KD",
-    color: "#4D5DFA",
-    icon: "↑",
-    date: "2 days ago",
-  },
-  {
-    id: "6",
-    type: "Withdrawal",
-    amount: "-10.00 KD",
-    color: "#FF4D4D",
-    icon: "↓",
-    date: "3 days ago",
-  },
-];
-
 const CurrentBalanceScreen = () => {
+  const { isAuth } = useContext(UserContext);
+
+  const { data: balanceData, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ["balance"],
+    queryFn: balance,
+    enabled: !!isAuth,
+  });
+
+  const { data: transactionsData, isLoading: isLoadingTransactions } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: transactions,
+    enabled: !!isAuth,
+  });
+
+  
+
+  if (isLoadingProfile || isLoadingTransactions) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4D5DFA" />
+      </View>
+    );
+  }
+
+  {
+    console.log("\n\nTransactions Data:\n", transactionsData, "\n\n=====================\n");
+  }
+
   return (
     <View style={styles.container}>
-      {/* <Logout /> */}
-      <Image
-        source={require("../../assets/background.png")}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <LinearGradient
+        colors={["#E3F2FD", "#BBDEFB", "#90CAF9"]}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       />
 
       <ScrollView
@@ -86,38 +62,18 @@ const CurrentBalanceScreen = () => {
       >
         <View style={styles.content}>
           <View style={styles.balanceSection}>
-            <Text style={styles.balanceLabel}>Total balance</Text>
-            <Text style={styles.balanceAmount}>3077.20 KD</Text>
+            <View style={styles.balanceCard}>
+              <Text style={styles.balanceLabel}>Total Balance</Text>
+              <Text style={styles.balanceAmount}>{balanceData?.balance || "0.00"} KD</Text>
+              <View style={styles.balanceDecoration} />
+            </View>
           </View>
 
           <View style={styles.mainContent}>
             <View style={styles.section}>
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>New Bike Goal</Text>
-                  <Text style={styles.cardAmount}>150.00 / 200.00 KD</Text>
-                </View>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: "75%" }]} />
-                </View>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Recent Activities</Text>
               </View>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>My Fun Tasks!</Text>
-
-              {mockTasks.map((task) => (
-                <TouchableOpacity key={task.id} style={styles.taskCard}>
-                  <View style={styles.taskContent}>
-                    <Text style={styles.taskTitle}>{task.title}</Text>
-                    <Text style={styles.taskReward}>Earn {task.reward} KD</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Recent Activities</Text>
               <View style={styles.activitiesScrollWrapper}>
                 <ScrollView
                   style={styles.activitiesScroll}
@@ -125,35 +81,25 @@ const CurrentBalanceScreen = () => {
                   showsVerticalScrollIndicator={true}
                   nestedScrollEnabled={true}
                 >
-                  {mockActivities.map((activity) => (
-                    <View key={activity.id} style={styles.transaction}>
-                      <View style={styles.transactionLeft}>
-                        <View
-                          style={[
-                            styles.transactionIcon,
-                            { backgroundColor: activity.color },
-                          ]}
-                        >
-                          <Text style={styles.iconText}>{activity.icon}</Text>
-                        </View>
-                        <View>
-                          <Text style={styles.transactionTitle}>
-                            {activity.type}
-                          </Text>
-                          <Text style={styles.transactionDate}>
-                            {activity.date}
-                          </Text>
-                        </View>
+                  {transactionsData?.map((activity) => (
+                    <View key={activity.id} style={styles.activityItem}>
+                      <View style={styles.activityIconContainer}>
+                        <Text style={styles.activityIcon}>
+                          {activity.type === "Deposit" ? "↑" : "↓"}
+                        </Text>
+                      </View>
+                      <View style={styles.activityDetails}>
+
+                        <Text style={styles.activityDate}>{activity.dateCreated}</Text>
                       </View>
                       <Text
                         style={[
-                          styles.transactionAmount,
-                          activity.type === "Deposit"
-                            ? styles.depositAmount
-                            : styles.withdrawalAmount,
+                          styles.activityAmount,
+                          { color: activity.type === "Deposit" ? "#4D5DFA" : "#FF4D4D" },
                         ]}
                       >
-                        {activity.amount}
+                        {activity.type === "Deposit" ? "+" : "-"}
+                        {activity.amount} KD
                       </Text>
                     </View>
                   ))}
@@ -172,224 +118,163 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
-  backgroundImage: {
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  gradient: {
     position: "absolute",
-    width: width,
-    height: height * 0.5,
+    left: 0,
+    right: 0,
     top: 0,
+    height: height,
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 39,
+    paddingHorizontal: 24,
     paddingTop: 60,
     alignItems: "center",
   },
   balanceSection: {
-    alignItems: "center",
-    marginBottom: 40,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    padding: 20,
-    borderRadius: 16,
     width: "100%",
+    marginBottom: 40,
+  },
+  balanceCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    position: "relative",
+    overflow: "hidden",
+    minHeight: 140,
   },
   balanceLabel: {
-    color: "#ffffff",
+    color: "#4D5DFA",
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 12,
+    marginBottom: 6,
     textTransform: "uppercase",
     letterSpacing: 1,
   },
   balanceAmount: {
-    color: "#ffffff",
+    color: "#1E40AF",
     fontSize: 36,
     fontWeight: "800",
     letterSpacing: 1,
   },
+  balanceDecoration: {
+    position: "absolute",
+    top: -50,
+    right: -50,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(77, 93, 250, 0.1)",
+  },
   mainContent: {
     width: "100%",
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 24,
     padding: 20,
     marginBottom: 20,
-    elevation: 4,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   section: {
     marginBottom: 20,
     gap: 16,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
-    color: "#174C4F",
+    color: "#1E40AF",
     marginBottom: 16,
   },
-  card: {
-    backgroundColor: "#F3F4F6",
-    borderRadius: 16,
-    padding: 20,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#174C4F",
-  },
-  cardAmount: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#174C4F",
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#4D5DFA",
-    borderRadius: 4,
-  },
-  taskCard: {
+  sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 2,
-  },
-  taskContent: {
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#174C4F",
-    marginBottom: 4,
-  },
-  taskReward: {
-    fontSize: 14,
-    color: "#4D5DFA",
-    fontWeight: "500",
+    marginBottom: 16,
   },
   activitiesScrollWrapper: {
-    maxHeight: 200,
-    borderRadius: 12,
+    maxHeight: 400,
+    borderRadius: 16,
     overflow: "hidden",
   },
   activitiesScroll: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "rgba(243, 244, 246, 0.8)",
     padding: 10,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "rgba(229, 231, 235, 0.8)",
   },
   activitiesContent: {
     paddingBottom: 10,
   },
-  // transaction: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   marginBottom: 12,
-  //   padding: 16,
-  //   backgroundColor: "#FFFFFF",
-  //   borderRadius: 12,
-  //   elevation: 2,
-  //   shadowColor: "#000",
-  //   shadowOffset: {
-  //     width: 0,
-  //     height: 1,
-  //   },
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 2,
-  // },
-  transaction: {
+  activityItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 12,
     padding: 16,
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    elevation: 2,
+    borderRadius: 16,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 2,
-    overflow: "hidden", // <— Optional safety net
+    elevation: 2,
   },
-  transactionLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    flex: 1,
-  },
-  transactionIcon: {
+  activityIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
   },
-  iconText: {
+  activityIcon: {
     color: "#FFFFFF",
     fontSize: 20,
   },
-  transactionTitle: {
+  activityDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  activityType: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#174C4F",
+    color: "#1E40AF",
     marginBottom: 4,
   },
-  transactionDate: {
+  activityDate: {
     fontSize: 12,
     color: "#6B7280",
   },
-  // transactionAmount: {
-  //   fontSize: 16,
-  //   fontWeight: "600",
-  // },
-  transactionAmount: {
+  activityAmount: {
     fontSize: 16,
     fontWeight: "600",
-    maxWidth: 100, // You can tweak this
-    textAlign: "right",
-    flexShrink: 1,
-  },
-  depositAmount: {
-    color: "#4D5DFA",
-  },
-  withdrawalAmount: {
-    color: "#FF4D4D",
   },
 });
 

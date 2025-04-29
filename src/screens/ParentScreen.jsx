@@ -190,6 +190,9 @@ const ParentScreen = ({ navigation }) => {
         </View>
 
         {/* Animated Balance */}
+        <TouchableOpacity
+                onPress={() => navigation.navigate("BalanceScreen")}
+                >
         <View style={styles.balanceCard}>
           <View style={styles.balanceRow}>
             <LottieView
@@ -199,6 +202,7 @@ const ParentScreen = ({ navigation }) => {
               style={styles.lottieIcon}
             />
             <View>
+             
               <Text style={styles.balanceLabel}>Total Balance</Text>
               <Text style={styles.balanceValue}>
                 KWD {totalBalance.toFixed(3)}
@@ -206,6 +210,7 @@ const ParentScreen = ({ navigation }) => {
             </View>
           </View>
         </View>
+        </TouchableOpacity>
       </View>
 
       {/* Tabs - Added Tasks tab and renamed History */}

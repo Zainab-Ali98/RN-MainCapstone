@@ -1,8 +1,7 @@
-import axios from "axios";
-import { ChildrenEndpoints } from "./endpoints";
+import { ChildrenEndpoints } from './endpoints';
 import instance from "../api/index";
 
-const tasks = async () => {
+const tasks = async (taskId) => {
   try {
     const response = await instance.get(ChildrenEndpoints.tasks);
     return response.data;
@@ -13,12 +12,15 @@ const tasks = async () => {
 };
 
 const taskComplete = async (taskId) => {
+  if (!taskId) {
+    throw new Error("taskId is required to complete a task.");
+  }
   try {
     const endpoint = ChildrenEndpoints.tasksComplete.replace("{id}", taskId);
-    const response = await instance.put(endpoint);
+    const response = await instance.put(endpoint, {});
     return response.data;
   } catch (error) {
-    console.error("Error marking task complete:", error);
+    console.error("Error marking task complete:", error.response?.data || error.message);
     throw error;
   }
 };

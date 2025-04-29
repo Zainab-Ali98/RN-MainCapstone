@@ -4,6 +4,7 @@ import { getToken } from "./storage";
 const baseURL = "http://192.168.1.180:5209/";
 const instance = axios.create({
   baseURL: `${baseURL}api/`,
+
   headers: {
     "Content-Type": "application/json",
   },

@@ -12,7 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import CircleProgress from "../components/CircleProgress";
-import Logout from "../components/Logout";
+import { LinearGradient } from "expo-linear-gradient";
 import { getChildTask, getChildSavingsGoals } from "../api/parents";
 import { useQuery } from "@tanstack/react-query";
 const { width, height } = Dimensions.get("window");
@@ -20,45 +20,85 @@ const { width, height } = Dimensions.get("window");
 const TaskItem = ({ item }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case "verify":
-        return "#3B82F6";
+      case "verified":
+        return "#22C55E"; // Green
       case "completed":
-        return "#10B981";
+        return "#3B82F6"; // Blue
       case "rejected":
-        return "#EF4444";
-      case "ongoing":
-        return "#FBBF24";
+        return "#EF4444"; // Red
       default:
         return "#9CA3AF";
     }
   };
 
+  const getStatusIcon = (status) => {
+    switch (status.toLowerCase()) {
+      case "verified":
+        return "check-circle";
+      case "approved":
+        return "thumb-up";
+      case "rejected":
+        return "error-outline";
+      default:
+        return "pending";
+    }
+  };
+
   return (
     <View style={styles.taskBox}>
-      <Text style={styles.taskTitle}>{item.title}</Text>
-      <Text style={styles.taskAmount}>{item.amount} KWD</Text>
-      <View
-        style={[
-          styles.statusBadge,
-          { backgroundColor: getStatusColor(item.status) },
-        ]}
+      <LinearGradient
+        colors={[item.color + "20", "#FFFFFF"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.taskGradient}
       >
-        <Text style={styles.statusText}>{item.status}</Text>
-      </View>
+        <View style={styles.taskContent}>
+          <Text style={styles.taskTitle}>{item.title}</Text>
+          <View style={styles.taskDetails}>
+            <Text style={[styles.rewardText, { color: item.color }]}>
+              +{item.amount.toFixed(2)} KWD
+            </Text>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: item.color + "20" },
+              ]}
+            >
+              <Text style={[styles.statusText, { color: item.color }]}>
+                {item.status}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
     </View>
   );
 };
 
 const SavingGoalItem = ({ item }) => {
   const percentage = Math.round((item.progress / item.amount) * 100);
+  const remainingAmount = item.amount - item.progress;
 
   return (
-    <View style={styles.goalCard}>
-      <CircleProgress percentage={percentage} />
-      <Text style={styles.goalTitle}>{item.title}</Text>
-      <Text style={styles.goalAmount}>
-        {item.progress} KWD / {item.amount} KWD
+    <View style={[styles.goalCard, { backgroundColor: item.color + "10" }]}>
+      <View
+        style={[
+          styles.goalEmojiContainer,
+          { backgroundColor: item.color + "20" },
+        ]}
+      >
+        <Text style={styles.goalEmoji}>{item.emoji}</Text>
+      </View>
+      <Text style={[styles.goalTitle, { color: item.color }]}>
+        {item.title}
       </Text>
+      <CircleProgress percentage={percentage} color={item.color} />
+      <View style={styles.goalProgress}>
+        <Text style={[styles.savedAmount, { color: item.color }]}>
+          Saved: {item.progress} KWD
+        </Text>
+        <Text style={styles.remainingAmount}>Need: {remainingAmount} KWD</Text>
+      </View>
     </View>
   );
 };
@@ -111,21 +151,66 @@ const ProfileScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Logout /> */}
-      <Image
-        source={require("../../assets/background.png")}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           {/* Balance Card */}
           <View style={styles.balanceCard}>
-            <Text style={styles.balanceLabel}>Total Available Balance</Text>
-            <Text style={styles.balanceAmount}>
-              KWD {child?.balance.toFixed(2)}
-            </Text>
+            <LinearGradient
+              colors={["#4B9EFF", "#7C3AED", "#FFD449"]}
+              style={styles.cardBackground}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              locations={[0, 0.5, 1]}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardName}>Available Balance</Text>
+                </View>
+                <Text style={styles.balanceAmount}>
+                  KWD {child?.balance.toFixed(2)}
+                </Text>
+                <View style={styles.cardFooter}>
+                  <View
+                    style={[
+                      styles.paymentMethods,
+                      { backgroundColor: "rgba(255, 255, 255, 0.2)" },
+                    ]}
+                  >
+                    <MaterialIcons name="contactless" size={24} color="white" />
+                  </View>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.buttonSection}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() =>
+                navigation.navigate("DepositScreen", { childId: child.id })
+              } // This should work now
+            >
+              <MaterialIcons
+                name="account-balance-wallet"
+                size={24}
+                color="#6C63FF"
+              />
+              <Text style={styles.whiteButtonText}>Send Money</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() =>
+                navigation.navigate("CreateTaskScreen", { childId: child.id })
+              }
+            >
+              <MaterialIcons
+                name="playlist-add-check"
+                size={24}
+                color="#6C63FF"
+              />
+              <Text style={styles.whiteButtonText}>Create Task</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Saving Goals */}
@@ -159,21 +244,7 @@ const ProfileScreen = ({ route }) => {
               resizeMode="contain"
             />
             <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() =>
-                  navigation.navigate("DepositScreen", { childId: child.id })
-                } // This should work now
-              >
-                <MaterialIcons
-                  name="account-balance-wallet"
-                  size={24}
-                  color="#6C63FF"
-                />
-                <Text style={styles.whiteButtonText}>Send Money</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() =>
                   navigation.navigate("CreateTaskScreen", { childId: child.id })
@@ -185,7 +256,7 @@ const ProfileScreen = ({ route }) => {
                   color="#6C63FF"
                 />
                 <Text style={styles.whiteButtonText}>Create Task</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </View>
@@ -194,17 +265,14 @@ const ProfileScreen = ({ route }) => {
   );
 };
 
-export default ProfileScreen;
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#ffffff" },
-  backgroundImage: {
-    position: "absolute",
-    width: width,
-    height: height * 0.5,
-    top: 0,
+  container: {
+    flex: 1,
+    backgroundColor: "#F8FAFC", // Light gray background
   },
-  scrollContent: { paddingBottom: 40 },
+  scrollContent: {
+    paddingBottom: 40,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 39,
@@ -213,26 +281,53 @@ const styles = StyleSheet.create({
   },
   balanceCard: {
     width: "100%",
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 16,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    height: 200,
+    borderRadius: 25,
+    overflow: "hidden",
     marginBottom: 24,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
-  balanceLabel: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 4,
+  cardBackground: {
+    flex: 1,
+    padding: 20,
+  },
+  cardContent: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  cardName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#ffffff",
+    opacity: 0.9,
   },
   balanceAmount: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: "bold",
-    color: "#000000",
+    color: "#ffffff",
+    marginVertical: 20,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  paymentMethods: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ffffff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   section: {
     width: "100%",
@@ -245,82 +340,133 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   taskBox: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    elevation: 2,
-  },
-  taskTitle: { fontSize: 16, fontWeight: "600", color: "#1F2937" },
-  taskAmount: { fontSize: 14, color: "#6B7280", marginVertical: 4 },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    alignSelf: "flex-start",
+    marginBottom: 12,
+    overflow: "hidden",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  statusText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 12,
+  taskLeftBorder: {
+    width: 4,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
   },
-  goalCard: {
-    backgroundColor: "#F9FAFB",
-    borderRadius: 16,
-    padding: 16,
-    width: 130,
+  taskContent: {
+    flex: 1,
+    padding: 12,
+  },
+  taskHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginRight: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+    marginBottom: 8,
   },
-  goalTitle: {
-    fontSize: 14,
+  taskTitle: {
+    fontSize: 16,
     fontWeight: "600",
     color: "#1F2937",
-    marginBottom: 4,
+    flex: 1,
+    marginRight: 12,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  statusIcon: {
+    marginRight: 4,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  rewardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rewardText: {
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#F59E0B",
+  },
+  goalCard: {
+    borderRadius: 20,
+    padding: 16,
+    width: width * 0.7,
+    marginRight: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  goalEmojiContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  goalEmoji: {
+    fontSize: 32,
+  },
+  goalTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 12,
     textAlign: "center",
   },
-  goalAmount: {
-    fontSize: 12,
-    color: "#6B7280",
-    textAlign: "center",
+  goalProgress: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
+  savedAmount: {
+    fontWeight: "600",
+  },
+  remainingAmount: {
+    color: "#7C3AED",
+    fontWeight: "600",
   },
   buttonSection: {
     width: "100%",
-    marginTop: 24,
-    position: "relative",
-  },
-  bearImage: {
-    width: 118,
-    height: 78,
-    position: "absolute",
-    right: 0,
-    top: -60,
-    zIndex: 1,
-  },
-  actionButtonsContainer: {
+    marginVertical: 16,
     flexDirection: "row",
-    justifyContent: "space-between",
     gap: 16,
   },
-  whiteButton: {
+  actionButton: {
     flex: 1,
-    height: 72,
-    backgroundColor: "#ffffff",
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "#6C63FF",
-    borderWidth: 2,
+    height: 60,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    borderWidth: 2,
+    borderColor: "#6C63FF",
   },
-  whiteButtonText: {
-    color: "#6C63FF",
+  buttonText: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#6C63FF",
   },
 });
+
+export default ProfileScreen;
