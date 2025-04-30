@@ -21,10 +21,19 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { rewards, redeemReward } from "../api/rewards";
 import { profile } from "../api/users";
 import UserContext from "../context/UserContext";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const { width, height } = Dimensions.get("window");
 
-const COLOR_MAP = ["#FFE4F0", "#E1F0FF", "#FFF6CC", "#E0FFE1"];
+const COLOR_MAP = [
+  "#42B7FF",
+  "#8B72A6",
+  "#FBB373",
+  "#2E8B57",
+  "#3B5998",
+  "#D2691E",
+];
 
 const RewardsScreen = () => {
   const confettiRef = useRef(null);
@@ -44,13 +53,14 @@ const RewardsScreen = () => {
     enabled: !!isAuth,
   });
 
+  console.log("rewardsData", rewardsData);
   const { mutate: redeem } = useMutation({
     mutationKey: ["redeemReward"],
     mutationFn: redeemReward,
-    onSuccess: () => {
+    onSuccess: (data) => {
       setShowModal(false);
       confettiRef.current?.start?.();
-      alert(`Requested ${selectedReward.title} 🎉`);
+      alert(`Requested ${data?.rewardName} 🎉`);
     },
     onError: (error) => {
       alert(error.message || "Failed to redeem reward");
@@ -92,7 +102,7 @@ const RewardsScreen = () => {
 
     return (
       <Animated.View style={[styles.animatedCard, animatedStyle]}>
-        <TouchableOpacity
+        <View
           onPress={() => onPress(reward)}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
@@ -103,18 +113,47 @@ const RewardsScreen = () => {
           ]}
         >
           <View style={styles.cardContent}>
-            <Image source={reward.image} style={styles.rewardImage} />
-            <View>
+            <View
+              style={{
+                gap: 5,
+              }}
+            >
               <Text style={styles.rewardText}>{reward.rewardName}</Text>
-              <Text style={styles.rewardDescription}>
-                Description: {reward.rewardDescription}
-              </Text>
-              <Text style={styles.rewardPoints}>
-                Cost: {reward.rewardPrice} pts
-              </Text>
+              <View style={styles.RewardLeft1}>
+                <FontAwesome name="circle" size={10} color="white" />
+                <Text style={styles.RewardDescription}>
+                  {reward.rewardDescription}
+                </Text>
+              </View>
+              <View style={styles.RewardLeft3}>
+                <Text style={styles.RewardLabel}>{"Required"}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
+                  <Text style={styles.RewardPrice}>{reward.rewardPrice}</Text>
+                  <AntDesign
+                    name="star"
+                    size={20}
+                    color="#FFD700"
+                    marginBottom={1}
+                  />
+                </View>
+              </View>
             </View>
+            <TouchableOpacity
+              style={styles.RewardRedeem}
+              onPress={() => onPress(reward)}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+            >
+              <Text style={styles.RewardRedeemButton}>{"Redeem"}</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </View>
       </Animated.View>
     );
   };
@@ -140,9 +179,7 @@ const RewardsScreen = () => {
           </View>
         </View>
 
-        <View style={styles.rewardsWrapper}>
-     
-
+        <View >
           {rewardsData?.map((reward, index) => (
             <AnimatedRewardCard
               key={reward.rewardId}
@@ -204,6 +241,48 @@ const RewardsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  RewardRedeemButton: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  RewardRedeem: {
+    backgroundColor: "rgba(255, 255, 255, 0.14)",
+    borderRadius: 14,
+    paddingVertical: 11,
+    paddingHorizontal: 13,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 89,
+    height: 37,
+    alignSelf: "center",
+  },
+  RewardPrice: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  RewardLabel: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  RewardLeft3: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  RewardLeft1: {
+    gap: 5,
+    flexDirection: "row",
+  },
+  RewardDescription: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    juastifyContent: "center",
+  },
   container: { flex: 1, backgroundColor: "#ffffff" },
   backgroundImage: {
     position: "absolute",
@@ -266,14 +345,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   rewardCard: {
-    padding: 18,
-    borderRadius: 16,
-    elevation: 3,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 22,
+    // marginBottom: 10,
+    marginHorizontal: 12,
   },
   cardContent: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
+    justifyContent: "space-between",
+    gap: 5,
+    width: "100%",
   },
   rewardImage: {
     width: 60,
@@ -281,9 +366,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   rewardText: {
+    color: "white",
     fontSize: 16,
-    color: "#1F2937",
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   rewardDescription: {
     fontSize: 14,

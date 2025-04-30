@@ -6,6 +6,7 @@ import ViewTaskScreen from "../screens/ViewTaskScreen";
 import RewardsScreen from "../screens/RewardsScreen";
 import CreateNewGoal from "../screens/CreateNewGoal";
 import ChildDepositScreen from "../screens/ChildDepositScreen";
+import test from "../screens/test";
 
 const Stack = createNativeStackNavigator();
 

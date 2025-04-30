@@ -4,6 +4,7 @@ import instance from "../api/index";
 const rewards = async () => {
   try {
     const response = await instance.get(RewardsEndpoints.rewards);
+    console.log("rewards",response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching rewards:', error);

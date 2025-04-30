@@ -21,11 +21,12 @@ const TaskDetailsScreen = ({ route }) => {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const task = route.params;
+  console.log("Task Details:", task); // Log the task details for debugging
   const taskId = task?.taskId || task?.id; // Use taskId from route params or fallback to id
   //console.log("Task ID:", task); // Log the taskId for debugging
 
   // if no task picture
-  const mockImage = "https://cdn-icons-png.flaticon.com/512/625/625083.png";
+  // const mockImage = "https://cdn-icons-png.flaticon.com/512/625/625083.png";
 
   // Mutation to update task status
   const verifyTaskMutation = useMutation({
@@ -78,7 +79,7 @@ const TaskDetailsScreen = ({ route }) => {
     };
     verifyTaskMutation.mutate({ taskId, verifyData });
   };
-  //console.log("task", task?.taskPicture);
+
 
   const renderProgress = () => {
     return (
@@ -107,22 +108,10 @@ const TaskDetailsScreen = ({ route }) => {
       {renderProgress()}
 
       <View style={styles.card}>
-        <View style={styles.imageContainer}>
-          <Image
-            //source={{ uri: mockImage }
-            source={{
-              uri: task?.taskPicture
-                ? `${baseURL}uploads/taskpictures/${task.taskPicture
-                    .split(`\\`)
-                    .pop()}`
-                : mockImage,
-            }}
-            style={styles.image}
-          />
+        <View style={{ alignItems: "center", marginBottom: 20 }}>
+           <Text style={styles.name}>{task?.name}</Text>
         </View>
-
-        <Text style={styles.name}>{task?.taskName}</Text>
-
+       
         <Text style={styles.sectionHeader}>Description</Text>
         {descriptionBullets.map((item) => (
           <View style={styles.bulletRow} key={item.id}>
@@ -130,22 +119,22 @@ const TaskDetailsScreen = ({ route }) => {
             <Text style={styles.bulletText}>{item.text}</Text>
           </View>
         ))}
-
+        <View style={{
+          borderBottomWidth: 1,
+          borderBottomColor: "#E5E7EB",
+        }} />
         <Text style={styles.info}>
           <Text style={styles.label}>Assigned to: </Text>
           <Text style={styles.infoValue}>{task?.childName || "—"}</Text>
         </Text>
-
         <Text style={styles.info}>
           <Text style={styles.label}>Reward Amount: </Text>
           <Text style={styles.infoValue}>{task?.rewardAmount}</Text>
         </Text>
-
         <Text style={styles.info}>
           <Text style={styles.label}>Created At: </Text>
           <Text style={styles.infoValue}>{task?.dateCreated}</Text>
         </Text>
-
         {task?.status.toLowerCase() === "verify" ? (
           <View style={styles.buttonRow}>
             <TouchableOpacity
@@ -197,7 +186,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#6B21A8",
+    color: "#4D5DFA",
     marginBottom: 100,
   },
   backButton: {
@@ -215,28 +204,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#7C3AED",
+    borderColor: "#4D5DFA",
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 4,
     marginTop: 40,
+    justifyContent: "center",
+    width: "90%", 
   },
-  imageContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
+
   name: {
     fontSize: 22,
-    fontWeight: "700",
-    color: "#111827",
-    marginBottom: 2,
-    textAlign: "center",
+    selfAlign: "center",
+    fontWeight: "bold",
   },
   sectionHeader: {
     fontSize: 18,
@@ -254,7 +235,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#7C3AED",
+    backgroundColor: "#4D5DFA",
     marginRight: 13,
   },
   bulletText: {
@@ -269,7 +250,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "600",
-    color: "#6B21A8",
+    color: "#4D5DFA",
   },
   infoValue: {
     fontWeight: "400",
