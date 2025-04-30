@@ -17,11 +17,11 @@ import LottieView from "lottie-react-native";
 
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { ChildCard } from "../components/ChildCard";
-import Logout from "../components/Logout";
 
 import KidBox from "../components/KidBox";
 import TaskBox from "../components/TaskBox";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import Logout from "../components/Logout";
 
 const ParentScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("kids");
@@ -177,7 +177,6 @@ const ParentScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Logout />
       <View style={styles.header}>
         <View style={styles.greetingSection}>
           <View style={styles.greetingBox}>
@@ -190,26 +189,23 @@ const ParentScreen = ({ navigation }) => {
         </View>
 
         {/* Animated Balance */}
-        <TouchableOpacity
-                onPress={() => navigation.navigate("BalanceScreen")}
-                >
-        <View style={styles.balanceCard}>
-          <View style={styles.balanceRow}>
-            <LottieView
-              source={require("../../assets/balance.json")}
-              autoPlay
-              loop
-              style={styles.lottieIcon}
-            />
-            <View>
-             
-              <Text style={styles.balanceLabel}>Total Balance</Text>
-              <Text style={styles.balanceValue}>
-                KWD {totalBalance.toFixed(3)}
-              </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("BalanceScreen")}>
+          <View style={styles.balanceCard}>
+            <View style={styles.balanceRow}>
+              <LottieView
+                source={require("../../assets/balance.json")}
+                autoPlay
+                loop
+                style={styles.lottieIcon}
+              />
+              <View>
+                <Text style={styles.balanceLabel}>Total Balance</Text>
+                <Text style={styles.balanceValue}>
+                  KWD {totalBalance.toFixed(3)}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
         </TouchableOpacity>
       </View>
 
@@ -274,7 +270,7 @@ const ParentScreen = ({ navigation }) => {
                           <MaterialIcons
                             name="person"
                             size={30}
-                            color="#0066FF"
+                            color="#4D5DFA"
                           />
                         </View>
                       )}
@@ -304,7 +300,7 @@ const ParentScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="add-a-photo"
                         size={24}
-                        color="#0066FF"
+                        color="#4D5DFA"
                       />
                     </TouchableOpacity>
 
@@ -318,7 +314,7 @@ const ParentScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="emoji-emotions"
                         size={24}
-                        color="#0066FF"
+                        color="#4D5DFA"
                       />
                     </TouchableOpacity>
                   </View>
@@ -330,7 +326,7 @@ const ParentScreen = ({ navigation }) => {
               style={styles.addCard}
               onPress={() => navigation.navigate("CreatenewAcc")}
             >
-              <MaterialIcons name="add" size={30} color="#0066FF" />
+              <MaterialIcons name="add" size={30} color="#4D5DFA" />
               <Text style={styles.addText}>Add a child</Text>
             </TouchableOpacity>
           </View>
@@ -353,7 +349,7 @@ const ParentScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="assignment"
                         size={20}
-                        color="#0066FF"
+                        color="#4D5DFA"
                       />
                     </View>
                     <View
@@ -365,11 +361,11 @@ const ParentScreen = ({ navigation }) => {
                   <Text style={styles.taskName}>{task.name}</Text>
                   <View style={styles.taskFooter}>
                     <View style={styles.childInfo}>
-                      <MaterialIcons name="person" size={16} color="#6B7280" />
+                      <MaterialIcons name="person" size={16} color="#4D5DFA" />
                       <Text style={styles.childName}>{task.childName}</Text>
                     </View>
                     <View style={styles.dateInfo}>
-                      <MaterialIcons name="event" size={16} color="#6B7280" />
+                      <MaterialIcons name="event" size={16} color="#4D5DFA" />
                       <Text style={styles.taskDate}>{task.dateCreated}</Text>
                     </View>
                   </View>
@@ -394,7 +390,7 @@ const ParentScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="assignment"
                         size={20}
-                        color="#0066FF"
+                        color="#4D5DFA"
                       />
                     </View>
                     <View
@@ -406,11 +402,11 @@ const ParentScreen = ({ navigation }) => {
                   <Text style={styles.taskName}>{task.name}</Text>
                   <View style={styles.taskFooter}>
                     <View style={styles.childInfo}>
-                      <MaterialIcons name="person" size={16} color="#6B7280" />
+                      <MaterialIcons name="person" size={16} color="#4D5DFA" />
                       <Text style={styles.childName}>{task.childName}</Text>
                     </View>
                     <View style={styles.dateInfo}>
-                      <MaterialIcons name="event" size={16} color="#6B7280" />
+                      <MaterialIcons name="event" size={16} color="#4D5DFA" />
                       <Text style={styles.taskDate}>{task.dateCreated}</Text>
                     </View>
                   </View>
@@ -437,7 +433,7 @@ const ParentScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="assignment"
                         size={20}
-                        color="#0066FF"
+                        color="#4D5DFA"
                       />
                     </View>
                     <View
@@ -454,11 +450,11 @@ const ParentScreen = ({ navigation }) => {
                   <Text style={styles.taskName}>{task.name}</Text>
                   <View style={styles.taskFooter}>
                     <View style={styles.childInfo}>
-                      <MaterialIcons name="person" size={16} color="#6B7280" />
+                      <MaterialIcons name="person" size={16} color="#4D5DFA" />
                       <Text style={styles.childName}>{task.childName}</Text>
                     </View>
                     <View style={styles.dateInfo}>
-                      <MaterialIcons name="event" size={16} color="#6B7280" />
+                      <MaterialIcons name="event" size={16} color="#4D5DFA" />
                       <Text style={styles.taskDate}>{task.dateCreated}</Text>
                     </View>
                   </View>
@@ -522,12 +518,11 @@ export default ParentScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FDFAF6",
   },
   header: {
     padding: 24,
     paddingTop: 50,
-    backgroundColor: "#0066FF",
+    backgroundColor: "#4D5DFA",
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#000",
@@ -546,8 +541,8 @@ const styles = StyleSheet.create({
   greetingBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    padding: 16,
+    backgroundColor: "rgba(0, 0, 0, 0.08)",
+    padding: 12,
     borderRadius: 20,
     borderLeftWidth: 4,
     borderLeftColor: "#FFD700",
@@ -557,24 +552,27 @@ const styles = StyleSheet.create({
   },
   dayText: {
     color: "rgba(255, 255, 255, 0.9)",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
   },
   nameText: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "bold",
     marginTop: 4,
   },
   balanceCard: {
-    backgroundColor: "#0066FF",
+    backgroundColor: "#4D5DFA",
     borderRadius: 16,
+    shadowRadius: 3,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
     padding: 20,
     marginTop: 12,
     marginHorizontal: 16,
-    borderStyle: "dashed",
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   balanceRow: {
     flexDirection: "row",
@@ -604,7 +602,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "#4D5DFA",
     fontWeight: "500",
     paddingVertical: 8,
     paddingHorizontal: 20,
@@ -612,8 +610,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
   },
   tabTextActive: {
-    color: "#0066FF",
-    backgroundColor: "#E5F0FF",
+    color: "#4D5DFA",
+    backgroundColor: "#4D5DFA11",
     fontWeight: "600",
   },
   grid: {
@@ -659,7 +657,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 30,
-    backgroundColor: "#E5F0FF",
+    backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -670,12 +668,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 30,
-    backgroundColor: "#E5F0FF",
+    backgroundColor: "#4D5DFA11",
     justifyContent: "center",
     alignItems: "center",
   },
   nameContainer: {
-    backgroundColor: "#E5F0FF",
+    backgroundColor: "#4D5DFA11",
     padding: 8,
     borderRadius: 12,
     width: "100%",
@@ -684,7 +682,7 @@ const styles = StyleSheet.create({
   childName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#0066FF",
+    color: "#4D5DFA",
     textAlign: "center",
   },
   childBalance: {
@@ -694,7 +692,7 @@ const styles = StyleSheet.create({
   balanceAmount: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#0066FF",
+    color: "#4D5DFA",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -705,7 +703,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#E5F0FF",
+    backgroundColor: "#4D5DFA11",
     padding: 10,
     borderRadius: 12,
     aspectRatio: 1,
@@ -729,7 +727,7 @@ const styles = StyleSheet.create({
   },
   addText: {
     marginTop: 6,
-    color: "#0066FF",
+    color: "#4D5DFA",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -765,7 +763,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: "#E5F0FF",
+    backgroundColor: "#4D5DFA11",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -847,7 +845,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#E5F0FF",
+    backgroundColor: "#4D5DFA",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
@@ -861,7 +859,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   closeButton: {
-    backgroundColor: "#0066FF",
+    backgroundColor: "#4D5DFA",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,

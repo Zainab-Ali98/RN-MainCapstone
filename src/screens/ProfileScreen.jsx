@@ -15,62 +15,23 @@ import CircleProgress from "../components/CircleProgress";
 import { LinearGradient } from "expo-linear-gradient";
 import { getChildTask, getChildSavingsGoals } from "../api/parents";
 import { useQuery } from "@tanstack/react-query";
+import ProgressDonut from "../components/ProgressDonut";
 const { width, height } = Dimensions.get("window");
 
 const TaskItem = ({ item }) => {
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "verified":
-        return "#22C55E"; // Green
-      case "completed":
-        return "#3B82F6"; // Blue
-      case "rejected":
-        return "#EF4444"; // Red
-      default:
-        return "#9CA3AF";
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status.toLowerCase()) {
-      case "verified":
-        return "check-circle";
-      case "approved":
-        return "thumb-up";
-      case "rejected":
-        return "error-outline";
-      default:
-        return "pending";
-    }
-  };
-
   return (
     <View style={styles.taskBox}>
-      <LinearGradient
-        colors={[item.color + "20", "#FFFFFF"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.taskGradient}
-      >
-        <View style={styles.taskContent}>
-          <Text style={styles.taskTitle}>{item.title}</Text>
-          <View style={styles.taskDetails}>
-            <Text style={[styles.rewardText, { color: item.color }]}>
-              +{item.amount.toFixed(2)} KWD
-            </Text>
-            <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: item.color + "20" },
-              ]}
-            >
-              <Text style={[styles.statusText, { color: item.color }]}>
-                {item.status}
-              </Text>
-            </View>
-          </View>
+      <View style={styles.taskContent}>
+        <Text style={styles.taskTitle}>{item.title}</Text>
+        <View style={styles.taskDetails}>
+          <Text style={[styles.rewardText, { color: item.color }]}>
+            +{item.amount.toFixed(2)} KWD
+          </Text>
         </View>
-      </LinearGradient>
+      </View>
+      <Text style={[styles.statusText, { color: item.color }]}>
+        {item.status}
+      </Text>
     </View>
   );
 };
@@ -80,19 +41,12 @@ const SavingGoalItem = ({ item }) => {
   const remainingAmount = item.amount - item.progress;
 
   return (
-    <View style={[styles.goalCard, { backgroundColor: item.color + "10" }]}>
-      <View
-        style={[
-          styles.goalEmojiContainer,
-          { backgroundColor: item.color + "20" },
-        ]}
-      >
-        <Text style={styles.goalEmoji}>{item.emoji}</Text>
-      </View>
+    <View style={styles.goalCard}>
       <Text style={[styles.goalTitle, { color: item.color }]}>
         {item.title}
       </Text>
-      <CircleProgress percentage={percentage} color={item.color} />
+      <ProgressDonut current={item.progress} total={item.amount} />
+      {console.log("Item color:", item.color)};
       <View style={styles.goalProgress}>
         <Text style={[styles.savedAmount, { color: item.color }]}>
           Saved: {item.progress} KWD
@@ -167,7 +121,7 @@ const ProfileScreen = ({ route }) => {
                   <Text style={styles.cardName}>Available Balance</Text>
                 </View>
                 <Text style={styles.balanceAmount}>
-                  KWD {child?.balance.toFixed(2)}
+                  KWD {child?.balance.toFixed(3)}
                 </Text>
                 <View style={styles.cardFooter}>
                   <View
@@ -275,16 +229,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 39,
     paddingTop: 60,
     alignItems: "center",
   },
   balanceCard: {
     width: "100%",
     height: 200,
-    borderRadius: 25,
     overflow: "hidden",
-    marginBottom: 24,
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -293,7 +244,9 @@ const styles = StyleSheet.create({
   },
   cardBackground: {
     flex: 1,
+    borderRadius: 25,
     padding: 20,
+    margin: 14,
   },
   cardContent: {
     flex: 1,
@@ -331,15 +284,17 @@ const styles = StyleSheet.create({
   },
   section: {
     width: "100%",
-    marginBottom: 24,
+    marginTop: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#1F2937",
     marginBottom: 12,
+    marginHorizontal: 16,
   },
   taskBox: {
+    flex: 1,
     flexDirection: "row",
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -350,6 +305,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginHorizontal: 16,
+    justifyContent: "space-between",
   },
   taskLeftBorder: {
     width: 4,
@@ -386,6 +343,8 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 12,
     fontWeight: "500",
+    marginTop: 20,
+    right: 20,
   },
   rewardContainer: {
     flexDirection: "row",
@@ -398,16 +357,21 @@ const styles = StyleSheet.create({
     color: "#F59E0B",
   },
   goalCard: {
+    flex: 1,
+    justifyContent: "space-around",
     borderRadius: 20,
     padding: 16,
     width: width * 0.7,
-    marginRight: 12,
+    height: 230,
+    marginHorizontal: 12,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    backgroundColor: "#FFFFFF",
+    marginBottom: 16,
   },
   goalEmojiContainer: {
     width: 60,
@@ -440,10 +404,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buttonSection: {
-    width: "100%",
-    marginVertical: 16,
+    marginVertical: 14,
     flexDirection: "row",
     gap: 16,
+    marginHorizontal: 16,
   },
   actionButton: {
     flex: 1,

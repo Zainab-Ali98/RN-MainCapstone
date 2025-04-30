@@ -16,6 +16,7 @@ import * as Progress from "react-native-progress";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
+import Logout from "./Logout";
 
 const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = 200;
@@ -103,6 +104,7 @@ const SavingsGoalList = () => {
 
   return (
     <View style={styles.container}>
+
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         {["All", "Completed", "Broken"].map((tab) => (

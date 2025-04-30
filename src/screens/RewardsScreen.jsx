@@ -11,14 +11,12 @@ import {
   Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import ConfettiCannon from "react-native-confetti-cannon";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import Logout from "../components/Logout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { rewards, redeemReward } from "../api/rewards";
 import { profile } from "../api/users";
@@ -29,7 +27,6 @@ const { width, height } = Dimensions.get("window");
 const COLOR_MAP = ["#FFE4F0", "#E1F0FF", "#FFF6CC", "#E0FFE1"];
 
 const RewardsScreen = () => {
-  const navigation = useNavigation();
   const confettiRef = useRef(null);
   const { isAuth } = useContext(UserContext);
   const [selectedReward, setSelectedReward] = useState(null);
@@ -41,13 +38,13 @@ const RewardsScreen = () => {
     enabled: !!isAuth,
   });
 
-  const { data: rewardsData, isLoading } = useQuery({
+  const { data: rewardsData } = useQuery({
     queryKey: ["rewards"],
     queryFn: rewards,
     enabled: !!isAuth,
   });
 
-  const { mutate: redeem, isLoading: isRedeeming } = useMutation({
+  const { mutate: redeem } = useMutation({
     mutationKey: ["redeemReward"],
     mutationFn: redeemReward,
     onSuccess: () => {
@@ -124,28 +121,15 @@ const RewardsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Logout />
       <Image
         source={require("../../assets/background.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
 
-      <LinearGradient
-        colors={["#1433FF", "rgba(217, 217, 217, 0)"]}
-        style={styles.header}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backButton}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>3yali Rewards</Text>
-        </View>
-      </LinearGradient>
-
       <ScrollView contentContainerStyle={styles.scrollView}>
+        <Text style={styles.centeredTitle}>3yali Rewards</Text>
+
         <View style={styles.pointsCard}>
           <Text style={styles.balanceLabel}>Current Balance</Text>
           <View style={styles.balanceRow}>
@@ -227,30 +211,17 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     top: 0,
   },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    zIndex: 1,
-  },
-  headerContent: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  backButton: {
-    color: "#ffffff",
-    fontSize: 16,
-    marginRight: 12,
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#ffffff",
-  },
   scrollView: {
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 30,
     paddingBottom: 40,
+  },
+  centeredTitle: {
+    fontSize: 26,
+    fontWeight: "800",
+    textAlign: "left",
+    color: "#ffff",
+    marginBottom: 20,
   },
   pointsCard: {
     backgroundColor: "#ffffff",
@@ -313,6 +284,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#1F2937",
     fontWeight: "600",
+  },
+  rewardDescription: {
+    fontSize: 14,
+    color: "#6B7280",
   },
   rewardPoints: {
     fontSize: 14,

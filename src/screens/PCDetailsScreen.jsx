@@ -1,14 +1,3 @@
-/**
- * PCDetailsScreen Component
- *
- * A screen component that displays user profile and contact details.
- * Features:
- * - Profile image upload
- * - Display of user information
- * - Responsive design for all screen sizes
- * - Loading and error states
- * - Accessibility support
- */
 
 import React, { useState, useEffect } from "react";
 import {
@@ -138,6 +127,7 @@ const PCDetailsScreen = ({ navigation }) => {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
+        <Logout />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0066FF" />
           <Text style={styles.loadingText}>Loading profile...</Text>
@@ -150,12 +140,12 @@ const PCDetailsScreen = ({ navigation }) => {
   if (isError) {
     return (
       <SafeAreaView style={styles.container}>
+        <Logout />
         <View style={styles.errorContainer}>
           <MaterialIcons name="error-outline" size={48} color="#FF4444" />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
-            onPress={fetchUserData}
             accessible={true}
             accessibilityLabel="Try loading profile again"
           >
@@ -177,8 +167,8 @@ const PCDetailsScreen = ({ navigation }) => {
         style={[styles.backgroundImage, { width, height: height * 0.5 }]}
         resizeMode="cover"
       />
-      <Logout />
 
+      <Logout />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -209,10 +199,6 @@ const PCDetailsScreen = ({ navigation }) => {
                 <MaterialIcons name="edit" size={16} color="#FFFFFF" />
               </View>
             </TouchableOpacity>
-            <Text style={styles.nameText}>
-              {userData.firstName} {userData.lastName}
-            </Text>
-            <Text style={styles.emailText}>{userData.email}</Text>
           </View>
           <View style={styles.infoCard}>
             <Text style={styles.sectionTitle}>Personal Information</Text>

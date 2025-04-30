@@ -8,12 +8,7 @@ const CircleProgress = ({
   color = "#4CAF50",
 }) => {
   // Calculate rotation for first half (0-50%)
-  const firstHalfRotation =
-    percentage <= 50 ? `${(percentage / 50) * 180}deg` : "180deg";
-
-  // Calculate rotation for second half (51-100%)
-  const secondHalfRotation =
-    percentage > 50 ? `${((percentage - 50) / 50) * 180}deg` : "0deg";
+  const firstHalfRotation = `${(percentage / 50) * 360}deg`;
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
@@ -42,30 +37,6 @@ const CircleProgress = ({
         />
       </View>
 
-      {/* Second half of progress (51-100%) */}
-      {percentage > 50 && (
-        <View
-          style={[
-            styles.progressContainer,
-            { transform: [{ rotate: "90deg" }] },
-          ]}
-        >
-          <View
-            style={[
-              styles.halfCircle,
-              {
-                borderWidth: strokeWidth,
-                transform: [{ rotate: secondHalfRotation }],
-                borderRightColor: "transparent",
-                borderBottomColor: "transparent",
-                borderLeftColor: color,
-                borderTopColor: color,
-              },
-            ]}
-          />
-        </View>
-      )}
-
       {/* Percentage label */}
       <View style={styles.center}>
         <Text style={[styles.label, { color: color }]}>{percentage}%</Text>
@@ -83,7 +54,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
-    borderRadius: 1000,
+    borderRadius: 100,
     borderColor: "#E5E7EB",
   },
   progressContainer: {
@@ -97,7 +68,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
-    borderRadius: 1000,
+    borderRadius: 100,
     borderColor: "#4CAF50",
   },
   center: {

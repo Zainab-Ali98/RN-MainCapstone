@@ -141,19 +141,18 @@ const DepositScreen = ({ navigation, route }) => {
           <View style={styles.divider} />
         </View> */}
         <View style={styles.amountSection}>
-          <Text style={styles.label}>Enter Amount</Text>
+          <Text style={styles.balanceText}>
+            Your Balance:{" "}
+            {isBalanceLoading
+              ? "Loading..."
+              : `${parentBalance.toFixed(3)} KWD`}
+          </Text>
           <Text style={styles.amount}>
             {isBalanceLoading
               ? "Loading..."
               : isBalanceError
               ? "Error"
               : `${amount} KWD`}
-          </Text>
-          <Text style={styles.balanceText}>
-            Available Balance:{" "}
-            {isBalanceLoading
-              ? "Loading..."
-              : `${parentBalance.toFixed(3)} KWD`}
           </Text>
           <View style={styles.divider} />
         </View>
@@ -253,7 +252,7 @@ const styles = StyleSheet.create({
     width: 224,
     height: 1,
     backgroundColor: "#4D5DFA",
-    marginTop: 44,
+    marginTop: 6,
     marginBottom: 41,
   },
   keypad: {

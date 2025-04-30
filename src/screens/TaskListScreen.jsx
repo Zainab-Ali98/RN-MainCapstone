@@ -176,11 +176,7 @@ const TaskListScreen = ({ navigation }) => {
                         <Text style={styles.taskTitle}>{task.taskName}</Text>
                       </View>
                       <View style={styles.taskFooter}>
-                        <View style={styles.pointsBadge}>
-                          <Text style={styles.pointsText}>
-                            +{task.taskPoints} 3yali Points
-                          </Text>
-                        </View>
+                      
                         <View style={styles.rewardContainer}>
                           <Text style={styles.rewardAmount}>
                             {task.rewardAmount} KD
@@ -200,12 +196,7 @@ const TaskListScreen = ({ navigation }) => {
 
         {/* Start New Adventure Button */}
         <View style={styles.bottomButtonContainer}>
-          <LottieView
-            source={require("../../assets/Walking.json")}
-            autoPlay
-            loop
-            style={styles.walkingAnimation}
-          />
+          
           <TouchableOpacity
             style={styles.createGoalButton}
             onPress={() => navigation.navigate("CreateNewGoal")}
@@ -290,7 +281,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
-  taskCardsContainer: { marginBottom: 20 },
+  taskCardsContainer: {  },
   horizontalScrollContent: { paddingRight: 20 },
   taskCardWrapper: { marginRight: 15 },
   taskCard: {
@@ -373,12 +364,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   bottomButtonContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 20,
-    backgroundColor: "transparent",
+    paddingTop: 8,
   },
   createGoalButton: {
     backgroundColor: "#6C63FF",

@@ -210,7 +210,7 @@ function RegisterScreen({ setIsAuth, setRole }) {
             {/* Register Button */}
             <View style={styles.buttonSection}>
               <Image
-                source={require("../../assets/registerbear.png")}
+                source={require("../../assets/bear.png")}
                 style={styles.bearImage}
                 resizeMode="contain"
               />
@@ -336,8 +336,6 @@ const styles = StyleSheet.create({
   },
   buttonSection: {
     width: "100%",
-    marginTop: 20,
-    paddingTop: 60,
     position: "relative",
   },
   registerButton: {
@@ -353,12 +351,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   bearImage: {
-    width: 140,
-    height: 100,
-    position: "absolute",
-    right: 0,
-    top: -19,
-    zIndex: 1,
+    width: 118,
+    height: 78,
   },
 
   orContainer: {

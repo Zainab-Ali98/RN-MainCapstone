@@ -2,32 +2,22 @@ import React from "react";
 import { View, Image, StyleSheet } from "react-native";
 import * as Progress from "react-native-progress";
 
-const CIRCLE_SIZE = 200;
+const CIRCLE_SIZE = 50;
 
-const ProgressDonut = ({ goal }) => {
-    const progress = Math.min(goal.currentBalance / goal.targetAmount, 1);
+const ProgressDonut = ({ current, total }) => {
+  const progress = Math.min(current / total, 1);
   return (
-    <View style={styles.circleWrapper}>
-      <View style={styles.progressCircle}>
-        <Progress.Circle
-          size={CIRCLE_SIZE + 30}
-          progress={progress}
-          thickness={15}
-          color="#4CAF50"
-          unfilledColor="#E5E7EB"
-          borderWidth={0}
-          showsText={false}
-        />
-      </View>
-      <View style={styles.circularMask}>
-        
-        <Image
-          source={{ uri: "https://reactjs.org/logo-og.png" }} // Replace with goal.imageUri if available
-          style={styles.productImage}
-          resizeMode="contain"
-        />
-      </View>
-    </View>
+    <Progress.Circle
+      size={CIRCLE_SIZE + 30}
+      progress={progress}
+      thickness={8}
+      color="#4CAF50"
+      unfilledColor="#E5E7EB"
+      borderWidth={0}
+      showsText={true}
+      formatText={() => `${Math.round(progress * 100)}%`}
+      textStyle={{ fontSize: 14, color: "#4CAF50" }}
+    />
   );
 };
 
@@ -53,9 +43,5 @@ const styles = StyleSheet.create({
     borderRadius: CIRCLE_SIZE / 2,
     overflow: "hidden",
     backgroundColor: "#fff",
-  },
-  productImage: {
-    width: 50,
-    height: 50,
   },
 });
