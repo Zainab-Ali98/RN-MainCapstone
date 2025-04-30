@@ -40,7 +40,7 @@
 //       quality: 1,
 //     });
 
-//     console.log(result);
+//     //console.log(result);
 
 //     if (!result.canceled) {
 //       setImage(result.assets[0].uri);
@@ -305,7 +305,7 @@ function CreateNewAcc() {
   const { mutate, isPending } = useMutation({
     mutationFn: () => createChild(userInfo, image),
     onSuccess: (data) => {
-      console.log("Child account created successfully:", data);
+      //console.log("Child account created successfully:", data);
       queryClient.invalidateQueries(["fetchChildren"]);
       navigation.navigate("ParentScreen");
     },
@@ -425,7 +425,7 @@ function CreateNewAcc() {
 
             <View style={styles.buttonSection}>
               <Image
-                source={require("../../assets/registerbear.png")}
+                source={require("../../assets/bear.png")}
                 style={styles.bearImage}
                 resizeMode="contain"
               />
@@ -530,29 +530,25 @@ const styles = StyleSheet.create({
   },
   buttonSection: {
     width: "100%",
-    marginTop: 20,
-    paddingTop: 60,
+    // marginTop: 20,
+    // paddingTop: 60,
     position: "relative",
   },
   registerButton: {
     height: 56,
-    backgroundColor: "#2563EB",
+    backgroundColor: "#4D5DFA",
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
   },
   buttonText: {
     color: "#ffffff",
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "700",
   },
   bearImage: {
-    width: 140,
-    height: 100,
-    position: "absolute",
-    right: 0,
-    top: -20,
-    zIndex: 1,
+    width: 118,
+    height: 78,
   },
 });
 

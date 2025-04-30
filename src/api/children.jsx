@@ -1,4 +1,4 @@
-import { ChildrenEndpoints } from './endpoints';
+import { ChildrenEndpoints } from "./endpoints";
 import instance from "../api/index";
 
 const tasks = async (taskId) => {
@@ -20,18 +20,20 @@ const taskComplete = async (taskId) => {
     const response = await instance.put(endpoint, {});
     return response.data;
   } catch (error) {
-    console.error("Error marking task complete:", error.response?.data || error.message);
+    console.error(
+      "Error marking task complete:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
-
 
 const getSavingsGoals = async () => {
   try {
     const response = await instance.get(ChildrenEndpoints.getSavingsGoals);
     return response.data;
   } catch (error) {
-    console.error('Error fetching savings goals:', error);
+    console.error("Error fetching savings goals:", error);
     throw error;
   }
 };
@@ -69,7 +71,6 @@ const createSavingsGoals = async (goalInfo, image) => {
   }
 };
 
-
 const savingsGoalsDeposit = async (goalId, amount) => {
   try {
     const endpoint = ChildrenEndpoints.savingsGoalsDeposit.replace(
@@ -79,12 +80,12 @@ const savingsGoalsDeposit = async (goalId, amount) => {
     const depositData = {
       amount: amount,
     };
-    console.log("Deposit Data:", depositData);
-    console.log("Deposit Data:", endpoint); 
+    //console.log("Deposit Data:", depositData);
+    //console.log("Deposit Data:", endpoint);
     const response = await instance.post(endpoint, depositData);
     return response.data;
   } catch (error) {
-    console.error('Error depositing to savings goal:', error.response.data);
+    console.error("Error depositing to savings goal:", error.response.data);
     throw error;
   }
 };
@@ -111,4 +112,3 @@ export {
   savingsGoalsDeposit,
   savingsGoalsBreak,
 };
-  

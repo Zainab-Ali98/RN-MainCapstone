@@ -18,7 +18,7 @@ const ViewTaskScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { taskId } = route.params;
-  console.log("taskId from route params:", taskId);
+  //console.log("taskId from route params:", taskId);
 
   const {
     data: taskList,
@@ -111,7 +111,7 @@ const ViewTaskScreen = () => {
         <TouchableOpacity
           style={styles.submitButton}
           onPress={() => {
-            console.log("Marking task as complete with taskId:", taskId);
+            //console.log("Marking task as complete with taskId:", taskId);
             markComplete(taskId);
           }}
           disabled={isCompleting}

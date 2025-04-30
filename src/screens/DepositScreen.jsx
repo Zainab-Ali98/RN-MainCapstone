@@ -25,7 +25,7 @@ const DepositScreen = ({ navigation, route }) => {
   const [amount, setAmount] = useState("0");
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
-  console.log("Child ID:", childId); // Log the childId for debugging
+  //console.log("Child ID:", childId); // Log the childId for debugging
 
   // Fetch Parent balance from backend
   const {

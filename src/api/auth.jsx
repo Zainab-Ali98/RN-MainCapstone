@@ -20,7 +20,7 @@ const register = async (userInfo, image) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(res.data);
+    //console.log(res.data);
     setToken(res.data.token);
     setRole(res.data.role);
     return res.data;
@@ -36,7 +36,7 @@ const register = async (userInfo, image) => {
 const login = async (userInfo) => {
   try {
     const res = await instance.post(AuthEndpoints.login, userInfo);
-    console.log("LOGIN TOKEN", res.data.token);
+    //console.log("LOGIN TOKEN", res.data.token);
     setToken(res.data.token);
     return res.data;
   } catch (error) {

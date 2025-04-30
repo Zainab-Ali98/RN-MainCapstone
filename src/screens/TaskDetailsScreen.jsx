@@ -22,7 +22,7 @@ const TaskDetailsScreen = ({ route }) => {
   const queryClient = useQueryClient();
   const task = route.params;
   const taskId = task?.taskId || task?.id; // Use taskId from route params or fallback to id
-  console.log("Task ID:", task); // Log the taskId for debugging
+  //console.log("Task ID:", task); // Log the taskId for debugging
 
   // if no task picture
   const mockImage = "https://cdn-icons-png.flaticon.com/512/625/625083.png";
@@ -78,7 +78,7 @@ const TaskDetailsScreen = ({ route }) => {
     };
     verifyTaskMutation.mutate({ taskId, verifyData });
   };
-  console.log("task", task?.taskPicture);
+  //console.log("task", task?.taskPicture);
 
   const renderProgress = () => {
     return (

@@ -84,15 +84,12 @@ const SavingsGoalList = () => {
         },
       ]
     );
-  }; 
+  };
 
   const currentGoal = inProgressGoals[currentIndex];
   const progress = currentGoal
     ? Math.min(currentGoal?.currentBalance / currentGoal?.targetAmount, 1)
     : 0;
-
-  // {console.log(currentGoal.ProfilePicture);
-  // }
 
   if (isLoading) {
     return <Text style={styles.loading}>Loading...</Text>;
@@ -104,7 +101,6 @@ const SavingsGoalList = () => {
 
   return (
     <View style={styles.container}>
-
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         {["All", "Completed", "Broken"].map((tab) => (
@@ -143,7 +139,7 @@ const SavingsGoalList = () => {
                 / {currentGoal?.targetAmount.toFixed(3)} KWD
               </Text>
             </View>
-
+ 
             <View style={styles.circleWrapper}>
               <Progress.Circle
                 size={CIRCLE_SIZE + 30}
@@ -188,11 +184,6 @@ const SavingsGoalList = () => {
                           }}
                         />
                       )}
-                      {/* <Image
-                        source={{ uri: item.imageUri }}
-                        style={styles.productImage}
-                        resizeMode="contain"
-                      /> */}
                     </View>
                   )}
                   horizontal
@@ -269,16 +260,23 @@ const SavingsGoalList = () => {
               No goals available for this filter.
             </Text>
           ) : (
-            filteredGoals.map((goal) => (
-              <View key={goal.savingsGoalId} style={styles.goalCard}>
-                <Text style={styles.goalName}>{goal.goalName}</Text>
-                <Text style={styles.goalStatus}>{goal.status}</Text>
-                <Text style={styles.goalProgress}>
-                  {goal.currentBalance.toFixed(3)} /{" "}
-                  {goal.targetAmount.toFixed(3)} KWD
-                </Text>
-              </View>
-            ))
+            filteredGoals.map(
+              (goal) => (
+                console.log(goal),
+                (
+                  <View key={goal.savingsGoalId} style={styles.goalCard}>
+                    <Text style={styles.goalName}>{goal.goalName}</Text>
+                    <Text style={styles.goalStatus}>{goal.status}</Text>
+                    <Text style={styles.goalProgress}>
+                      {goal.status === "InProgress"
+                        ? `${goal.currentBalance.toFixed(3)} / `
+                        : ""}
+                      {goal.targetAmount.toFixed(3)} KWD
+                    </Text>
+                  </View>
+                )
+              )
+            )
           )}
         </View>
       </ScrollView>

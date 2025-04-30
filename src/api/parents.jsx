@@ -5,7 +5,7 @@ import instance from "../api/index";
 const getTasks = async () => {
   try {
     const response = await instance.get(ParentsEndpoints.tasks);
-    console.log("Tasks:", response.data);
+    //console.log("Tasks:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching parent tasks:", error);
@@ -15,7 +15,7 @@ const getTasks = async () => {
 const getChildren = async () => {
   try {
     const response = await instance.get(ParentsEndpoints.getChildren);
-    console.log("Children:", response.data);
+    //console.log("Children:", response.data);
     return response.data; // Array of { childId, firstName, lastName, childAccountId, balance }
   } catch (error) {
     if (error.response) {
@@ -96,8 +96,8 @@ const depositToChild = async (childId, depositData) => {
     // const depositData = {
     //   amount: amount,
     // };
-    console.log("Deposit Data:", depositData);
-    console.log("Endpoint:", endpoint);
+    //console.log("Deposit Data:", depositData);
+    //console.log("Endpoint:", endpoint);
     const response = await instance.post(endpoint, depositData);
     return response.data;
   } catch (error) {
@@ -116,7 +116,7 @@ const depositToChild = async (childId, depositData) => {
 
 const createTaskForChild = async (taskData, image) => {
   try {
-    console.log("Image", image);
+    //console.log("Image", image);
     const formData = new FormData();
     for (key in taskData) {
       formData.append(key, taskData[key]);
@@ -147,7 +147,7 @@ const createTaskForChild = async (taskData, image) => {
 const verifyTask = async (taskId, verifyData) => {
   try {
     const endpoint = ParentsEndpoints.tasksVerify.replace("{id}", taskId);
-    console.log("Verify Data:", verifyData);
+    //console.log("Verify Data:", verifyData);
     const response = await instance.put(endpoint, verifyData);
     return response.data;
   } catch (error) {

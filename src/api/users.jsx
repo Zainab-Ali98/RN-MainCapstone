@@ -5,7 +5,7 @@ import instance from ".";
 export const balance = async () => {
   try {
     const response = await instance.get(UsersEndpoints.balance);
-    console.log("User balance:", response.data);
+    //console.log("User balance:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching user balance:", error);

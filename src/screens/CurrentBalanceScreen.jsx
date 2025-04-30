@@ -5,22 +5,50 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  TouchableOpacity,
-  Image,
   ActivityIndicator,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { transactions } from "../api/transactions";
 import { balance, profile } from "../api/users";
 import UserContext from "../context/UserContext";
 import { useContext } from "react";
+import LottieView from "lottie-react-native";
 
 const { width, height } = Dimensions.get("window");
 
-const CurrentBalanceScreen = () => {
-  const { isAuth } = useContext(UserContext);
+const getActivityArrow = (type, activity, down, up, win) => {
+  if (
+    type === "Parent" &&
+    activity.senderType === "Parent" &&
+    activity.receiverType === "Child"
+  ) {
+    return down;
+  }
 
+  if (
+    type === "Child" &&
+    activity.senderType === "Parent" &&
+    activity.receiverType === "Child"
+  ) {
+    return up;
+  }
+
+  if (
+    type === "Child" &&
+    activity.senderType === "Child" &&
+    activity.receiverType === "SavingsGoal"
+  ) {
+    return down;
+  }
+
+  return win;
+};
+
+
+const CurrentBalanceScreen = () => {
+  const { isAuth, role } = useContext(UserContext);
+  const type = role;
+  
   const { data: balanceData, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["balance"],
     queryFn: balance,
@@ -43,87 +71,75 @@ const CurrentBalanceScreen = () => {
     );
   }
 
-  {
-    console.log(
-      "\n\nTransactions Data:\n",
-      transactionsData,
-      "\n\n=====================\n"
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={["#E3F2FD", "#BBDEFB", "#90CAF9"]}
-        style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      />
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          <View style={styles.balanceSection}>
-            <View style={styles.balanceCard}>
-              <Text style={styles.balanceLabel}>Total Balance</Text>
-              <Text style={styles.balanceAmount}>
-                {balanceData?.balance || "0.00"} KD
-              </Text>
-              <View style={styles.balanceDecoration} />
-            </View>
-          </View>
-
-          <View style={styles.mainContent}>
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Recent Activities</Text>
-              </View>
-              <View style={styles.activitiesScrollWrapper}>
-                <ScrollView
-                  style={styles.activitiesScroll}
-                  contentContainerStyle={styles.activitiesContent}
-                  showsVerticalScrollIndicator={true}
-                  nestedScrollEnabled={true}
-                >
-                  {transactionsData?.map((activity) => (
-                    <View
-                      key={activity.transactionId}
-                      style={styles.activityItem}
-                    >
-                      <View style={styles.activityIconContainer}>
-                        <Text style={styles.activityIcon}>
-                          {activity.type === "Deposit" ? "↑" : "↓"}
-                        </Text>
-                      </View>
-                      <View style={styles.activityDetails}>
-                        <Text style={styles.activityDate}>
-                          {activity.dateCreated}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.activityAmount,
-                          {
-                            color:
-                              activity.type === "Deposit"
-                                ? "#4D5DFA"
-                                : "#FF4D4D",
-                          },
-                        ]}
-                      >
-                        {activity.type === "Deposit" ? "+" : "-"}
-                        {activity.amount} KD
-                      </Text>
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
-            </View>
+      <View style={styles.balanceCard}>
+        <View style={styles.balanceRow}>
+          <LottieView
+            source={require("../../assets/balance.json")}
+            autoPlay
+            loop
+            style={styles.lottieIcon}
+          />
+          <View>
+            <Text style={styles.balanceLabel}>Total Balance</Text>
+            <Text style={styles.balanceValue}>
+              KWD {balanceData?.balance.toFixed(3)}
+            </Text>
           </View>
         </View>
-      </ScrollView>
+      </View>
+      <View style={styles.mainContent}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent Activities</Text>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {transactionsData?.map(
+            (activity, index) => (
+              (
+                <View key={activity.transactionId} style={styles.activityItem}>
+                  <View style={styles.activityIconContainer}>
+                    <Text style={styles.activityIcon}>
+                      {getActivityArrow(type, activity, "↓", "↑", "🎉")}
+                    </Text>
+                  </View>
+                  <View style={styles.activityDetails}>
+                    <Text style={styles.activityDate}>
+                      {new Date(activity.dateCreated).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
+                        }
+                      )}
+                    </Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.activityAmount,
+                      {
+                        color:
+                          getActivityArrow(type, activity, "#FF4D4D", "green", "#000"),
+                      },
+                    ]}
+                  >
+                    {getActivityArrow(type, activity, "-", "+", "")}
+                    {activity.amount} KD
+                  </Text>
+                </View>
+              )
+            )
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -145,9 +161,6 @@ const styles = StyleSheet.create({
     top: 0,
     height: height,
   },
-  scrollContent: {
-    flexGrow: 1,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 24,
@@ -159,35 +172,37 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   balanceCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
+    backgroundColor: "#4D5DFA",
+    borderRadius: 16,
+    shadowRadius: 3,
+    shadowOpacity: 0.3,
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-    position: "relative",
-    overflow: "hidden",
-    minHeight: 140,
+    padding: 20,
+    marginTop: 60,
+    marginHorizontal: 16,
+  },
+  balanceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  lottieIcon: {
+    width: 60,
+    height: 60,
+    marginRight: 12,
   },
   balanceLabel: {
-    color: "#4D5DFA",
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 6,
-    textTransform: "uppercase",
-    letterSpacing: 1,
+    color: "rgba(255, 255, 255, 0.8)",
+    fontSize: 14,
+    fontWeight: "500",
   },
-  balanceAmount: {
-    color: "#1E40AF",
-    fontSize: 36,
-    fontWeight: "800",
-    letterSpacing: 1,
+  balanceValue: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 4,
   },
   balanceDecoration: {
     position: "absolute",
@@ -199,11 +214,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(77, 93, 250, 0.1)",
   },
   mainContent: {
-    width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: "rgb(238, 238, 238)",
     borderRadius: 24,
     padding: 20,
-    marginBottom: 20,
+    paddingBottom: 0,
+    margin: 20,
+    marginBottom: 210,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -226,7 +242,6 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
   },
   activitiesScrollWrapper: {
     maxHeight: 400,
@@ -234,11 +249,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   activitiesScroll: {
-    backgroundColor: "rgba(243, 244, 246, 0.8)",
-    padding: 10,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "rgba(229, 231, 235, 0.8)",
   },
   activitiesContent: {
     paddingBottom: 10,
@@ -268,7 +279,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   activityIcon: {
-    color: "#FFFFFF",
+    color: "#000",
     fontSize: 20,
   },
   activityDetails: {

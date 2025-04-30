@@ -15,14 +15,6 @@ import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { ChildCard } from "../components/ChildCard";
-
-import KidBox from "../components/KidBox";
-import TaskBox from "../components/TaskBox";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import Logout from "../components/Logout";
-
 const ParentScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("kids");
   const [greeting, setGreeting] = useState("");
@@ -60,7 +52,7 @@ const ParentScreen = ({ navigation }) => {
     queryKey: ["fetchChildren"],
     queryFn: () => getChildren(),
     onSuccess: (data) => {
-      console.log("Children data:", data);
+      //console.log("Children data:", data);
     },
     onError: (error) => {
       console.error("Error fetching children:", error);
@@ -86,7 +78,7 @@ const ParentScreen = ({ navigation }) => {
     queryKey: ["fetchTasks"],
     queryFn: () => getTasks(),
     onSuccess: (data) => {
-      //console.log("Task data:", data);
+      ////console.log("Task data:", data);
     },
     onError: (error) => {
       console.error("Error fetching children:", error);

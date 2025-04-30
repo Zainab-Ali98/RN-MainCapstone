@@ -15,7 +15,11 @@ import { balance } from "../api/users";
 import UserContext from "../context/UserContext";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
@@ -61,7 +65,7 @@ const TaskListScreen = ({ navigation }) => {
     queryFn: tasks,
     enabled: !!isAuth,
     onSuccess: (data) => {
-      console.log("Tasks fetched successfully:", data);
+      //console.log("Tasks fetched successfully:", data);
     },
     onError: (error) => {
       setError(error.message || "Failed to fetch tasks");
@@ -93,7 +97,6 @@ const TaskListScreen = ({ navigation }) => {
 
       if (response.didCancel) return;
 
-
       updateTaskStatus(taskId);
       Alert.alert("Great job", "Photo uploaded! Waiting for parent to check.");
     } catch (error) {
@@ -102,7 +105,7 @@ const TaskListScreen = ({ navigation }) => {
     }
   };
 
-  console.log("tasks", tasksData);
+  //console.log("tasks", tasksData);
 
   const sortedTasks = tasksData
     ?.filter((task) => task.status.toLowerCase() === "ongoing") // Filter tasks with status "Ongoing"
@@ -125,7 +128,9 @@ const TaskListScreen = ({ navigation }) => {
               <View style={styles.amountContainer}>
                 <Text style={styles.currencySymbol}>KWD</Text>
                 <Text style={styles.balanceAmount}>
-                  {isLoadingBalance ? "Loading..." : balanceData?.balance || "0.00"}
+                  {isLoadingBalance
+                    ? "Loading..."
+                    : balanceData?.balance || "0.00"}
                 </Text>
               </View>
             </View>
@@ -161,7 +166,9 @@ const TaskListScreen = ({ navigation }) => {
                       selectedTask === task.taskId && styles.selectedTask,
                     ]}
                     onPress={() =>
-                      navigation.navigate("ViewTaskScreen", { taskId: task.taskId })
+                      navigation.navigate("ViewTaskScreen", {
+                        taskId: task.taskId,
+                      })
                     }
                   >
                     <View style={styles.bubbleTop} />
@@ -176,7 +183,6 @@ const TaskListScreen = ({ navigation }) => {
                         <Text style={styles.taskTitle}>{task.taskName}</Text>
                       </View>
                       <View style={styles.taskFooter}>
-                      
                         <View style={styles.rewardContainer}>
                           <Text style={styles.rewardAmount}>
                             {task.rewardAmount} KD
@@ -196,7 +202,6 @@ const TaskListScreen = ({ navigation }) => {
 
         {/* Start New Adventure Button */}
         <View style={styles.bottomButtonContainer}>
-          
           <TouchableOpacity
             style={styles.createGoalButton}
             onPress={() => navigation.navigate("CreateNewGoal")}
@@ -281,7 +286,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
-  taskCardsContainer: {  },
+  taskCardsContainer: {},
   horizontalScrollContent: { paddingRight: 20 },
   taskCardWrapper: { marginRight: 15 },
   taskCard: {
@@ -386,7 +391,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-  walkingAnimation: { width: 120, height: 120, alignSelf: "center", marginBottom: -40 },
+  walkingAnimation: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: -40,
+  },
   errorText: {
     color: "red",
     fontSize: 16,

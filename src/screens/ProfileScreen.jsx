@@ -46,7 +46,6 @@ const SavingGoalItem = ({ item }) => {
         {item.title}
       </Text>
       <ProgressDonut current={item.progress} total={item.amount} />
-      {console.log("Item color:", item.color)};
       <View style={styles.goalProgress}>
         <Text style={[styles.savedAmount, { color: item.color }]}>
           Saved: {item.progress} KWD
@@ -60,7 +59,7 @@ const SavingGoalItem = ({ item }) => {
 const ProfileScreen = ({ route }) => {
   const navigation = useNavigation();
   const child = route.params; // Get the child data from route params
-  console.log("Child data:", child); // Log the child data for debugging
+  //console.log("Child data:", child); // Log the child data for debugging
 
   // Fetch Child Savings Goals
   const {

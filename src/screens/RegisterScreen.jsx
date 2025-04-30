@@ -81,7 +81,7 @@ function RegisterScreen({ setIsAuth, setRole }) {
     },
     onError: (error) => {
       setError(error.message || "Something went wrong");
-      console.log("\nError message: ", error, "\n");
+      //console.log("\nError message: ", error, "\n");
     },
   });
 
@@ -167,7 +167,6 @@ function RegisterScreen({ setIsAuth, setRole }) {
                   placeholder="First Name"
                   placeholderTextColor="#6B7280"
                   autoCapitalize="words"
-                  onFocus={() => console.log("First Name input focused")}
                   onChangeText={(value) => {
                     setUserInfo({ ...userInfo, FirstName: value });
                     setError(null);

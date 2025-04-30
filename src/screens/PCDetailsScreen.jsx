@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -82,7 +81,7 @@ const PCDetailsScreen = ({ navigation }) => {
     queryKey: ["userData"],
     queryFn: () => profile(),
     onSuccess: (data) => {
-      console.log("User data fetched successfully:", data);
+      //console.log("User data fetched successfully:", data);
     },
     onError: (error) => {
       setError("Failed to load user data");

@@ -141,7 +141,7 @@ const RewardsScreen = () => {
         </View>
 
         <View style={styles.rewardsWrapper}>
-          <Text style={styles.sectionTitle}>Redeem Your Points</Text>
+     
 
           {rewardsData?.map((reward, index) => (
             <AnimatedRewardCard

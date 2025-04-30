@@ -72,7 +72,7 @@ function LoginScreen({ navigation, setIsAuth, setRole }) {
     },
     onError: (error) => {
       setError(error.message || "Something went wrong");
-      console.log("\nError message: ", error, "\n");
+      //console.log("\nError message: ", error, "\n");
     },
   });
 
