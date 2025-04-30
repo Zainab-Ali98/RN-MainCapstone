@@ -179,7 +179,7 @@ const RewardsScreen = () => {
           </View>
         </View>
 
-        <View >
+        <View>
           {rewardsData?.map((reward, index) => (
             <AnimatedRewardCard
               key={reward.rewardId}
@@ -243,7 +243,7 @@ const RewardsScreen = () => {
 const styles = StyleSheet.create({
   RewardRedeemButton: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
   RewardRedeem: {

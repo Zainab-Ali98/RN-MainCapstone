@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import test from "../screens/test";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +13,6 @@ export const AuthNavigator = ({ setIsAuth, setRole }) => {
         headerShown: false,
       }}
     >
-      {/* <Stack.Screen name="test" component={test} /> */}
       <Stack.Screen name="Register">
         {(props) => (
           <RegisterScreen {...props} setIsAuth={setIsAuth} setRole={setRole} />

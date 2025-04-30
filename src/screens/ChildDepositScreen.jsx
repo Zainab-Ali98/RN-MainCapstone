@@ -101,7 +101,6 @@ const ChildDepositScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Logout />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
