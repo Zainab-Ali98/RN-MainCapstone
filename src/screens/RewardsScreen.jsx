@@ -17,12 +17,13 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, QueryClient } from "@tanstack/react-query";
 import { rewards, redeemReward } from "../api/rewards";
 import { profile } from "../api/users";
 import UserContext from "../context/UserContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { width, height } = Dimensions.get("window");
 
@@ -40,6 +41,7 @@ const RewardsScreen = () => {
   const { isAuth } = useContext(UserContext);
   const [selectedReward, setSelectedReward] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: profileData } = useQuery({
     queryKey: ["profile"],
@@ -58,6 +60,7 @@ const RewardsScreen = () => {
     mutationKey: ["redeemReward"],
     mutationFn: redeemReward,
     onSuccess: (data) => {
+      queryClient.invalidateQueries(["rewards"]);
       setShowModal(false);
       confettiRef.current?.start?.();
       alert(`Requested ${data?.rewardName} 🎉`);
