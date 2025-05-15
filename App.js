@@ -18,6 +18,8 @@ import ProgressGoalsScreen from "./src/screens/ProgressGoalsScreen";
 import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
 import ChildDepositScreen from "./src/screens/ChildDepositScreen";
 import ParentScreen from "./src/screens/ParentScreen";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); // Ignore all log notifications
 
 const queryClient = new QueryClient();
 
